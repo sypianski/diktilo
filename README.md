@@ -14,24 +14,14 @@
 
   <p>
     <a href="https://tryvoiceink.com">Website</a> •
-    <a href="https://www.youtube.com/@tryvoiceink">YouTube</a> •
-    <a href="https://github.com/Beingpax/VoiceInk/discussions">Discussions</a>
+    <a href="https://www.youtube.com/@tryvoiceink">YouTube</a>
   </p>
-
   <br />
-  
-  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <h3>Ready to Transform Your Voice into Text?</h3>
-    <a href="https://tryvoiceink.com">
-      <img src="https://img.shields.io/badge/Download-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download VoiceInk" width="250"/>
-    </a>
-    <p style="margin-top: 10px; font-size: 0.9em;">macOS 14.0 or later required</p>
-  </div>
-</div>
+
 
 ---
 
-VoiceInk is a powerful macOS application that transforms your voice into text in real-time, providing a seamless and efficient way to capture your thoughts, create content, and transcribe audio.
+VoiceInk is a native macOS application that transcribes what you say to text almost instantly. It works everywhere on your mac and has near perfect accuracy. It provides a seamless and efficient way to work without ever doing the manual typing, ever again.
 
 ## Features
 
@@ -40,7 +30,7 @@ VoiceInk is a powerful macOS application that transforms your voice into text in
 - 🚀 Powered by whisper.cpp for efficient, local transcription
 - 🔒 Privacy-focused: All processing happens locally on your device
 - ⚡ Fast and responsive interface
-- 📝 Easy-to-use text editor
+- 🤖 Supports AI enhancements (bring your own API keys)
 
 ## Requirements
 
@@ -76,8 +66,6 @@ If you encounter any issues or have questions, please:
 
 ## Acknowledgments
 
-Special thanks to the following projects and their maintainers:
-
 ### Core Technology
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) - High-performance inference of OpenAI's Whisper model
 
@@ -88,10 +76,7 @@ Special thanks to the following projects and their maintainers:
 - [Defaults](https://github.com/sindresorhus/Defaults) - Modern user defaults management
 - [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin) - Launch at login functionality
 
-### Community
-- All contributors who help make this project better
-- The open-source community for their invaluable tools and support
 
 ---
 
-Made with ❤️ by the VoiceInk team 
+Made with ❤️ by Pax
