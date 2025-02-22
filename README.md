@@ -11,16 +11,28 @@
   ![GitHub all releases](https://img.shields.io/github/downloads/Beingpax/VoiceInk/total)
   <!-- Add Discord badge once link is provided -->
 
+  <p>
+    <img src="https://img.shields.io/github/stars/Beingpax/VoiceInk?style=social" alt="GitHub stars" />
+    <img src="https://img.shields.io/github/forks/Beingpax/VoiceInk?style=social" alt="GitHub forks" />
+    <img src="https://img.shields.io/github/issues/Beingpax/VoiceInk" alt="GitHub issues" />
+    <img src="https://img.shields.io/github/last-commit/Beingpax/VoiceInk" alt="Last commit" />
+  </p>
+
+  <p>
+    <a href="https://tryvoiceink.com">Website</a> •
+    <a href="https://www.youtube.com/@tryvoiceink">YouTube</a> •
+    <a href="https://github.com/Beingpax/VoiceInk/discussions">Discussions</a>
+  </p>
+
   <br />
   
-  <a href="https://tryvoiceink.com">
-    <img src="https://img.shields.io/badge/Download-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download Latest Version" />
-  </a>
-  
-  <p align="center">
-    <a href="https://tryvoiceink.com">Download Latest Version</a> • 
-    <a href="https://github.com/Beingpax/VoiceInk/releases/latest">GitHub Release</a>
-  </p>
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3>Ready to Transform Your Voice into Text?</h3>
+    <a href="https://tryvoiceink.com">
+      <img src="https://img.shields.io/badge/Download-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download VoiceInk" width="250"/>
+    </a>
+    <p style="margin-top: 10px; font-size: 0.9em;">macOS 14.0 or later required</p>
+  </div>
 </div>
 
 ---
