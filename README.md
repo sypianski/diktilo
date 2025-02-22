@@ -1,4 +1,18 @@
-# VoiceInk
+# <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/64-mac.png" width="32" height="32" /> VoiceInk
+
+<div align="center">
+  <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="180" height="180" />
+  <h1>VoiceInk</h1>
+  <p>Transform your voice into text, instantly.</p>
+
+  [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+  ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-brightgreen)
+  [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Beingpax/VoiceInk)](https://github.com/Beingpax/VoiceInk/releases)
+  <!-- Add Discord badge once link is provided -->
+  
+</div>
+
+---
 
 VoiceInk is a powerful macOS application that transforms your voice into text in real-time, providing a seamless and efficient way to capture your thoughts, create content, and transcribe audio.
 
