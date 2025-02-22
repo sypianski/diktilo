@@ -12,12 +12,12 @@
 
   <br />
   
-  <a href="https://dub.sh/voiceinK">
+  <a href="https://tryvoiceink.com">
     <img src="https://img.shields.io/badge/Download-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download Latest Version" />
   </a>
   
   <p align="center">
-    <a href="https://dub.sh/voiceinc">Official Download Link</a> • 
+    <a href="https://tryvoiceink.com">Download Latest Version</a> • 
     <a href="https://github.com/Beingpax/VoiceInk/releases/latest">GitHub Release</a>
   </p>
 </div>
