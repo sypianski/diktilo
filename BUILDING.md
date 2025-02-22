@@ -8,7 +8,10 @@ Before you begin, ensure you have:
 - macOS 14.0 or later
 - Xcode (latest version recommended)
 - Swift (latest version recommended)
-- whisper.cpp properly set up
+- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) properly set up
+  - Follow the installation instructions in the whisper.cpp repository
+  - Make sure you can build and run the basic examples
+  - The library should be properly linked in your environment
 
 ## Building Steps
 
@@ -34,8 +37,10 @@ open VoiceInk.xcodeproj
    - Install any required Xcode Command Line Tools
 
 2. **Dependencies**
-   - The project uses whisper.cpp for transcription
-   - Make sure whisper.cpp is properly set up in your environment
+   - The project uses [whisper.cpp](https://github.com/ggerganov/whisper.cpp) for transcription
+   - Clone and build whisper.cpp following their installation guide
+   - Ensure the library is properly linked in your Xcode project
+   - Test the whisper.cpp installation independently before proceeding
 
 3. **Building for Development**
    - Use the Debug configuration for development
@@ -52,5 +57,6 @@ If you encounter any build issues:
 2. Clean the build cache (Cmd+Shift+K twice)
 3. Check Xcode and macOS versions
 4. Verify all dependencies are properly installed
+5. Make sure whisper.cpp is properly built and linked
 
 For more help, please check the [issues](https://github.com/Beingpax/VoiceInk/issues) section or create a new issue. 

@@ -14,7 +14,7 @@ VoiceInk is a powerful macOS application that transforms your voice into text in
 ## Requirements
 
 - macOS 14.0 or later
-- whisper.cpp
+- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) - High-performance inference of OpenAI's Whisper model
 
 ## Documentation
 
