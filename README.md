@@ -8,6 +8,7 @@
   [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-brightgreen)
   [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Beingpax/VoiceInk)](https://github.com/Beingpax/VoiceInk/releases)
+  ![GitHub all releases](https://img.shields.io/github/downloads/Beingpax/VoiceInk/total)
   <!-- Add Discord badge once link is provided -->
 
   <br />
