@@ -2,6 +2,24 @@
 
 First off, thank you for considering contributing to VoiceInk! It's people like you that make VoiceInk such a great tool.
 
+## Important Notice About Pull Requests
+
+We welcome forks and improvements to VoiceInk! However, please note:
+
+1. **The acceptance of Pull Requests is solely at the discretion of the project maintainers**
+2. **Before making significant changes or starting work on major features:**
+   - Open an issue to discuss your proposed changes
+   - Wait for maintainer feedback and approval
+   - This helps ensure your time and effort align with the project's direction
+3. **For fundamental or architectural changes:**
+   - Direct consultation with the maintainers is required
+   - These discussions should happen before you start the implementation
+
+This policy helps ensure:
+- Your valuable time is spent on changes that align with the project's vision
+- The codebase maintains its consistency and quality
+- We can provide proper guidance and support for your contribution
+
 ## Important Notice
 
 Before starting work on any new feature or fix, please reach out to us first by opening an issue or discussion. This is crucial because:
