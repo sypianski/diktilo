@@ -3,20 +3,14 @@
 <div align="center">
   <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="180" height="180" />
   <h1>VoiceInk</h1>
-  <p>Transform your voice into text, instantly.</p>
+  <p>Dictation app for macOS to transcribe what you say to text almost instantly</p>
 
   [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-brightgreen)
   [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Beingpax/VoiceInk)](https://github.com/Beingpax/VoiceInk/releases)
   ![GitHub all releases](https://img.shields.io/github/downloads/Beingpax/VoiceInk/total)
+  ![GitHub stars](https://img.shields.io/github/stars/Beingpax/VoiceInk?style=social)
   <!-- Add Discord badge once link is provided -->
-
-  <p>
-    <img src="https://img.shields.io/github/stars/Beingpax/VoiceInk?style=social" alt="GitHub stars" />
-    <img src="https://img.shields.io/github/forks/Beingpax/VoiceInk?style=social" alt="GitHub forks" />
-    <img src="https://img.shields.io/github/issues/Beingpax/VoiceInk" alt="GitHub issues" />
-    <img src="https://img.shields.io/github/last-commit/Beingpax/VoiceInk" alt="Last commit" />
-  </p>
 
   <p>
     <a href="https://tryvoiceink.com">Website</a> •
