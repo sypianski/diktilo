@@ -9,7 +9,17 @@
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-brightgreen)
   [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Beingpax/VoiceInk)](https://github.com/Beingpax/VoiceInk/releases)
   <!-- Add Discord badge once link is provided -->
+
+  <br />
   
+  <a href="https://dub.sh/voiceinc">
+    <img src="https://img.shields.io/badge/Download-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download Latest Version" />
+  </a>
+  
+  <p align="center">
+    <a href="https://dub.sh/voiceinc">Official Download Link</a> • 
+    <a href="https://github.com/Beingpax/VoiceInk/releases/latest">GitHub Release</a>
+  </p>
 </div>
 
 ---
