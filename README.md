@@ -27,7 +27,7 @@ VoiceInk is a native macOS application that transcribes what you say to text alm
 
 - 🎙️ Real-time voice transcription
 - 💻 Native macOS application
-- 🚀 Powered by whisper.cpp for efficient, local transcription
+- 🚀 Powered by Whisper AI for efficient, local transcription
 - 🔒 Privacy-focused: All processing happens locally on your device
 - ⚡ Fast and responsive interface
 - 🤖 Supports AI enhancements (bring your own API keys)
