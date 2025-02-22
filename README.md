@@ -16,8 +16,7 @@
     <a href="https://tryvoiceink.com">Website</a> •
     <a href="https://www.youtube.com/@tryvoiceink">YouTube</a>
   </p>
-  <br />
-
+</div>
 
 ---
 
