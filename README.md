@@ -12,7 +12,7 @@
 
   <br />
   
-  <a href="https://dub.sh/voiceinc">
+  <a href="https://dub.sh/voiceinK">
     <img src="https://img.shields.io/badge/Download-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download Latest Version" />
   </a>
   
@@ -38,16 +38,7 @@ VoiceInk is a powerful macOS application that transforms your voice into text in
 ## Requirements
 
 - macOS 14.0 or later
-- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) - High-performance inference of OpenAI's Whisper model
 
-## Dependencies
-
-VoiceInk relies on several excellent open-source packages:
-- [Sparkle](https://github.com/sparkle-project/Sparkle) - Software update framework for macOS
-- [HotKey](https://github.com/soffes/HotKey) - Simple global shortcuts for macOS
-- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) - User-customizable global keyboard shortcuts
-- [Defaults](https://github.com/sindresorhus/Defaults) - Modern user defaults for Swift
-- [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin) - Launch app at login helper
 
 ## Documentation
 
