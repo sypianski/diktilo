@@ -16,6 +16,15 @@ VoiceInk is a powerful macOS application that transforms your voice into text in
 - macOS 14.0 or later
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) - High-performance inference of OpenAI's Whisper model
 
+## Dependencies
+
+VoiceInk relies on several excellent open-source packages:
+- [Sparkle](https://github.com/sparkle-project/Sparkle) - Software update framework for macOS
+- [HotKey](https://github.com/soffes/HotKey) - Simple global shortcuts for macOS
+- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) - User-customizable global keyboard shortcuts
+- [Defaults](https://github.com/sindresorhus/Defaults) - Modern user defaults for Swift
+- [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin) - Launch app at login helper
+
 ## Documentation
 
 - [Building from Source](BUILDING.md) - Detailed instructions for building the project
@@ -45,8 +54,21 @@ If you encounter any issues or have questions, please:
 
 ## Acknowledgments
 
-- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) for providing the core transcription capabilities
+Special thanks to the following projects and their maintainers:
+
+### Core Technology
+- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) - High-performance inference of OpenAI's Whisper model
+
+### Essential Dependencies
+- [Sparkle](https://github.com/sparkle-project/Sparkle) - Keeping VoiceInk up to date
+- [HotKey](https://github.com/soffes/HotKey) - Global shortcut support
+- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) - User-customizable keyboard shortcuts
+- [Defaults](https://github.com/sindresorhus/Defaults) - Modern user defaults management
+- [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin) - Launch at login functionality
+
+### Community
 - All contributors who help make this project better
+- The open-source community for their invaluable tools and support
 
 ---
 
