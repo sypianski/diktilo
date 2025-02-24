@@ -89,6 +89,7 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
     private let recorder = Recorder()
     private var recordedFile: URL? = nil
     private var dictionaryWords: [String] = []
+    private let saveKey = "CustomDictionaryItems"
     
     let modelContext: ModelContext
     
@@ -150,6 +151,7 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
         createModelsDirectoryIfNeeded()
         createRecordingsDirectoryIfNeeded()
         loadAvailableModels()
+        loadDictionaryItems()
         
         // Load saved model
         if let savedModelName = UserDefaults.standard.string(forKey: "CurrentModel"),
@@ -190,6 +192,17 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
             }
         } catch {
             print("Error loading available models: \(error.localizedDescription)")
+        }
+    }
+    
+    private func loadDictionaryItems() {
+        guard let data = UserDefaults.standard.data(forKey: saveKey) else { return }
+        
+        // Try loading with new format first
+        if let savedItems = try? JSONDecoder().decode([DictionaryItem].self, from: data) {
+            let enabledWords = savedItems.filter { $0.isEnabled }.map { $0.word }
+            dictionaryWords = enabledWords
+            updateTranscriptionPrompt()
         }
     }
     
@@ -827,6 +840,15 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
         logger.info("Saved recording permanently at: \(permanentURL.path)")
         
         return permanentURL
+    }
+
+    func saveDictionaryItems(_ items: [DictionaryItem]) async {
+        if let encoded = try? JSONEncoder().encode(items) {
+            UserDefaults.standard.set(encoded, forKey: saveKey)
+            let enabledWords = items.filter { $0.isEnabled }.map { $0.word }
+            dictionaryWords = enabledWords
+            updateTranscriptionPrompt()
+        }
     }
 }
 

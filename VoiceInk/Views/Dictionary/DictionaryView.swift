@@ -33,9 +33,10 @@ struct DictionaryItem: Identifiable, Hashable, Codable {
 class DictionaryManager: ObservableObject {
     @Published var items: [DictionaryItem] = []
     private let saveKey = "CustomDictionaryItems"
-    var onDictionaryChanged: (([String]) -> Void)?
+    @Published var whisperState: WhisperState
     
-    init() {
+    init(whisperState: WhisperState) {
+        self.whisperState = whisperState
         loadItems()
     }
     
@@ -53,20 +54,18 @@ class DictionaryManager: ObservableObject {
                 saveItems()
             }
         }
-        notifyDictionaryChanged()
+        Task { @MainActor in
+            await whisperState.saveDictionaryItems(items)
+        }
     }
     
     private func saveItems() {
         if let encoded = try? JSONEncoder().encode(items) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
-            notifyDictionaryChanged()
+            Task { @MainActor in
+                await whisperState.saveDictionaryItems(items)
+            }
         }
-    }
-    
-    private func notifyDictionaryChanged() {
-        // Only include enabled words in the dictionary
-        let enabledWords = items.filter { $0.isEnabled }.map { $0.word }
-        onDictionaryChanged?(enabledWords)
     }
     
     func addWord(_ word: String) {
@@ -98,11 +97,15 @@ class DictionaryManager: ObservableObject {
 }
 
 struct DictionaryView: View {
-    @StateObject private var dictionaryManager = DictionaryManager()
+    @StateObject private var dictionaryManager: DictionaryManager
     @EnvironmentObject private var whisperState: WhisperState
     @State private var newWord = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
+    
+    init(whisperState: WhisperState) {
+        _dictionaryManager = StateObject(wrappedValue: DictionaryManager(whisperState: whisperState))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -177,10 +180,6 @@ struct DictionaryView: View {
             Text(alertMessage)
         }
         .onAppear {
-            dictionaryManager.onDictionaryChanged = { words in
-                whisperState.updateDictionaryWords(words)
-            }
-            // Initial update
             whisperState.updateDictionaryWords(dictionaryManager.allWords)
         }
     }

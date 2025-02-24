@@ -69,7 +69,8 @@ enum AIPrompts {
        IMPORTANT: Only apply replacements if specific words are provided
        - Skip any replacement activity if no replacement options are available
        - When replacements are provided:
-         - Replace specified words or phrases exactly as provided
+         - Replace ONLY exact matches of the specified words/phrases
+         - Do NOT replace partial matches or similar words
          - Apply replacements before other enhancements
          - Maintain case sensitivity when applying replacements
          - Preserve the flow and readability of the text

@@ -29,6 +29,9 @@ actor WhisperContext {
     func fullTranscribe(samples: [Float]) {
         guard let context = context else { return }
         
+        // Capture prompt state at start
+        let currentPrompt = prompt
+        
         // Leave 2 processors free (i.e. the high-efficiency cores).
         let maxThreads = max(1, min(8, cpuCount() - 2))
         print("Selecting \(maxThreads) threads")
@@ -49,12 +52,12 @@ actor WhisperContext {
         }
         
         // Only use prompt for English language
-        if selectedLanguage == "en" && prompt != nil {
-            promptCString = Array(prompt!.utf8CString)
+        if selectedLanguage == "en" && currentPrompt != nil {
+            promptCString = Array(currentPrompt!.utf8CString)
             params.initial_prompt = promptCString?.withUnsafeBufferPointer { ptr in
                 ptr.baseAddress
             }
-            print("Using prompt for English transcription: \(prompt!)")
+            print("Using prompt for English transcription: \(currentPrompt!)")
         } else {
             promptCString = nil
             params.initial_prompt = nil
