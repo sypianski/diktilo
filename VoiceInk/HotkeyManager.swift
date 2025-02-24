@@ -71,7 +71,7 @@ class HotkeyManager: ObservableObject {
     
     init(whisperState: WhisperState) {
         self.isPushToTalkEnabled = UserDefaults.standard.bool(forKey: "isPushToTalkEnabled")
-        self.pushToTalkKey = PushToTalkKey(rawValue: UserDefaults.standard.string(forKey: "pushToTalkKey") ?? "") ?? .rightOption
+        self.pushToTalkKey = PushToTalkKey(rawValue: UserDefaults.standard.string(forKey: "pushToTalkKey") ?? "") ?? .rightCommand
         self.whisperState = whisperState
         
         updateShortcutStatus()

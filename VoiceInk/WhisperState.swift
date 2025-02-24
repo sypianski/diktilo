@@ -270,36 +270,28 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
                             self.recordedFile = file
                             self.transcriptionStartTime = Date()
                             
-                            // Handle all parallel tasks
-                            await withTaskGroup(of: Void.self) { group in
-                                // Task 1: Configuration detection
-                                group.addTask {
-                                    await ActiveWindowService.shared.applyConfigurationForCurrentApp()
+                            // Handle tasks sequentially
+                            // Step 1: Apply power mode configuration
+                            await ActiveWindowService.shared.applyConfigurationForCurrentApp()
+                            
+                            // Step 2: Handle screen capture if enabled by the configuration
+                            if let enhancementService = self.enhancementService,
+                               enhancementService.isEnhancementEnabled &&
+                               enhancementService.useScreenCaptureContext {
+                                await MainActor.run {
+                                    self.messageLog += "Capturing screen context...\n"
                                 }
-                                
-                                // Task 2: Screen capture if enabled
-                                if let enhancementService = self.enhancementService,
-                                   enhancementService.isEnhancementEnabled &&
-                                   enhancementService.useScreenCaptureContext {
-                                    group.addTask {
-                                        await MainActor.run {
-                                            self.messageLog += "Capturing screen context...\n"
-                                        }
-                                        await enhancementService.captureScreenContext()
-                                    }
-                                }
-                                
-                                // Task 3: Model loading if needed
-                                if let currentModel = self.currentModel, self.whisperContext == nil {
-                                    group.addTask {
-                                        do {
-                                            try await self.loadModel(currentModel)
-                                        } catch {
-                                            await MainActor.run {
-                                                print("Error preloading model: \(error.localizedDescription)")
-                                                self.messageLog += "Error preloading model: \(error.localizedDescription)\n"
-                                            }
-                                        }
+                                await enhancementService.captureScreenContext()
+                            }
+                            
+                            // Step 3: Load model if needed
+                            if let currentModel = self.currentModel, self.whisperContext == nil {
+                                do {
+                                    try await self.loadModel(currentModel)
+                                } catch {
+                                    await MainActor.run {
+                                        print("Error preloading model: \(error.localizedDescription)")
+                                        self.messageLog += "Error preloading model: \(error.localizedDescription)\n"
                                     }
                                 }
                             }

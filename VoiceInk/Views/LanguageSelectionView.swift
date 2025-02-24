@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LanguageSelectionView: View {
     @ObservedObject var whisperState: WhisperState
-    @State private var selectedLanguage: String = UserDefaults.standard.string(forKey: "SelectedLanguage") ?? "auto"
+    @State private var selectedLanguage: String = UserDefaults.standard.string(forKey: "SelectedLanguage") ?? "en"
     
     let languages = [
         "auto": "Auto-detect",

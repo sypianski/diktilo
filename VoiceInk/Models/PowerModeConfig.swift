@@ -43,7 +43,7 @@ class PowerModeManager: ObservableObject {
             defaultConfig = PowerModeConfig(
                 bundleIdentifier: "default",
                 appName: "Default Configuration",
-                isAIEnhancementEnabled: true,
+                isAIEnhancementEnabled: false,
                 selectedPrompt: nil
             )
             saveDefaultConfig()
