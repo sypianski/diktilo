@@ -3,25 +3,18 @@
     <channel>
         <title>VoiceInk Releases</title>
         <item>
-            <title>0.91</title>
+            <title>0.92</title>
             <pubDate>Thu, 20 Feb 2025 07:51:55 +0545</pubDate>
-            <sparkle:version>91</sparkle:version>
-            <sparkle:shortVersionString>0.91</sparkle:shortVersionString>
+            <sparkle:version>92</sparkle:version>
+            <sparkle:shortVersionString>0.92</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <description><![CDATA[
-                    <h3>What's New in Version 0.91 🚀⚡</h3>
+                    <h3>What's New in Version 0.92 🚀⚡</h3>
                         <ul>
-                            <li>Proper support for Multiple Languages</li>
-                            <li>Better Onboarding View</li>
-                        </ul>
-                    <h3>What's New in Version 0.89 🚀⚡</h3>
-                        <ul>
-                            <li>Fixed Native Mac apps not appearing on Power Mode</li>
-                            <li>Fixed random app freeze issue</li>
-                            <li>Made Screen Capture service more reliable</li>
+                            <li>Minor Bug Fixes</li>
                         </ul>
             ]]></description>
-            <enclosure url="https://github.com/Beingpax/VoiceInk/releases/download/v0.91/VoiceInk.dmg" length="5665255" type="application/octet-stream" sparkle:edSignature="XhJfFmObvNeduAatySAdaleaPlzeS3IJ4XiF21caJ4aerj/TE1D+u2jxhUkoYP8ZmChQpe/HIPk3BIC6DysNBQ=="/>
+            <enclosure url="https://github.com/Beingpax/VoiceInk/releases/download/v0.92/VoiceInk.dmg" length="5670760" type="application/octet-stream" sparkle:edSignature="MzRcP5kv6A4iNZs3uZ7fT/QgEDJ1QZ3slx0PWImDDyBCW9Qs830OCt7sq97Ym+px8SNazmMrcJZsgH0yZjDXAg=="/>
         </item>
     </channel>
 </rss>
