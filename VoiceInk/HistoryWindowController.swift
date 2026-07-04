@@ -7,7 +7,7 @@ class HistoryWindowController: NSObject, NSWindowDelegate {
 
     private var historyWindow: NSWindow?
     private let windowIdentifier = NSUserInterfaceItemIdentifier("com.prakashjoshipax.voiceink.historyWindow")
-    private let windowAutosaveName = NSWindow.FrameAutosaveName("VoiceInkHistoryWindowFrame")
+    private let windowAutosaveName = NSWindow.FrameAutosaveName("DiktiloHistoryWindowFrame")
 
     private override init() {
         super.init()

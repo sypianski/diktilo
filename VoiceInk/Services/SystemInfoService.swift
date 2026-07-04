@@ -208,7 +208,7 @@ class SystemInfoService {
 
         // Check for existing license key and activation
         if licenseManager.licenseKey != nil {
-            if licenseManager.activationId != nil || !UserDefaults.standard.bool(forKey: "VoiceInkLicenseRequiresActivation") {
+            if licenseManager.activationId != nil || !UserDefaults.standard.bool(forKey: "DiktiloLicenseRequiresActivation") {
                 return "Licensed (Pro)"
             }
         }

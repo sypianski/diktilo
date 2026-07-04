@@ -49,7 +49,7 @@ class LicenseViewModel: ObservableObject {
 
             // If we have a license key, trust that it's licensed
             // Skip server validation on startup
-            if licenseManager.activationId != nil || !userDefaults.bool(forKey: "VoiceInkLicenseRequiresActivation") {
+            if licenseManager.activationId != nil || !userDefaults.bool(forKey: "DiktiloLicenseRequiresActivation") {
                 licenseState = .licensed
                 activationsLimit = userDefaults.activationsLimit
                 return
@@ -107,7 +107,7 @@ class LicenseViewModel: ObservableObject {
         switch licenseState {
         case .unlicensed, .trialExpired:
             return String(
-                format: String(localized: "Your trial has ended. Upgrade to VoiceInk Pro at %@"),
+                format: String(localized: "Your trial has ended. Upgrade to Diktilo Pro at %@"),
                 "tryvoiceink.com/buy"
             )
         case .trial, .licensed:
@@ -154,7 +154,7 @@ class LicenseViewModel: ObservableObject {
                     if isValid {
                         let limit = licenseCheck.activationsLimit ?? userDefaults.activationsLimit
                         licenseManager.licenseKey = normalizedLicenseKey
-                        userDefaults.set(true, forKey: "VoiceInkLicenseRequiresActivation")
+                        userDefaults.set(true, forKey: "DiktiloLicenseRequiresActivation")
                         activationsLimit = limit
                         userDefaults.activationsLimit = limit
                         completeSuccessfulValidation(message: String(localized: "License activated successfully!"))
@@ -171,7 +171,7 @@ class LicenseViewModel: ObservableObject {
                 // Store activation details
                 licenseManager.licenseKey = normalizedLicenseKey
                 licenseManager.activationId = newActivationId
-                userDefaults.set(true, forKey: "VoiceInkLicenseRequiresActivation")
+                userDefaults.set(true, forKey: "DiktiloLicenseRequiresActivation")
                 self.activationsLimit = limit
                 userDefaults.activationsLimit = limit
 
@@ -179,7 +179,7 @@ class LicenseViewModel: ObservableObject {
                 // This license doesn't require activation (unlimited devices)
                 licenseManager.licenseKey = normalizedLicenseKey
                 licenseManager.activationId = nil
-                userDefaults.set(false, forKey: "VoiceInkLicenseRequiresActivation")
+                userDefaults.set(false, forKey: "DiktiloLicenseRequiresActivation")
                 self.activationsLimit = licenseCheck.activationsLimit ?? 0
                 userDefaults.activationsLimit = licenseCheck.activationsLimit ?? 0
 
@@ -237,7 +237,7 @@ class LicenseViewModel: ObservableObject {
         licenseManager.removeStoredLicense()
 
         // Reset UserDefaults flags
-        userDefaults.set(false, forKey: "VoiceInkLicenseRequiresActivation")
+        userDefaults.set(false, forKey: "DiktiloLicenseRequiresActivation")
         userDefaults.activationsLimit = 0
 
         licenseKey = ""
@@ -253,7 +253,7 @@ class LicenseViewModel: ObservableObject {
 // UserDefaults extension for non-sensitive license settings
 extension UserDefaults {
     var activationsLimit: Int {
-        get { integer(forKey: "VoiceInkActivationsLimit") }
-        set { set(newValue, forKey: "VoiceInkActivationsLimit") }
+        get { integer(forKey: "DiktiloActivationsLimit") }
+        set { set(newValue, forKey: "DiktiloActivationsLimit") }
     }
 }

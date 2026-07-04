@@ -122,7 +122,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
     private let pipeline: TranscriptionPipeline
     private var enhancementPrewarm: EnhancementPrewarmService?
 
-    let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "VoiceInkEngine")
+    let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "DiktiloEngine")
 
     init(
         modelContext: ModelContext,

@@ -6,7 +6,7 @@ extension UserDefaults {
         static let selectedAudioDeviceUID = "selectedAudioDeviceUID"
         static let selectedAudioDeviceModelUID = "selectedAudioDeviceModelUID"
         static let prioritizedDevices = "prioritizedDevices"
-        static let affiliatePromotionDismissed = "VoiceInkAffiliatePromotionDismissed"
+        static let affiliatePromotionDismissed = "DiktiloAffiliatePromotionDismissed"
     }
 
     var audioInputModeRawValue: String? {
