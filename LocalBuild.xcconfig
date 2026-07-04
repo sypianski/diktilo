@@ -13,3 +13,11 @@ PROVISIONING_PROFILE_SPECIFIER =
 
 // Add LOCAL_BUILD compilation flag so Swift code can use #if LOCAL_BUILD
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) LOCAL_BUILD
+
+// Diktilo fork branding: command-line xcconfig overrides target-level
+// settings, so the app builds as Diktilo.app without touching project.pbxproj
+// (keeps upstream merges clean). App Support paths and Keychain entries keep
+// the original hardcoded identifiers, so data survives the rename.
+PRODUCT_NAME = Diktilo
+PRODUCT_BUNDLE_IDENTIFIER = cc.sypianski.diktilo
+INFOPLIST_KEY_CFBundleDisplayName = Diktilo

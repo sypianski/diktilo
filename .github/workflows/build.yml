@@ -1,8 +1,8 @@
-name: Build VoiceInk.app
+name: Build Diktilo.app
 
 on:
   push:
-    branches: [willow-streaming]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -19,8 +19,13 @@ jobs:
           path: ~/VoiceInk-Dependencies
           key: whisper-xcframework-${{ runner.os }}-v1
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode.app
+      # LLMkit needs Swift tools 6.2+; the image default Xcode is older.
+      - name: Select latest Xcode
+        run: |
+          XCODE="$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+          echo "Selecting $XCODE"
+          sudo xcode-select -s "$XCODE"
+          swift --version
 
       - name: Build (local, ad-hoc signed)
         run: make local
@@ -28,11 +33,11 @@ jobs:
       - name: Zip app
         run: |
           cd .local-build/Build/Products/Debug
-          ditto -c -k --sequesterRsrc --keepParent VoiceInk.app VoiceInk.app.zip
+          ditto -c -k --sequesterRsrc --keepParent Diktilo.app Diktilo.app.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: VoiceInk-app
-          path: .local-build/Build/Products/Debug/VoiceInk.app.zip
+          name: Diktilo-app
+          path: .local-build/Build/Products/Debug/Diktilo.app.zip
           retention-days: 14
