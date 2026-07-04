@@ -44,6 +44,11 @@ final class TranscriptionDelivery {
             return
         }
 
+        if request.output.outputMode == .copy {
+            await deliverCopy(request, actions: actions)
+            return
+        }
+
         if let text = request.text {
             await paste(text, output: request.output, actions: actions)
         } else {
@@ -61,6 +66,16 @@ final class TranscriptionDelivery {
 
         actions.setState(.enhancing)
         await actions.sendFollowUp(text, item.transcription)
+    }
+
+    private func deliverCopy(_ item: Request, actions: Actions) async {
+        SoundManager.shared.playStopSound()
+
+        if let text = item.text, !ClipboardManager.setClipboard(deliverableText(from: text)) {
+            logger.error("Failed to copy transcription to clipboard")
+        }
+
+        await actions.dismiss()
     }
 
     private func deliverResponse(_ item: Request, actions: Actions) async {
