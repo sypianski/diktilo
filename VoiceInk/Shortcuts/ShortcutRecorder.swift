@@ -48,6 +48,14 @@ struct ShortcutRecorder: View {
             .accessibilityLabel(accessibilityLabel)
             .help(accessibilityLabel)
 
+            Button {
+                bindFnKey()
+            } label: {
+                ShortcutKeyCap(title: "Fn", isRecording: false)
+            }
+            .buttonStyle(.plain)
+            .disabled(recorder.isRecording)
+            .help("Bind Fn / 🌐 key")
         }
         .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { notification in
             guard let changedAction = notification.object as? ShortcutAction, changedAction == action else { return }
@@ -86,6 +94,24 @@ struct ShortcutRecorder: View {
     private func clearShortcutBeforeRecording() {
         ShortcutStore.setShortcut(nil, for: action)
         shortcut = nil
+        onShortcutChanged()
+    }
+
+    private func bindFnKey() {
+        recorder.cancel()
+        let fn = Shortcut.modifierOnly(
+            keyCode: UInt16(kVK_Function),
+            modifierFlags: [.function]
+        )
+        if let validationError = ShortcutValidator.validationError(for: fn, action: action) {
+            NotificationManager.shared.showNotification(
+                title: validationError.notificationTitle(for: fn),
+                type: .error
+            )
+            return
+        }
+        ShortcutStore.setShortcut(fn, for: action)
+        shortcut = fn
         onShortcutChanged()
     }
 
@@ -164,6 +190,8 @@ final class ShortcutRecorderModel: ObservableObject {
     @Published var previewShortcut: Shortcut?
 
     private var localMonitor: Any?
+    fileprivate var eventTap: CFMachPort?
+    private var runLoopSource: CFRunLoopSource?
     private var onCapture: ((Shortcut) -> Void)?
     private var activeAction: ShortcutAction?
     private var pendingModifierShortcut: Shortcut?
@@ -227,6 +255,57 @@ final class ShortcutRecorderModel: ObservableObject {
     }
 
     private func installRecordingMonitor() {
+        if installCGEventTap() {
+            return
+        }
+        installLocalFallbackMonitor()
+    }
+
+    private func installCGEventTap() -> Bool {
+        let mask: CGEventMask = (CGEventMask(1) << CGEventType.keyDown.rawValue) |
+                                (CGEventMask(1) << CGEventType.flagsChanged.rawValue)
+
+        let callback: CGEventTapCallBack = { _, type, event, userInfo in
+            guard let userInfo else {
+                return Unmanaged.passUnretained(event)
+            }
+            let model = Unmanaged<ShortcutRecorderModel>.fromOpaque(userInfo).takeUnretainedValue()
+
+            if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+                if let tap = model.eventTap {
+                    CGEvent.tapEnable(tap: tap, enable: true)
+                }
+                return Unmanaged.passUnretained(event)
+            }
+
+            let consumed = model.handleCGEvent(type: type, event: event)
+            return consumed ? nil : Unmanaged.passUnretained(event)
+        }
+
+        guard let tap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: mask,
+            callback: callback,
+            userInfo: Unmanaged.passUnretained(self).toOpaque()
+        ) else {
+            return false
+        }
+
+        guard let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0) else {
+            CFMachPortInvalidate(tap)
+            return false
+        }
+
+        self.eventTap = tap
+        self.runLoopSource = source
+        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+        CGEvent.tapEnable(tap: tap, enable: true)
+        return true
+    }
+
+    private func installLocalFallbackMonitor() {
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .flagsChanged]) { [weak self] event in
             guard let self else { return event }
             let shouldConsume = self.handleRecordingEvent(event)
@@ -235,9 +314,33 @@ final class ShortcutRecorderModel: ObservableObject {
     }
 
     private func removeRecordingMonitor() {
+        if let runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+            self.runLoopSource = nil
+        }
+        if let eventTap {
+            CFMachPortInvalidate(eventTap)
+            self.eventTap = nil
+        }
         if let localMonitor {
             NSEvent.removeMonitor(localMonitor)
             self.localMonitor = nil
+        }
+    }
+
+    fileprivate func handleCGEvent(type: CGEventType, event: CGEvent) -> Bool {
+        guard isRecording else {
+            return false
+        }
+        let keyCode = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
+        let flags = NSEvent.ModifierFlags(rawValue: UInt(event.flags.rawValue))
+        switch type {
+        case .keyDown:
+            return handleKeyDown(keyCode: keyCode, modifierFlags: flags)
+        case .flagsChanged:
+            return handleFlagsChanged(keyCode: keyCode, modifierFlags: flags)
+        default:
+            return false
         }
     }
 
