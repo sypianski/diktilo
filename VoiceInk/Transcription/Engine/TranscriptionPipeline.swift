@@ -56,6 +56,7 @@ class TranscriptionPipeline {
         session: TranscriptionSession?,
         triggerWordModeSelection: @escaping (String) -> String? = { _ in nil },
         enhancementConfiguration: @escaping () -> EnhancementRuntimeConfiguration?,
+        prewarmedEnhancement: @escaping (String) -> (String, TimeInterval, String?)? = { _ in nil },
         recordingContextSnapshot: @escaping () async -> RecordingContextSnapshot? = { nil },
         outputConfiguration: @escaping () -> OutputRuntimeConfiguration,
         onStateChange: @escaping (RecordingState) -> Void,
@@ -180,12 +181,19 @@ class TranscriptionPipeline {
                     }
 
                     do {
-                        let contextSnapshot = await recordingContextSnapshot()
-                        let (enhancedText, enhancementDuration, promptName) = try await enhancementService.enhance(
-                            textForAI,
-                            configuration: resolvedEnhancementConfiguration,
-                            contextSnapshot: contextSnapshot
-                        )
+                        let enhancedText: String
+                        let enhancementDuration: TimeInterval
+                        let promptName: String?
+                        if let prewarmed = prewarmedEnhancement(textForAI) {
+                            (enhancedText, enhancementDuration, promptName) = prewarmed
+                        } else {
+                            let contextSnapshot = await recordingContextSnapshot()
+                            (enhancedText, enhancementDuration, promptName) = try await enhancementService.enhance(
+                                textForAI,
+                                configuration: resolvedEnhancementConfiguration,
+                                contextSnapshot: contextSnapshot
+                            )
+                        }
                         transcription.enhancedText = enhancedText
                         transcription.aiEnhancementModelName = resolvedEnhancementConfiguration.modelName ?? resolvedEnhancementConfiguration.provider?.defaultModel
                         transcription.promptName = promptName

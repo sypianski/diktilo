@@ -1,0 +1,38 @@
+name: Build VoiceInk.app
+
+on:
+  push:
+    branches: [willow-streaming]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      # whisper.xcframework build takes ~15 min; cache it between runs.
+      - name: Cache whisper.xcframework
+        uses: actions/cache@v4
+        with:
+          path: ~/VoiceInk-Dependencies
+          key: whisper-xcframework-${{ runner.os }}-v1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build (local, ad-hoc signed)
+        run: make local
+
+      - name: Zip app
+        run: |
+          cd .local-build/Build/Products/Debug
+          ditto -c -k --sequesterRsrc --keepParent VoiceInk.app VoiceInk.app.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceInk-app
+          path: .local-build/Build/Products/Debug/VoiceInk.app.zip
+          retention-days: 14

@@ -120,6 +120,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
     let assistantSession = AssistantSession()
     let assistantChat: AssistantChatService?
     private let pipeline: TranscriptionPipeline
+    private var enhancementPrewarm: EnhancementPrewarmService?
 
     let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "VoiceInkEngine")
 
@@ -156,6 +157,9 @@ class VoiceInkEngine: NSObject, ObservableObject {
             serviceRegistry: serviceRegistry,
             enhancementService: enhancementService
         )
+        if let enhancementService {
+            self.enhancementPrewarm = EnhancementPrewarmService(enhancementService: enhancementService)
+        }
 
         super.init()
 
@@ -309,6 +313,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                                                 return
                                             }
                                             self.partialTranscript = partial
+                                            self.enhancementPrewarm?.update(partialText: partial)
                                         }
                                     }
                                 )
@@ -323,6 +328,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                                     if droppedStartupChunks > 0 {
                                         self.logger.warning("Realtime startup audio gate dropped \(droppedStartupChunks, privacy: .public) chunks before streaming became active")
                                     }
+                                    self.beginEnhancementPrewarmIfPossible()
                                 } else {
                                     _ = realtimeAudioGate.reset()
                                     self.recorder.onAudioChunk = nil
@@ -401,6 +407,52 @@ class VoiceInkEngine: NSObject, ObservableObject {
         activeRecordingContextStore = nil
     }
 
+    // MARK: - Enhancement Prewarm
+
+    /// Starts speculative AI enhancement of partial transcripts ("thinking
+    /// while you speak"). Only active for streaming sessions with a configured
+    /// enhancement provider.
+    private func beginEnhancementPrewarmIfPossible() {
+        guard let enhancementPrewarm,
+              enhancementPrewarm.isEnabled,
+              let enhancementService,
+              let aiService = enhancementService.getAIService() else {
+            return
+        }
+
+        let configuration = ModeRuntimeResolver.currentEnhancementConfiguration(
+            enhancementService: enhancementService,
+            aiService: aiService
+        )
+        guard configuration.isEnabled,
+              enhancementService.isConfigured(for: configuration) else {
+            return
+        }
+
+        let formattingConfiguration = ModeRuntimeResolver.transcriptionFormattingConfiguration()
+        let modelContext = self.modelContext
+        let contextStore = activeRecordingContextStore
+
+        enhancementPrewarm.begin(
+            configuration: configuration,
+            inputTransform: { rawText in
+                // Mirror TranscriptionPipeline's pre-enhancement processing so
+                // speculative inputs match the final `textForAI` exactly.
+                var text = TranscriptionOutputFilter.filter(rawText)
+                text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                if formattingConfiguration.isTextFormattingEnabled {
+                    text = ParagraphFormatter.format(text)
+                }
+                return WordReplacementService.shared.applyReplacements(to: text, using: modelContext)
+            },
+            contextSnapshotProvider: {
+                await MainActor.run {
+                    contextStore?.snapshot
+                }
+            }
+        )
+    }
+
     // MARK: - Pipeline Dispatch
 
     private func runPipeline(
@@ -443,6 +495,9 @@ class VoiceInkEngine: NSObject, ObservableObject {
                     enhancementService: enhancementService,
                     aiService: aiService
                 )
+            },
+            prewarmedEnhancement: { [weak self] finalText in
+                self?.enhancementPrewarm?.consume(finalText: finalText)
             },
             recordingContextSnapshot: {
                 await MainActor.run {
@@ -663,10 +718,12 @@ class VoiceInkEngine: NSObject, ObservableObject {
         currentSession?.cancel()
         currentSession = nil
         currentSessionTranscriptionConfiguration = nil
+        enhancementPrewarm?.cancel()
     }
 
     private func finishRecorderSession() async {
         enhancementService?.clearCapturedContexts()
+        enhancementPrewarm?.cancel()
     }
 
     func cleanupResources() async {

@@ -183,6 +183,7 @@ struct CustomTranscriptionModelEditorPanel: View {
     @State private var apiKey = ""
     @State private var modelName = ""
     @State private var isMultilingual = true
+    @State private var supportsRealtimeStreaming = false
     @State private var validationErrors: [String] = []
     @State private var isSaving = false
     @State private var connectionTest: ConnectionTestState = .idle
@@ -237,6 +238,7 @@ struct CustomTranscriptionModelEditorPanel: View {
                             CustomModelSecretField(label: "API Key", placeholder: String(localized: "Paste API key"), text: $apiKey)
                             CustomModelTextField(label: "Model Name", placeholder: "gpt-4o-mini-transcribe", text: $modelName)
                             CustomModelToggleRow(title: "Multilingual Model", isOn: $isMultilingual)
+                            CustomModelToggleRow(title: "Realtime Streaming (OpenAI Realtime API / speaches)", isOn: $supportsRealtimeStreaming)
                             ConnectionTestRow(state: connectionTest, isDisabled: !canTestConnection, action: runConnectionTest)
                         }
                     }
@@ -277,12 +279,14 @@ struct CustomTranscriptionModelEditorPanel: View {
             apiKey = APIKeyManager.shared.getCustomModelAPIKey(forModelId: editingModel.id) ?? ""
             modelName = editingModel.modelName
             isMultilingual = editingModel.isMultilingualModel
+            supportsRealtimeStreaming = editingModel.supportsRealtimeStreaming
         } else {
             displayName = ""
             apiEndpoint = "https://api.openai.com/v1/audio/transcriptions"
             apiKey = ""
             modelName = "gpt-4o-mini-transcribe"
             isMultilingual = true
+            supportsRealtimeStreaming = false
         }
 
         validationErrors = []
@@ -320,7 +324,8 @@ struct CustomTranscriptionModelEditorPanel: View {
                 description: "Custom transcription model",
                 apiEndpoint: trimmedEndpoint,
                 modelName: trimmedModelName,
-                isMultilingual: isMultilingual
+                isMultilingual: isMultilingual,
+                supportsRealtimeStreaming: supportsRealtimeStreaming
             )
 
             guard customModelManager.updateCustomModel(updatedModel, apiKey: trimmedKey) else {
@@ -335,7 +340,8 @@ struct CustomTranscriptionModelEditorPanel: View {
                 description: "Custom transcription model",
                 apiEndpoint: trimmedEndpoint,
                 modelName: trimmedModelName,
-                isMultilingual: isMultilingual
+                isMultilingual: isMultilingual,
+                supportsRealtimeStreaming: supportsRealtimeStreaming
             )
 
             guard customModelManager.addCustomModel(customModel, apiKey: trimmedKey) else {
