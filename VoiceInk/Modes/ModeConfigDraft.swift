@@ -136,7 +136,7 @@ struct ModeConfigDraft {
 
     mutating func useCompatibleLanguage(for model: any TranscriptionModel) {
         selectedLanguage = TranscriptionLanguageSupport.validLanguageOrFallback(
-            selectedLanguage ?? "en",
+            selectedLanguage ?? "pl",
             for: model,
             realtimeEnabled: isRealtimeTranscriptionEnabled
         )

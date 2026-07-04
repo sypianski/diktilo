@@ -279,7 +279,7 @@ struct ModeConfigFormView: View {
             EmptyView()
                 .onAppear {
                     if draft.selectedLanguage == nil {
-                        draft.selectedLanguage = "en"
+                        draft.selectedLanguage = "pl"
                     }
                 }
         }

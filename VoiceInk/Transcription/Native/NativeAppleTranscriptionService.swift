@@ -66,7 +66,7 @@ class NativeAppleTranscriptionService: TranscriptionService {
         let audioDuration = Double(audioFile.length) / audioFile.processingFormat.sampleRate
         
         // Apple Speech stores and consumes actual BCP-47 locale identifiers directly.
-        let selectedLanguage = context.language ?? "en-US"
+        let selectedLanguage = context.language ?? "pl-PL"
         guard let assetContext = await NativeAppleSpeechAssetManager.assetContext(for: selectedLanguage) else {
             let requestedIdentifier = Locale(identifier: selectedLanguage).identifier(.bcp47)
             logger.error("Transcription failed: Locale '\(requestedIdentifier, privacy: .public)' is not supported by SpeechTranscriber.")
