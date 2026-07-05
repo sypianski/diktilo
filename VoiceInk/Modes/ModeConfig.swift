@@ -23,6 +23,7 @@ enum AutoSendKey: String, Codable, CaseIterable {
 enum ModeOutputMode: String, Codable, CaseIterable {
     case paste
     case copy
+    case editWindow
     case respond
     case customCommand
 
@@ -30,6 +31,7 @@ enum ModeOutputMode: String, Codable, CaseIterable {
         switch self {
         case .paste: return String(localized: "Paste")
         case .copy: return String(localized: "Copy to Clipboard")
+        case .editWindow: return String(localized: "Edit Window")
         case .respond: return String(localized: "Respond")
         case .customCommand: return String(localized: "Custom Command")
         }
@@ -39,6 +41,7 @@ enum ModeOutputMode: String, Codable, CaseIterable {
         switch self {
         case .paste: return "doc.on.clipboard"
         case .copy: return "doc.on.doc"
+        case .editWindow: return "square.and.pencil"
         case .respond: return "text.bubble"
         case .customCommand: return "terminal"
         }
@@ -49,7 +52,9 @@ enum ModeOutputMode: String, Codable, CaseIterable {
     }
 
     static func choices(canRespond: Bool) -> [ModeOutputMode] {
-        canRespond ? [.paste, .copy, .respond, .customCommand] : [.paste, .copy, .customCommand]
+        canRespond
+            ? [.paste, .copy, .editWindow, .respond, .customCommand]
+            : [.paste, .copy, .editWindow, .customCommand]
     }
 }
 
