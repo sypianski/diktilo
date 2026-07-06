@@ -691,6 +691,8 @@ final class VimNSTextView: NSTextView {
     var vimEnabled = false
     /// Cmd+Return commit handler (works in every mode).
     var onCommit: (() -> Void)?
+    /// Opt+Return save-to-bag handler (works in every mode).
+    var onSaveToWorek: (() -> Void)?
     /// Escape-with-no-Vim cancel handler.
     var onCancelPlain: (() -> Void)?
 
@@ -724,6 +726,12 @@ final class VimNSTextView: NSTextView {
         // Cmd+Return always commits.
         if event.keyCode == 36, event.modifierFlags.contains(.command) {
             onCommit?()
+            return
+        }
+        // Opt+Return saves to bag.
+        if event.keyCode == 36, event.modifierFlags.contains(.option),
+           !event.modifierFlags.contains(.command) {
+            onSaveToWorek?()
             return
         }
 
@@ -762,6 +770,7 @@ struct VimTextView: NSViewRepresentable {
     let onCommandBufferChange: (String) -> Void
     let onCommit: () -> Void
     let onCancel: () -> Void
+    var onSaveToWorek: (() -> Void)? = nil
 
     func makeNSView(context: Context) -> NSScrollView {
         let scrollView = NSTextView.scrollableTextView()
@@ -791,6 +800,7 @@ struct VimTextView: NSViewRepresentable {
 
         textView.vimEnabled = vimEnabled
         textView.onCommit = onCommit
+        textView.onSaveToWorek = onSaveToWorek
         textView.onCancelPlain = onCancel
 
         if vimEnabled {

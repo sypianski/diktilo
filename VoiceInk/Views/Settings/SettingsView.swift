@@ -126,6 +126,20 @@ struct SettingsView: View {
                     hasCancelRecordingShortcut = ShortcutStore.shortcut(for: .cancelRecorder) != nil
                 }
 
+                LabeledContent("Open Vim Editor") {
+                    ShortcutRecorder(action: .openVimEditor) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                        .controlSize(.small)
+                }
+
+                LabeledContent("Open Worek") {
+                    ShortcutRecorder(action: .openWorek) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                        .controlSize(.small)
+                }
+
                 ExpandableSettingsRow(
                     isExpanded: $isMiddleClickExpanded,
                     isEnabled: $recordingShortcutManager.isMiddleClickToggleEnabled,

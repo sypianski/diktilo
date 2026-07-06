@@ -19,7 +19,7 @@ final class TranscriptEditManager {
 
     /// Present the edit window with the transcript. `onDone` is invoked once the
     /// panel closes (whether committed or cancelled).
-    func present(text: String, onDone: (() -> Void)? = nil) {
+    func present(text: String, onDone: (() -> Void)? = nil, saveToWorek: Bool = true) {
         // Replacing an open window: dismiss the old one silently first.
         if isVisible { hide() }
 
@@ -42,6 +42,14 @@ final class TranscriptEditManager {
                 self?.hide()
                 onDone?()
             },
+            onSaveToWorek: saveToWorek ? { [weak self] savedText in
+                Task { @MainActor in
+                    WorekStore.shared.add(text: savedText)
+                    SoundManager.shared.playStopSound()
+                    self?.hide()
+                    onDone?()
+                }
+            } : nil,
             onTextChange: { [weak newPanel] newText in
                 newPanel?.resizeAnimated(for: newText)
             }
@@ -151,6 +159,7 @@ struct TranscriptEditView: View {
     let vimEnabled: Bool
     let onCommit: (String) -> Void
     let onCancel: () -> Void
+    var onSaveToWorek: ((String) -> Void)? = nil
     var onTextChange: ((String) -> Void)?
 
     @State private var text: String
@@ -161,11 +170,13 @@ struct TranscriptEditView: View {
          vimEnabled: Bool,
          onCommit: @escaping (String) -> Void,
          onCancel: @escaping () -> Void,
+         onSaveToWorek: ((String) -> Void)? = nil,
          onTextChange: ((String) -> Void)? = nil) {
         self.initialText = initialText
         self.vimEnabled = vimEnabled
         self.onCommit = onCommit
         self.onCancel = onCancel
+        self.onSaveToWorek = onSaveToWorek
         self.onTextChange = onTextChange
         _text = State(initialValue: initialText)
     }
@@ -180,7 +191,8 @@ struct TranscriptEditView: View {
                 onModeChange: { mode = $0 },
                 onCommandBufferChange: { commandBuffer = $0 },
                 onCommit: { onCommit(text) },
-                onCancel: onCancel
+                onCancel: onCancel,
+                onSaveToWorek: onSaveToWorek.map { save in { save(text) } }
             )
             Divider().opacity(0.4)
             hintBar
@@ -240,6 +252,7 @@ struct TranscriptEditView: View {
                 case .insert:
                     hint("ESC", "→ NORMAL")
                     hint("⌘↵", "Kopiuj")
+                    if onSaveToWorek != nil { hint("⌥↵", "Worek") }
                 case .commandLine, .search:
                     hint("↵", "Wykonaj")
                     hint("ESC", "Anuluj")
@@ -249,10 +262,12 @@ struct TranscriptEditView: View {
                     hint("dd", "Usuń linię")
                     hint(":w ↵", "Kopiuj")
                     hint(":q ↵", "Anuluj")
+                    if onSaveToWorek != nil { hint("⌥↵", "Worek") }
                 }
             } else {
                 Spacer()
                 hint("⌘↵", "Kopiuj")
+                if onSaveToWorek != nil { hint("⌥↵", "Worek") }
                 hint("ESC", "Anuluj")
             }
             if vimEnabled { Spacer() }

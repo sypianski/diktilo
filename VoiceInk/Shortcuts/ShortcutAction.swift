@@ -9,6 +9,8 @@ enum ShortcutAction: Hashable {
     case cancelRecorder
     case openHistoryWindow
     case quickAddToDictionary
+    case openVimEditor
+    case openWorek
     case profile(UUID)
     case recorderPanelEscape
     case recorderPanelMode(Int)
@@ -44,6 +46,10 @@ enum ShortcutAction: Hashable {
             return "openHistoryWindow"
         case .quickAddToDictionary:
             return "quickAddToDictionary"
+        case .openVimEditor:
+            return "openVimEditor"
+        case .openWorek:
+            return "openWorek"
         case .profile(let id):
             return "mode_\(id.uuidString)"
         case .recorderPanelEscape:
@@ -71,6 +77,10 @@ enum ShortcutAction: Hashable {
             return String(localized: "Open History Window")
         case .quickAddToDictionary:
             return String(localized: "Quick Add to Dictionary")
+        case .openVimEditor:
+            return String(localized: "Open Vim Editor")
+        case .openWorek:
+            return String(localized: "Open Worek")
         case .profile(let id):
             if let config = OutputProfileManager.shared.getConfiguration(with: id) {
                 return String(format: String(localized: "%@ Mode"), config.name)
@@ -93,7 +103,9 @@ enum ShortcutAction: Hashable {
         .pasteLastEnhancement,
         .retryLastTranscription,
         .openHistoryWindow,
-        .quickAddToDictionary
+        .quickAddToDictionary,
+        .openVimEditor,
+        .openWorek
     ]
 
     static let recorderPanelStoredActions: [Self] = [
