@@ -236,9 +236,11 @@ struct TranscriptEditView: View {
                     hint("↵", "Wykonaj")
                     hint("ESC", "Anuluj")
                 default:
+                    hint("i", "Pisz")
+                    hint("hjkl", "Ruch")
+                    hint("dd", "Usuń linię")
                     hint(":w ↵", "Kopiuj")
                     hint(":q ↵", "Anuluj")
-                    hint("i", "Edytuj")
                 }
             } else {
                 Spacer()
