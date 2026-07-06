@@ -82,10 +82,17 @@ final class TranscriptEditManager {
         return NSSize(width: width, height: height)
     }
 
+}
+
+// MARK: - Panel
+
+final class TranscriptEditPanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+
     func resizeAnimated(for text: String) {
         let newSize = TranscriptEditManager.preferredSize(for: text)
         guard abs(newSize.height - frame.height) > 4 else { return }
-        // Keep the window vertically centered when growing.
         let screen = NSScreen.main ?? NSScreen.screens[0]
         let newX = frame.minX
         let newY = screen.visibleFrame.midY - newSize.height / 2 + 40
@@ -95,13 +102,6 @@ final class TranscriptEditManager {
             animator().setFrame(NSRect(origin: NSPoint(x: newX, y: newY), size: newSize), display: true)
         }
     }
-}
-
-// MARK: - Panel
-
-final class TranscriptEditPanel: NSPanel {
-    override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
 
     init(size: NSSize) {
         let origin = TranscriptEditPanel.centeredOrigin(for: size)
