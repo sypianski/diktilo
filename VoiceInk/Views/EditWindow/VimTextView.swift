@@ -87,6 +87,23 @@ final class VimEngine {
         let ctrl = flags.contains(.control)
         let key = event.charactersIgnoringModifiers ?? ""
 
+        // Arrow keys: hjkl motions in normal/visual, pass through in insert.
+        switch event.keyCode {
+        case 123: // ←
+            if mode == .insert || mode == .commandLine || mode == .search { return mode == .insert ? false : true }
+            resolveMotion(.left); return true
+        case 124: // →
+            if mode == .insert || mode == .commandLine || mode == .search { return mode == .insert ? false : true }
+            resolveMotion(.right); return true
+        case 125: // ↓
+            if mode == .insert || mode == .commandLine || mode == .search { return mode == .insert ? false : true }
+            resolveMotion(.down); return true
+        case 126: // ↑
+            if mode == .insert || mode == .commandLine || mode == .search { return mode == .insert ? false : true }
+            resolveMotion(.up); return true
+        default: break
+        }
+
         switch mode {
         case .insert:
             if isEscape {
@@ -677,6 +694,32 @@ final class VimNSTextView: NSTextView {
     /// Escape-with-no-Vim cancel handler.
     var onCancelPlain: (() -> Void)?
 
+    // Block cursor in NORMAL/VISUAL modes.
+    override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn: Bool) {
+        guard vimEnabled, let engine, engine.mode != .insert, engine.mode != .commandLine, engine.mode != .search else {
+            super.drawInsertionPoint(in: rect, color: color, turnedOn: turnedOn)
+            return
+        }
+        guard turnedOn else { return }
+        // Measure glyph width under caret for a proper block.
+        let caretLoc = selectedRange().location
+        var blockWidth: CGFloat = rect.width * 6  // fallback ~6× hairline = ~1ch
+        if let lm = layoutManager, let tc = textContainer, caretLoc < string.utf16.count {
+            let glyphIdx = lm.glyphIndexForCharacter(at: caretLoc)
+            let glyphRect = lm.boundingRect(forGlyphRange: NSRange(location: glyphIdx, length: 1), in: tc)
+            if glyphRect.width > 0 { blockWidth = glyphRect.width }
+        }
+        let blockRect = NSRect(x: rect.minX, y: rect.minY, width: blockWidth, height: rect.height)
+        color.withAlphaComponent(engine.mode == .normal ? 0.55 : 0.35).setFill()
+        blockRect.fill()
+    }
+
+    // Trigger redraw on mode change so cursor shape updates immediately.
+    func updateCursorDisplay() {
+        needsDisplay = true
+        setNeedsDisplay(visibleRect)
+    }
+
     override func keyDown(with event: NSEvent) {
         // Cmd+Return always commits.
         if event.keyCode == 36, event.modifierFlags.contains(.command) {
@@ -738,6 +781,9 @@ struct VimTextView: NSViewRepresentable {
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticSpellingCorrectionEnabled = false
+        textView.isGrammarCheckingEnabled = false
+        textView.smartInsertDeleteEnabled = false
+        textView.isContinuousSpellCheckingEnabled = false
         textView.allowsUndo = true
         textView.textContainerInset = NSSize(width: 8, height: 8)
         textView.drawsBackground = false
@@ -749,7 +795,10 @@ struct VimTextView: NSViewRepresentable {
 
         if vimEnabled {
             let engine = VimEngine(textView: textView)
-            engine.onModeChange = onModeChange
+            engine.onModeChange = { [weak textView] newMode in
+                onModeChange(newMode)
+                textView?.updateCursorDisplay()
+            }
             engine.onCommandBufferChange = onCommandBufferChange
             engine.onWrite = onCommit
             engine.onQuit = onCancel
