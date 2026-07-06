@@ -69,13 +69,21 @@ final class TranscriptEditManager {
     /// Sizes the window to fit the transcript, growing up to 90% of screen height.
     static func preferredSize(for text: String) -> NSSize {
         let width: CGFloat = 620
-        let lines = text.split(separator: "\n", omittingEmptySubsequences: false).count
-        // Rough wrap estimate: ~72 monospace chars per line at this width.
-        let wrapped = text.split(separator: "\n", omittingEmptySubsequences: false)
-            .reduce(0) { $0 + max(1, Int(ceil(Double($1.count) / 72.0))) }
-        let visualLines = max(lines, wrapped)
-        let bodyHeight = CGFloat(visualLines) * 20 + 40           // editor content
-        let chromeHeight: CGFloat = 44 + 40                        // header + hint bar
+        // Measure the actual laid-out text height for this exact font/width so
+        // the window fits the content instead of relying on a char-count guess
+        // (which under-counted wrapped lines and left the text scrolling).
+        let font = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
+        // Usable text width = window width − text insets (8·2) − container
+        // line-fragment padding (5·2), matching VimTextView's setup.
+        let textWidth = width - (8 * 2) - (5 * 2)
+        let measured = (text as NSString).boundingRect(
+            with: NSSize(width: textWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: font]
+        )
+        let lineHeight = ceil(font.ascender - font.descender + font.leading)
+        let bodyHeight = ceil(measured.height) + (8 * 2) + lineHeight  // + insets + caret line
+        let chromeHeight: CGFloat = 44 + 40                            // header + hint bar
         let screenHeight = NSScreen.main?.visibleFrame.height ?? 800
         let maxHeight = screenHeight * 0.90
         let height = min(max(bodyHeight + chromeHeight, 220), maxHeight)
