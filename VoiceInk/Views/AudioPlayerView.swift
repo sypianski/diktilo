@@ -369,7 +369,7 @@ struct AudioPlayerView: View {
     private var currentEnhancementConfiguration: EnhancementRuntimeConfiguration? {
         guard let aiService = enhancementService.getAIService() else { return nil }
         return ProfileRuntimeResolver.currentEnhancementConfiguration(
-            mode: selectedMode,
+            profile: selectedMode,
             enhancementService: enhancementService,
             aiService: aiService
         )
@@ -637,7 +637,7 @@ struct AudioPlayerView: View {
         }
 
         guard let transcriptionConfiguration = ProfileRuntimeResolver.transcriptionConfiguration(
-            mode: selectedMode,
+            profile: selectedMode,
             transcriptionModelManager: engine.transcriptionModelManager
         ) else {
             showErrorNotification(String(localized: "No transcription model selected"))
