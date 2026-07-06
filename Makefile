@@ -58,6 +58,7 @@ build: setup
 local: check setup
 	@echo "Building VoiceInk for local use (no Apple Developer certificate required)..."
 	@rm -rf "$(LOCAL_DERIVED_DATA)"
+	$(eval BUILD_NUMBER := $(shell git rev-list --count HEAD))
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug \
 		-derivedDataPath "$(LOCAL_DERIVED_DATA)" \
 		-xcconfig LocalBuild.xcconfig \
@@ -68,6 +69,7 @@ local: check setup
 		$(if $(LOCAL_SIGN_KEYCHAIN),OTHER_CODE_SIGN_FLAGS="--keychain $(LOCAL_SIGN_KEYCHAIN)",) \
 		CODE_SIGN_ENTITLEMENTS="$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" \
 		SWIFT_ACTIVE_COMPILATION_CONDITIONS='$$(inherited) LOCAL_BUILD' \
+		CURRENT_PROJECT_VERSION="$(BUILD_NUMBER)" \
 		build
 	@APP_PATH="$(LOCAL_DERIVED_DATA)/Build/Products/Debug/Diktilo.app" && \
 	if [ -d "$$APP_PATH" ]; then \
