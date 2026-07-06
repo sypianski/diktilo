@@ -49,7 +49,7 @@ struct ModeEmptyStateView: View {
     }
 }
 
-struct OutputProfileurationsGrid: View {
+struct OutputProfilesGrid: View {
     @ObservedObject var modeManager: OutputProfileManager
     let onEditConfig: (OutputProfile) -> Void
     @EnvironmentObject var enhancementService: AIEnhancementService

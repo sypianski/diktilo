@@ -160,7 +160,7 @@ class SystemInfoService {
     }
 
     private func getCurrentTranscriptionModel() -> String {
-        if let modelName = OutputProfileManager.shared.currentEffectiveConfiguration?.selectedTranscriptionModelName {
+        if let modelName = GlobalTranscriptionSettings.modelName {
             if let model = TranscriptionModelRegistry.models.first(where: { $0.name == modelName }) {
                 return model.displayName
             }

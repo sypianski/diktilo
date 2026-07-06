@@ -4,7 +4,7 @@ enum OnboardingV2Migration {
     private static let legacyCompletedKey = "hasCompletedOnboarding"
     private static let completedKey = "hasCompletedOnboardingV2"
     private static let preparedKey = "hasPreparedOnboardingV2"
-    private static let legacyOutputProfileurationsKey = "powerOutputProfileurationsV2"
+    private static let legacyOutputProfilesKey = "powerModeConfigurationsV2"
     private static let modeConfigurationsKey = "modeConfigurationsV2"
     private static let activeConfigurationIdKey = "activeConfigurationId"
 
@@ -25,7 +25,7 @@ enum OnboardingV2Migration {
 
     private static func clearModeStorage(defaults: UserDefaults) {
         let modeIds = modeConfigurationIds(forKey: modeConfigurationsKey, defaults: defaults)
-            .union(modeConfigurationIds(forKey: legacyOutputProfileurationsKey, defaults: defaults))
+            .union(modeConfigurationIds(forKey: legacyOutputProfilesKey, defaults: defaults))
             .union(StarterModeCatalog.ids)
 
         for id in modeIds {
@@ -34,7 +34,7 @@ enum OnboardingV2Migration {
         }
 
         defaults.removeObject(forKey: modeConfigurationsKey)
-        defaults.removeObject(forKey: legacyOutputProfileurationsKey)
+        defaults.removeObject(forKey: legacyOutputProfilesKey)
         defaults.removeObject(forKey: activeConfigurationIdKey)
     }
 
