@@ -308,11 +308,12 @@ struct LiveTranscriptView: View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 Text(text)
-                    .font(.system(size: 12))
+                    .font(.system(size: 13))
                     .foregroundColor(.white.opacity(0.8))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
+                    .padding(.top, 12)
+                    .padding(.bottom, 6)
                     .id("bottom")
             }
             .frame(height: 56)
