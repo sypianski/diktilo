@@ -5,10 +5,10 @@ struct ModeTriggerSection: View {
     @Binding var websiteConfigs: [URLConfig]
     @Binding var triggerGroups: [ModeTriggerGroup]
     @Binding var triggerWords: [String]
-    let modeId: UUID
+    let profileId: UUID
     let cleanURL: (String) -> String
 
-    @EnvironmentObject private var modeWarmupStore: ModeFormWarmupStore
+    @EnvironmentObject private var modeWarmupStore: OutputProfileFormWarmupStore
 
     @State private var isShowingTriggerPicker = false
     @State private var triggerSearchText = ""
@@ -40,7 +40,7 @@ struct ModeTriggerSection: View {
 
                 Spacer()
 
-                ShortcutRecorder(action: .mode(modeId))
+                ShortcutRecorder(action: .profile(profileId))
                     .frame(minHeight: 28)
             }
         } header: {
@@ -66,7 +66,7 @@ struct ModeTriggerSection: View {
                 TriggerPickerPopover(
                     installedApps: modeWarmupStore.installedApps,
                     isLoadingApps: modeWarmupStore.isLoadingInstalledApps,
-                    currentModeId: modeId,
+                    currentModeId: profileId,
                     appConfigs: $appConfigs,
                     websiteConfigs: $websiteConfigs,
                     triggerGroups: $triggerGroups,

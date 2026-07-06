@@ -471,22 +471,22 @@ final class OnboardingFlowController {
 
     func activateExperienceModeForDemo() {
         guard coordinator.stage == .experience,
-              let config = ModeManager.shared.getConfiguration(with: coordinator.experienceModeTemplate.id) else {
+              let config = OutputProfileManager.shared.getConfiguration(with: coordinator.experienceModeTemplate.id) else {
             return
         }
 
         applyDefaultMode(for: coordinator.experienceStep)
-        ModeManager.shared.setActiveConfiguration(config)
+        OutputProfileManager.shared.setActiveConfiguration(config)
     }
 
     func activateCleanTranscriptionMode() {
         guard let cleanTemplate = StarterModeCatalog.templates.first(where: { $0.kind == .clean }),
-              let cleanConfig = ModeManager.shared.getConfiguration(with: cleanTemplate.id) else {
+              let cleanConfig = OutputProfileManager.shared.getConfiguration(with: cleanTemplate.id) else {
             return
         }
 
-        ModeManager.shared.setAsDefault(configId: cleanConfig.id)
-        ModeManager.shared.setActiveConfiguration(cleanConfig)
+        OutputProfileManager.shared.setAsDefault(configId: cleanConfig.id)
+        OutputProfileManager.shared.setActiveConfiguration(cleanConfig)
     }
 
     private func applyDefaultMode(for step: OnboardingExperienceStep) {
@@ -495,12 +495,12 @@ final class OnboardingFlowController {
 
     private func setDefaultStarterMode(_ kind: StarterModeKind) {
         guard let template = StarterModeCatalog.templates.first(where: { $0.kind == kind }),
-              ModeManager.shared.getConfiguration(with: template.id) != nil,
-              ModeManager.shared.getDefaultConfiguration()?.id != template.id else {
+              OutputProfileManager.shared.getConfiguration(with: template.id) != nil,
+              OutputProfileManager.shared.getDefaultConfiguration()?.id != template.id else {
             return
         }
 
-        ModeManager.shared.setAsDefault(configId: template.id)
+        OutputProfileManager.shared.setAsDefault(configId: template.id)
     }
 
     private func shouldStartExperienceInIntroPhase(for step: OnboardingExperienceStep) -> Bool {
@@ -518,7 +518,7 @@ final class OnboardingFlowController {
                 continue
             }
 
-            let action = ShortcutAction.mode(template.id)
+            let action = ShortcutAction.profile(template.id)
             if ShortcutStore.rawShortcut(for: action) != nil || ShortcutStore.isShortcutCleared(for: action) {
                 ShortcutStore.removeShortcutStorage(for: action)
             }

@@ -80,8 +80,8 @@ struct ModeFormWarmupSnapshot {
 }
 
 @MainActor
-final class ModeFormWarmupStore: ObservableObject {
-    static let shared = ModeFormWarmupStore()
+final class OutputProfileFormWarmupStore: ObservableObject {
+    static let shared = OutputProfileFormWarmupStore()
 
     @Published private(set) var snapshot = ModeFormWarmupSnapshot.empty
     @Published private(set) var installedApps: [InstalledAppInfo] = []

@@ -9,7 +9,7 @@ enum ShortcutAction: Hashable {
     case cancelRecorder
     case openHistoryWindow
     case quickAddToDictionary
-    case mode(UUID)
+    case profile(UUID)
     case recorderPanelEscape
     case recorderPanelMode(Int)
 
@@ -44,7 +44,7 @@ enum ShortcutAction: Hashable {
             return "openHistoryWindow"
         case .quickAddToDictionary:
             return "quickAddToDictionary"
-        case .mode(let id):
+        case .profile(let id):
             return "mode_\(id.uuidString)"
         case .recorderPanelEscape:
             return "recorderPanelEscape"
@@ -71,8 +71,8 @@ enum ShortcutAction: Hashable {
             return String(localized: "Open History Window")
         case .quickAddToDictionary:
             return String(localized: "Quick Add to Dictionary")
-        case .mode(let id):
-            if let config = ModeManager.shared.getConfiguration(with: id) {
+        case .profile(let id):
+            if let config = OutputProfileManager.shared.getConfiguration(with: id) {
                 return String(format: String(localized: "%@ Mode"), config.name)
             }
 

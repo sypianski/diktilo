@@ -4,7 +4,7 @@ enum OnboardingV2Migration {
     private static let legacyCompletedKey = "hasCompletedOnboarding"
     private static let completedKey = "hasCompletedOnboardingV2"
     private static let preparedKey = "hasPreparedOnboardingV2"
-    private static let legacyModeConfigurationsKey = "powerModeConfigurationsV2"
+    private static let legacyOutputProfileurationsKey = "powerOutputProfileurationsV2"
     private static let modeConfigurationsKey = "modeConfigurationsV2"
     private static let activeConfigurationIdKey = "activeConfigurationId"
 
@@ -25,16 +25,16 @@ enum OnboardingV2Migration {
 
     private static func clearModeStorage(defaults: UserDefaults) {
         let modeIds = modeConfigurationIds(forKey: modeConfigurationsKey, defaults: defaults)
-            .union(modeConfigurationIds(forKey: legacyModeConfigurationsKey, defaults: defaults))
+            .union(modeConfigurationIds(forKey: legacyOutputProfileurationsKey, defaults: defaults))
             .union(StarterModeCatalog.ids)
 
         for id in modeIds {
-            ShortcutStore.removeShortcutStorage(for: .mode(id))
+            ShortcutStore.removeShortcutStorage(for: .profile(id))
             removeLegacyPowerModeShortcutStorage(for: id, defaults: defaults)
         }
 
         defaults.removeObject(forKey: modeConfigurationsKey)
-        defaults.removeObject(forKey: legacyModeConfigurationsKey)
+        defaults.removeObject(forKey: legacyOutputProfileurationsKey)
         defaults.removeObject(forKey: activeConfigurationIdKey)
     }
 
@@ -43,7 +43,7 @@ enum OnboardingV2Migration {
             return []
         }
 
-        if let configs = try? JSONDecoder().decode([ModeConfig].self, from: data) {
+        if let configs = try? JSONDecoder().decode([OutputProfile].self, from: data) {
             return Set(configs.map(\.id))
         }
 

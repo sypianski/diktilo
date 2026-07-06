@@ -3,10 +3,10 @@ import SwiftUI
 // Enhancement Prompt Popover for recorder views
 struct EnhancementPromptPopover: View {
     @EnvironmentObject var enhancementService: AIEnhancementService
-    @ObservedObject private var modeManager = ModeManager.shared
+    @ObservedObject private var modeManager = OutputProfileManager.shared
     @State private var selectedPrompt: CustomPrompt?
 
-    private var currentMode: ModeConfig? {
+    private var currentMode: OutputProfile? {
         modeManager.currentEffectiveConfiguration
     }
 

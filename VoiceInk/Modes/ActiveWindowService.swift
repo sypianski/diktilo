@@ -17,13 +17,13 @@ class ActiveWindowService: ObservableObject {
     @MainActor
     @discardableResult
     func beginApplyingConfiguration(
-        modeId: UUID? = nil,
+        profileId: UUID? = nil,
         shouldApply: @escaping @MainActor () -> Bool = { true }
     ) -> Task<Void, Never> {
-        if let modeId = modeId,
-           let config = ModeManager.shared.getConfiguration(with: modeId) {
+        if let profileId = profileId,
+           let config = OutputProfileManager.shared.getConfiguration(with: profileId) {
             guard shouldApply() else { return Task {} }
-            ModeManager.shared.setActiveConfiguration(config)
+            OutputProfileManager.shared.setActiveConfiguration(config)
             return Task {}
         }
 
@@ -35,11 +35,11 @@ class ActiveWindowService: ObservableObject {
         guard shouldApply() else { return Task {} }
         currentApplication = frontmostApp
 
-        let quickConfig = ModeManager.shared.getConfigurationForApp(bundleIdentifier)
-            ?? ModeManager.shared.getDefaultConfiguration()
+        let quickConfig = OutputProfileManager.shared.getConfigurationForApp(bundleIdentifier)
+            ?? OutputProfileManager.shared.getDefaultConfiguration()
 
         if let quickConfig {
-            ModeManager.shared.setActiveConfiguration(quickConfig)
+            OutputProfileManager.shared.setActiveConfiguration(quickConfig)
         }
 
         guard let browserType = BrowserType.allCases.first(where: { $0.bundleIdentifier == bundleIdentifier }) else {
@@ -53,10 +53,10 @@ class ActiveWindowService: ObservableObject {
                 let currentURL = try await self.browserURLService.getCurrentURL(from: browserType)
                 await MainActor.run {
                     guard shouldApply(),
-                          let config = ModeManager.shared.getConfigurationForURL(currentURL) else {
+                          let config = OutputProfileManager.shared.getConfigurationForURL(currentURL) else {
                         return
                     }
-                    ModeManager.shared.setActiveConfiguration(config)
+                    OutputProfileManager.shared.setActiveConfiguration(config)
                 }
             } catch is CancellationError {
                 return
@@ -66,9 +66,9 @@ class ActiveWindowService: ObservableObject {
         }
     }
 
-    func applyConfiguration(modeId: UUID? = nil) async {
+    func applyConfiguration(profileId: UUID? = nil) async {
         let task = await MainActor.run {
-            beginApplyingConfiguration(modeId: modeId)
+            beginApplyingConfiguration(profileId: profileId)
         }
         await task.value
     }

@@ -13,11 +13,17 @@ enum StarterModeFactory {
         selectedLanguage: String = "auto",
         installedApps: [InstalledAppInfo]? = nil
     ) {
-        let manager = ModeManager.shared
+        let manager = OutputProfileManager.shared
         let requestedKinds = Set(kinds)
         let availableInstalledApps = requestedKinds.contains(.email)
             ? (installedApps ?? InstalledApps.load())
             : []
+
+        // Transcription is global now - seed it once from the onboarding choice.
+        GlobalTranscriptionSettings.modelName = transcriptionModelName
+        GlobalTranscriptionSettings.isRealtimeEnabled = isRealtimeTranscriptionEnabled
+        GlobalTranscriptionSettings.language = selectedLanguage
+        GlobalTranscriptionSettings.isTextFormattingEnabled = true
 
         let starterConfigs = StarterModeCatalog.templates
             .filter { requestedKinds.contains($0.kind) }
@@ -26,16 +32,13 @@ enum StarterModeFactory {
                     from: $0,
                     provider: provider,
                     modelName: modelName,
-                    transcriptionModelName: transcriptionModelName,
-                    isRealtimeTranscriptionEnabled: isRealtimeTranscriptionEnabled,
-                    selectedLanguage: selectedLanguage,
                     installedApps: availableInstalledApps
                 )
             }
 
         let nonStarterConfigs = manager.configurations
             .filter { !StarterModeCatalog.ids.contains($0.id) }
-            .map { config -> ModeConfig in
+            .map { config -> OutputProfile in
                 var config = config
                 if starterConfigs.contains(where: \.isDefault) {
                     config.isDefault = false
@@ -46,7 +49,7 @@ enum StarterModeFactory {
         manager.replaceConfigurations(starterConfigs + nonStarterConfigs)
 
         for config in starterConfigs where config.isDefault {
-            ShortcutStore.removeShortcutStorage(for: .mode(config.id))
+            ShortcutStore.removeShortcutStorage(for: .profile(config.id))
         }
 
         if let defaultConfig = starterConfigs.first(where: \.isDefault) {
@@ -59,19 +62,16 @@ enum StarterModeFactory {
             return false
         }
 
-        return ModeManager.shared.configurations.contains { $0.id == template.id }
+        return OutputProfileManager.shared.configurations.contains { $0.id == template.id }
     }
 
     private static func makeConfig(
         from template: StarterModeTemplate,
         provider: AIProvider,
         modelName: String?,
-        transcriptionModelName: String,
-        isRealtimeTranscriptionEnabled: Bool,
-        selectedLanguage: String,
         installedApps: [InstalledAppInfo]
-    ) -> ModeConfig {
-        ModeConfig(
+    ) -> OutputProfile {
+        OutputProfile(
             id: template.id,
             name: template.name,
             icon: template.icon,
@@ -80,13 +80,9 @@ enum StarterModeFactory {
             triggerGroups: triggerGroups(for: template.kind, installedApps: installedApps),
             isAIEnhancementEnabled: template.usesAIEnhancement,
             selectedPrompt: template.promptId?.uuidString,
-            selectedTranscriptionModelName: transcriptionModelName,
-            isRealtimeTranscriptionEnabled: isRealtimeTranscriptionEnabled,
-            selectedLanguage: selectedLanguage,
             useClipboardContext: template.kind == .email,
             useSelectedTextContext: template.useSelectedTextContext,
             useScreenCapture: template.useScreenCapture,
-            isTextFormattingEnabled: true,
             selectedAIProvider: template.usesAIEnhancement ? provider.rawValue : nil,
             selectedAIModel: template.usesAIEnhancement ? (modelName ?? provider.defaultModel) : nil,
             outputMode: template.outputMode,
@@ -109,7 +105,7 @@ enum StarterModeFactory {
             installedApps: installedApps,
             existingAppBundleIds: [],
             existingWebsites: [],
-            cleanURL: ModeManager.shared.cleanURL
+            cleanURL: OutputProfileManager.shared.cleanURL
         )
 
         return group.isEmpty ? nil : [group]

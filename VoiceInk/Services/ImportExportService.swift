@@ -117,12 +117,12 @@ class ImportExportService {
 
     @MainActor
     func exportSettings(enhancementService: AIEnhancementService, recordingShortcutManager: RecordingShortcutManager, menuBarManager: MenuBarManager, mediaController: MediaController, playbackController: PlaybackController, recorderUIManager: RecorderUIManager, modelContext: ModelContext) {
-        let modeManager = ModeManager.shared
+        let modeManager = OutputProfileManager.shared
         let emojiManager = EmojiManager.shared
 
         let modeConfigs = modeManager.configurations
         let modeShortcuts = Dictionary(uniqueKeysWithValues: modeConfigs.compactMap { config -> (String, ShortcutBackup)? in
-            guard let shortcut = ShortcutStore.shortcut(for: .mode(config.id)) else { return nil }
+            guard let shortcut = ShortcutStore.shortcut(for: .profile(config.id)) else { return nil }
             return (config.id.uuidString, ShortcutBackup(shortcut))
         })
 

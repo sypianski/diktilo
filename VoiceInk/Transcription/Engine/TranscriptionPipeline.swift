@@ -128,10 +128,10 @@ class TranscriptionPipeline {
             let resolvedEnhancementConfiguration = enhancementConfiguration()
             let resolvedOutputConfiguration = outputConfiguration()
             let modeMetadata = metadata(
-                for: formattingConfiguration.mode ??
-                    resolvedEnhancementConfiguration?.mode ??
-                    resolvedOutputConfiguration.mode ??
-                    transcriptionConfiguration.mode
+                for: formattingConfiguration.profile ??
+                    resolvedEnhancementConfiguration?.profile ??
+                    resolvedOutputConfiguration.profile ??
+                    transcriptionConfiguration.profile
             )
 
             if formattingConfiguration.isTextFormattingEnabled {
@@ -286,7 +286,7 @@ class TranscriptionPipeline {
         saveTranscriptionAndPostCompletion()
     }
 
-    private func metadata(for mode: ModeConfig?) -> (name: String?, emoji: String?) {
+    private func metadata(for mode: OutputProfile?) -> (name: String?, emoji: String?) {
         guard let mode, mode.isEnabled else {
             return (nil, nil)
         }

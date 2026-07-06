@@ -33,7 +33,7 @@ class AudioTranscriptionService: ObservableObject {
         self.serviceRegistry = serviceRegistry
     }
     
-    func retranscribeAudio(from url: URL, using model: any TranscriptionModel, mode: ModeConfig? = nil) async throws -> Transcription {
+    func retranscribeAudio(from url: URL, using model: any TranscriptionModel, mode: OutputProfile? = nil) async throws -> Transcription {
         guard FileManager.default.fileExists(atPath: url.path) else {
             throw TranscriptionError.noAudioFile
         }
@@ -43,11 +43,11 @@ class AudioTranscriptionService: ObservableObject {
         }
         
         do {
-            let mode = mode ?? ModeManager.shared.currentEffectiveConfiguration
+            let mode = mode ?? OutputProfileManager.shared.currentEffectiveConfiguration
             let language = TranscriptionLanguageSupport.validLanguageOrFallback(
-                mode?.selectedLanguage,
+                GlobalTranscriptionSettings.language,
                 for: model,
-                realtimeEnabled: mode?.isRealtimeTranscriptionEnabled
+                realtimeEnabled: GlobalTranscriptionSettings.isRealtimeEnabled
             )
             let requestContext = TranscriptionRequestContext(
                 language: language,
@@ -61,7 +61,7 @@ class AudioTranscriptionService: ObservableObject {
             let transcriptionDuration = Date().timeIntervalSince(transcriptionStart)
             text = TranscriptionOutputFilter.filter(text)
             text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            let formattingConfiguration = ModeRuntimeResolver.transcriptionFormattingConfiguration(mode: mode)
+            let formattingConfiguration = ProfileRuntimeResolver.transcriptionFormattingConfiguration(profile: mode)
 
             if formattingConfiguration.isTextFormattingEnabled {
                 text = ParagraphFormatter.format(text)
@@ -93,8 +93,8 @@ class AudioTranscriptionService: ObservableObject {
             let enhancementConfiguration = enhancementService
                 .flatMap { service in
                     service.getAIService().map { aiService in
-                        ModeRuntimeResolver.currentEnhancementConfiguration(
-                            mode: mode,
+                        ProfileRuntimeResolver.currentEnhancementConfiguration(
+                            profile: mode,
                             enhancementService: service,
                             aiService: aiService
                         )

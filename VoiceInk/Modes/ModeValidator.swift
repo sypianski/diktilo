@@ -45,14 +45,14 @@ enum ModeValidationError: Error, Identifiable {
     }
 }
 
-struct ModeValidator {
-    private let modeManager: ModeManager
+struct OutputProfileValidator {
+    private let modeManager: OutputProfileManager
 
-    init(modeManager: ModeManager) {
+    init(modeManager: OutputProfileManager) {
         self.modeManager = modeManager
     }
 
-    func validateForSave(config: ModeConfig, mode: ConfigurationMode) -> [ModeValidationError] {
+    func validateForSave(config: OutputProfile, mode: ConfigurationMode) -> [ModeValidationError] {
         var errors: [ModeValidationError] = []
 
         if config.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {

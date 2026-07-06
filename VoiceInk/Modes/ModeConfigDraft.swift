@@ -1,6 +1,6 @@
 import Foundation
 
-struct ModeConfigDraft {
+struct OutputProfileDraft {
     var id: UUID
     var name: String
     var icon: ModeIcon
@@ -10,24 +10,19 @@ struct ModeConfigDraft {
     var triggerWords: [String]
     var isAIEnhancementEnabled: Bool
     var selectedPromptId: UUID?
-    var selectedTranscriptionModelName: String?
-    var isRealtimeTranscriptionEnabled: Bool
-    var selectedLanguage: String?
-    var isTextFormattingEnabled: Bool
     var useClipboardContext: Bool
     var useSelectedTextContext: Bool
     var useScreenCapture: Bool
     var selectedAIProvider: String?
     var selectedAIModel: String?
-    var outputMode: ModeOutputMode
+    var outputMode: OutputMode
     var autoSendKey: AutoSendKey
     var customCommand: String
     var isDefault: Bool
-    var isTranscriptionFormattingExpanded: Bool
 
-    private var sourceConfig: ModeConfig?
+    private var sourceConfig: OutputProfile?
 
-    init(mode: ConfigurationMode, modeManager: ModeManager) {
+    init(mode: ConfigurationMode, modeManager: OutputProfileManager) {
         switch mode {
         case .add:
             let inheritedConfig = modeManager.currentEffectiveConfiguration
@@ -41,10 +36,6 @@ struct ModeConfigDraft {
             triggerWords = []
             isAIEnhancementEnabled = false
             selectedPromptId = inheritedConfig?.selectedPrompt.flatMap { UUID(uuidString: $0) }
-            selectedTranscriptionModelName = inheritedConfig?.selectedTranscriptionModelName
-            isRealtimeTranscriptionEnabled = true
-            selectedLanguage = inheritedConfig?.selectedLanguage
-            isTextFormattingEnabled = true
             useClipboardContext = false
             useSelectedTextContext = false
             useScreenCapture = true
@@ -54,7 +45,6 @@ struct ModeConfigDraft {
             autoSendKey = .none
             customCommand = inheritedConfig?.customCommand?.command ?? ""
             isDefault = false
-            isTranscriptionFormattingExpanded = false
             sourceConfig = nil
 
         case .edit(let config):
@@ -68,10 +58,6 @@ struct ModeConfigDraft {
             triggerWords = latestConfig.triggerWords
             isAIEnhancementEnabled = latestConfig.isAIEnhancementEnabled
             selectedPromptId = latestConfig.selectedPrompt.flatMap { UUID(uuidString: $0) }
-            selectedTranscriptionModelName = latestConfig.selectedTranscriptionModelName
-            isRealtimeTranscriptionEnabled = latestConfig.isRealtimeTranscriptionEnabled
-            selectedLanguage = latestConfig.selectedLanguage
-            isTextFormattingEnabled = latestConfig.isTextFormattingEnabled
             useClipboardContext = latestConfig.useClipboardContext
             useSelectedTextContext = latestConfig.useSelectedTextContext
             useScreenCapture = latestConfig.useScreenCapture
@@ -81,7 +67,6 @@ struct ModeConfigDraft {
             autoSendKey = latestConfig.autoSendKey
             customCommand = latestConfig.customCommand?.command ?? ""
             isDefault = latestConfig.isDefault
-            isTranscriptionFormattingExpanded = false
             sourceConfig = latestConfig
         }
     }
@@ -113,33 +98,10 @@ struct ModeConfigDraft {
         selectedAIModel = snapshot.selectedModel(for: provider)
     }
 
-    mutating func inheritUsableTranscriptionModelSelection(from snapshot: ModeFormWarmupSnapshot) {
-        if let selectedTranscriptionModelName,
-           snapshot.hasUsableTranscriptionModel(named: selectedTranscriptionModelName) {
-            return
-        }
-
-        selectedTranscriptionModelName = snapshot.usableTranscriptionModels.first?.name
-    }
-
-    mutating func ensureTranscriptionModelSelection(fallback: String?) {
-        if selectedTranscriptionModelName == nil {
-            selectedTranscriptionModelName = fallback
-        }
-    }
-
     mutating func ensurePromptSelection(firstPromptId: UUID?) {
         if isAIEnhancementEnabled && selectedPromptId == nil {
             selectedPromptId = firstPromptId
         }
-    }
-
-    mutating func useCompatibleLanguage(for model: any TranscriptionModel) {
-        selectedLanguage = TranscriptionLanguageSupport.validLanguageOrFallback(
-            selectedLanguage ?? "pl",
-            for: model,
-            realtimeEnabled: isRealtimeTranscriptionEnabled
-        )
     }
 
     mutating func applyOutputRules(canRespond: Bool) {
@@ -156,14 +118,14 @@ struct ModeConfigDraft {
         }
     }
 
-    func makeConfig(mode: ConfigurationMode) -> ModeConfig {
+    func makeConfig(mode: ConfigurationMode) -> OutputProfile {
         let savedAutoSendKey: AutoSendKey = outputMode.usesPasteOptions ? autoSendKey : .none
         let savedIsDefault = outputMode == .respond ? false : isDefault
         let savedCustomCommand = makeCustomCommand()
 
         switch mode {
         case .add:
-            return ModeConfig(
+            return OutputProfile(
                 id: id,
                 name: name,
                 icon: icon,
@@ -173,13 +135,9 @@ struct ModeConfigDraft {
                 triggerWords: triggerWords,
                 isAIEnhancementEnabled: isAIEnhancementEnabled,
                 selectedPrompt: selectedPromptId?.uuidString,
-                selectedTranscriptionModelName: selectedTranscriptionModelName,
-                isRealtimeTranscriptionEnabled: isRealtimeTranscriptionEnabled,
-                selectedLanguage: selectedLanguage,
                 useClipboardContext: useClipboardContext,
                 useSelectedTextContext: useSelectedTextContext,
                 useScreenCapture: useScreenCapture,
-                isTextFormattingEnabled: isTextFormattingEnabled,
                 selectedAIProvider: selectedAIProvider,
                 selectedAIModel: selectedAIModel,
                 outputMode: outputMode,
@@ -195,13 +153,9 @@ struct ModeConfigDraft {
             updatedConfig.appConfigs = appConfigs.isEmpty ? nil : appConfigs
             updatedConfig.urlConfigs = websiteConfigs.isEmpty ? nil : websiteConfigs
             updatedConfig.triggerGroups = triggerGroups.isEmpty ? nil : triggerGroups
-            updatedConfig.triggerWords = ModeConfig.normalizedTriggerWords(triggerWords)
+            updatedConfig.triggerWords = OutputProfile.normalizedTriggerWords(triggerWords)
             updatedConfig.isAIEnhancementEnabled = isAIEnhancementEnabled
             updatedConfig.selectedPrompt = selectedPromptId?.uuidString
-            updatedConfig.selectedTranscriptionModelName = selectedTranscriptionModelName
-            updatedConfig.isRealtimeTranscriptionEnabled = isRealtimeTranscriptionEnabled
-            updatedConfig.selectedLanguage = selectedLanguage
-            updatedConfig.isTextFormattingEnabled = isTextFormattingEnabled
             updatedConfig.useClipboardContext = useClipboardContext
             updatedConfig.useSelectedTextContext = useSelectedTextContext
             updatedConfig.useScreenCapture = useScreenCapture
@@ -215,8 +169,8 @@ struct ModeConfigDraft {
         }
     }
 
-    private func makeCustomCommand() -> ModeCustomCommand? {
-        let command = ModeCustomCommand(command: customCommand)
+    private func makeCustomCommand() -> OutputCommand? {
+        let command = OutputCommand(command: customCommand)
         return command.trimmedCommand == nil ? nil : command
     }
 }

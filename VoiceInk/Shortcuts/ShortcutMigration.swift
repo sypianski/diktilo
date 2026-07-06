@@ -45,8 +45,8 @@ enum ShortcutMigration {
             migrateLegacyKeyboardShortcut(for: action)
         }
 
-        for config in ModeManager.shared.configurations {
-            migrateLegacyKeyboardShortcut(for: .mode(config.id))
+        for config in OutputProfileManager.shared.configurations {
+            migrateLegacyKeyboardShortcut(for: .profile(config.id))
         }
 
         UserDefaults.standard.set(true, forKey: migrationKey)
@@ -266,7 +266,7 @@ enum ShortcutMigration {
             return ["openHistoryWindow"]
         case .quickAddToDictionary:
             return ["quickAddToDictionary"]
-        case .mode(let id):
+        case .profile(let id):
             return ["mode_\(id.uuidString)", "powerMode_\(id.uuidString)"]
         case .recorderPanelEscape, .recorderPanelMode:
             return []

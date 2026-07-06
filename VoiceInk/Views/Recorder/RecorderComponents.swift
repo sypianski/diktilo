@@ -246,7 +246,7 @@ struct ProgressAnimation: View {
 // MARK: - Mode Button
 
 struct RecorderModeButton: View {
-    @ObservedObject private var modeManager = ModeManager.shared
+    @ObservedObject private var modeManager = OutputProfileManager.shared
     let buttonSize: CGFloat
     let padding: EdgeInsets
 
@@ -275,7 +275,7 @@ struct RecorderModeButton: View {
             syncPopoverVisibility()
         }
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
-            ModePopover()
+            OutputProfilePopover()
                 .onHover {
                     isHoveringPopover = $0
                     syncPopoverVisibility()

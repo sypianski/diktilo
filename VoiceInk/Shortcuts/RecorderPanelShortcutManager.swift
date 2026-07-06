@@ -53,7 +53,7 @@ final class RecorderPanelShortcutManager: ObservableObject {
     }
 
     private var canUseModeShortcuts: Bool {
-        !ModeManager.shared.enabledConfigurations.isEmpty
+        !OutputProfileManager.shared.enabledConfigurations.isEmpty
     }
 
     private func resetEscapeState() {
@@ -139,7 +139,7 @@ final class RecorderPanelShortcutManager: ObservableObject {
     private func handleModeSelectionShortcut(index: Int) {
         guard canUseModeShortcuts else { return }
 
-        let modeManager = ModeManager.shared
+        let modeManager = OutputProfileManager.shared
         let availableConfigurations = modeManager.enabledConfigurations
 
         guard index < availableConfigurations.count else { return }

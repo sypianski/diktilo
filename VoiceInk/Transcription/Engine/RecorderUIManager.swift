@@ -159,20 +159,20 @@ class RecorderUIManager: ObservableObject, RecorderPanelPresenting {
 
     // MARK: - Recorder Panel Management
 
-    func toggleRecorderPanel(modeId: UUID? = nil) async {
+    func toggleRecorderPanel(profileId: UUID? = nil) async {
         guard let engine = engine else { return }
 
         if isRecorderPanelVisible {
             switch engine.recordingState {
             case .recording:
-                await engine.toggleRecord(modeId: modeId)
+                await engine.toggleRecord(profileId: profileId)
             case .starting, .transcribing, .enhancing:
                 await cancelRecording()
             case .idle:
                 if engine.assistantSession.canSendFollowUp {
                     SoundManager.shared.playStartSound()
                     await engine.toggleRecord(
-                        modeId: modeId,
+                        profileId: profileId,
                         isAssistantFollowUp: true
                     )
                 } else {
@@ -184,7 +184,7 @@ class RecorderUIManager: ObservableObject, RecorderPanelPresenting {
         } else {
             SoundManager.shared.playStartSound()
             isRecorderPanelVisible = true
-            await engine.toggleRecord(modeId: modeId)
+            await engine.toggleRecord(profileId: profileId)
         }
     }
 
