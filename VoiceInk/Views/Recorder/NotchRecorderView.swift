@@ -1,4 +1,16 @@
 import SwiftUI
+import AppKit
+
+private struct VisualEffectBlur: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let v = NSVisualEffectView()
+        v.material = .hudWindow
+        v.blendingMode = .behindWindow
+        v.state = .active
+        return v
+    }
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
 
 struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     @ObservedObject var stateProvider: S
@@ -135,7 +147,12 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
             assistantPanel
         }
         .frame(width: pillWidth, height: pillHeight)
-        .background(Color.black)
+        .background(
+            ZStack {
+                VisualEffectBlur()
+                Color.black.opacity(0.72)
+            }
+        )
         .clipShape(
             NotchShape(
                 topCornerRadius: displayState == .liveText ? 12 : 8,
@@ -159,7 +176,6 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                         action: onRecordButtonTapped
                     )
                 }
-                RecorderModeButton(buttonSize: 20, padding: EdgeInsets())
                 Spacer(minLength: 0)
             }
             .padding(.leading, sideEdgePadding)
@@ -171,13 +187,14 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 value: displayState
             )
 
-            HStack(spacing: 0) {
+            HStack(spacing: 8) {
                 Spacer(minLength: 0)
                 RecorderStatusDisplay(
                     currentState: stateProvider.recordingState,
                     audioMeter: recorder.audioMeter,
                     menuBarHeight: notchHeight
                 )
+                RecorderModeButton(buttonSize: 20, padding: EdgeInsets())
             }
             .padding(.trailing, sideEdgePadding)
             .frame(width: sideExpansion)
