@@ -41,6 +41,9 @@ final class TranscriptEditManager {
             onCancel: { [weak self] in
                 self?.hide()
                 onDone?()
+            },
+            onTextChange: { [weak newPanel] newText in
+                newPanel?.resizeAnimated(for: newText)
             }
         )
 
@@ -63,9 +66,8 @@ final class TranscriptEditManager {
         previousApp = nil
     }
 
-    /// Sizes the window to comfortably fit the transcript, clamped so a long
-    /// dictation does not fill the screen.
-    private static func preferredSize(for text: String) -> NSSize {
+    /// Sizes the window to fit the transcript, growing up to 90% of screen height.
+    static func preferredSize(for text: String) -> NSSize {
         let width: CGFloat = 620
         let lines = text.split(separator: "\n", omittingEmptySubsequences: false).count
         // Rough wrap estimate: ~72 monospace chars per line at this width.
@@ -74,8 +76,24 @@ final class TranscriptEditManager {
         let visualLines = max(lines, wrapped)
         let bodyHeight = CGFloat(visualLines) * 20 + 40           // editor content
         let chromeHeight: CGFloat = 44 + 40                        // header + hint bar
-        let height = min(max(bodyHeight + chromeHeight, 220), 620)
+        let screenHeight = NSScreen.main?.visibleFrame.height ?? 800
+        let maxHeight = screenHeight * 0.90
+        let height = min(max(bodyHeight + chromeHeight, 220), maxHeight)
         return NSSize(width: width, height: height)
+    }
+
+    func resizeAnimated(for text: String) {
+        let newSize = TranscriptEditManager.preferredSize(for: text)
+        guard abs(newSize.height - frame.height) > 4 else { return }
+        // Keep the window vertically centered when growing.
+        let screen = NSScreen.main ?? NSScreen.screens[0]
+        let newX = frame.minX
+        let newY = screen.visibleFrame.midY - newSize.height / 2 + 40
+        NSAnimationContext.runAnimationGroup { ctx in
+            ctx.duration = 0.12
+            ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            animator().setFrame(NSRect(origin: NSPoint(x: newX, y: newY), size: newSize), display: true)
+        }
     }
 }
 
@@ -125,6 +143,7 @@ struct TranscriptEditView: View {
     let vimEnabled: Bool
     let onCommit: (String) -> Void
     let onCancel: () -> Void
+    var onTextChange: ((String) -> Void)?
 
     @State private var text: String
     @State private var mode: VimMode = .normal
@@ -133,11 +152,13 @@ struct TranscriptEditView: View {
     init(initialText: String,
          vimEnabled: Bool,
          onCommit: @escaping (String) -> Void,
-         onCancel: @escaping () -> Void) {
+         onCancel: @escaping () -> Void,
+         onTextChange: ((String) -> Void)? = nil) {
         self.initialText = initialText
         self.vimEnabled = vimEnabled
         self.onCommit = onCommit
         self.onCancel = onCancel
+        self.onTextChange = onTextChange
         _text = State(initialValue: initialText)
     }
 
@@ -163,6 +184,9 @@ struct TranscriptEditView: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .strokeBorder(AppTheme.Border.tint, lineWidth: 0.5)
         )
+        .onChange(of: text) { newText in
+            onTextChange?(newText)
+        }
     }
 
     // MARK: Header
@@ -204,12 +228,24 @@ struct TranscriptEditView: View {
     private var hintBar: some View {
         HStack(spacing: 14) {
             if vimEnabled {
-                hint(":w", "Copy back")
-                hint(":q", "Cancel")
+                switch mode {
+                case .insert:
+                    hint("ESC", "→ NORMAL")
+                    hint("⌘↵", "Kopiuj")
+                case .commandLine, .search:
+                    hint("↵", "Wykonaj")
+                    hint("ESC", "Anuluj")
+                default:
+                    hint(":w ↵", "Kopiuj")
+                    hint(":q ↵", "Anuluj")
+                    hint("i", "Edytuj")
+                }
+            } else {
+                Spacer()
+                hint("⌘↵", "Kopiuj")
+                hint("ESC", "Anuluj")
             }
-            Spacer()
-            hint("⌘↵", "Copy back")
-            hint("esc", vimEnabled ? "Normal" : "Cancel")
+            if vimEnabled { Spacer() }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
