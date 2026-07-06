@@ -22,6 +22,8 @@ struct SettingsView: View {
     @AppStorage(AppAppearancePreference.userDefaultsKey) private var appAppearancePreference = AppAppearancePreference.system
     @AppStorage(AppLanguagePreference.userDefaultsKey) private var appLanguagePreference = AppLanguagePreference.systemValue
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
+    @AppStorage(GlobalTranscriptionSettings.Keys.isRealtimeEnabled) private var globalRealtimeEnabled = true
+    @AppStorage(GlobalTranscriptionSettings.Keys.isTextFormattingEnabled) private var globalTextFormattingEnabled = true
     @State private var showResetOnboardingAlert = false
     @State private var showLanguageRestartAlert = false
     @State private var hasCancelRecordingShortcut = ShortcutStore.shortcut(for: .cancelRecorder) != nil
@@ -180,6 +182,27 @@ struct SettingsView: View {
                         return
                     }
                     PasteMethod.setCurrent(method)
+                }
+            }
+
+            Section("Transcription") {
+                Toggle(isOn: $globalRealtimeEnabled) {
+                    HStack(spacing: 4) {
+                        Text("Real-time Streaming")
+                        InfoTip("Stream audio to the transcription server while you speak. Falls back to batch transcription automatically when unavailable. Applies to every profile.")
+                    }
+                }
+
+                Toggle(isOn: $globalTextFormattingEnabled) {
+                    HStack(spacing: 4) {
+                        Text("Paragraph Formatting")
+                        InfoTip("Break large blocks of transcribed text into paragraphs. Applies to every profile.")
+                    }
+                }
+
+                LabeledContent("Model & Language") {
+                    Text("Set in the AI Models tab")
+                        .foregroundColor(.secondary)
                 }
             }
 

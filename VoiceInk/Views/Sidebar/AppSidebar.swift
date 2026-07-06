@@ -61,6 +61,8 @@ private extension ViewType {
         switch self {
         case .transcribeAudio:
             return "Transcribe"
+        case .modes:
+            return "Profiles"
         default:
             return LocalizedStringKey(rawValue)
         }
