@@ -15,7 +15,7 @@ class NotchRecorderPanel: KeyablePanel {
 
         super.init(
             contentRect: metrics.frame,
-            styleMask: [.nonactivatingPanel, .fullSizeContentView, .hudWindow],
+            styleMask: [.nonactivatingPanel, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
