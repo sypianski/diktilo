@@ -4,6 +4,16 @@ WHISPER_CPP_DIR := $(DEPS_DIR)/whisper.cpp
 FRAMEWORK_PATH := $(WHISPER_CPP_DIR)/build-apple/whisper.xcframework
 LOCAL_DERIVED_DATA := $(CURDIR)/.local-build
 
+# Code signing for `make local`. Defaults to ad-hoc ("-"), which regenerates a
+# new signature every build — macOS then treats each build as a new app and
+# drops previously granted TCC permissions (Accessibility, Input Monitoring,
+# Microphone, Screen Recording). To keep permissions across rebuilds, sign with
+# a stable self-signed identity by exporting, e.g. in your shell profile:
+#     LOCAL_SIGN_IDENTITY="Diktilo Local"
+#     LOCAL_SIGN_KEYCHAIN="$HOME/Library/Keychains/diktilo-signing.keychain-db"
+LOCAL_SIGN_IDENTITY ?= -
+LOCAL_SIGN_KEYCHAIN ?=
+
 .PHONY: all clean whisper setup build local check healthcheck help dev run
 
 # Default target
@@ -51,10 +61,11 @@ local: check setup
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug \
 		-derivedDataPath "$(LOCAL_DERIVED_DATA)" \
 		-xcconfig LocalBuild.xcconfig \
-		CODE_SIGN_IDENTITY="-" \
+		CODE_SIGN_IDENTITY="$(LOCAL_SIGN_IDENTITY)" \
 		CODE_SIGNING_REQUIRED=NO \
 		CODE_SIGNING_ALLOWED=YES \
 		DEVELOPMENT_TEAM="" \
+		$(if $(LOCAL_SIGN_KEYCHAIN),OTHER_CODE_SIGN_FLAGS="--keychain $(LOCAL_SIGN_KEYCHAIN)",) \
 		CODE_SIGN_ENTITLEMENTS="$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" \
 		SWIFT_ACTIVE_COMPILATION_CONDITIONS='$$(inherited) LOCAL_BUILD' \
 		build
