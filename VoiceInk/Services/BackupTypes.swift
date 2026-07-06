@@ -121,7 +121,7 @@ struct BackupFile: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case version, customPrompts, modeConfigs, modeShortcuts, vocabularyWords, wordReplacements, generalSettings, customEmojis, customCloudModels
-        case legacyOutputProfiles = "powerOutputProfiles"
+        case legacyOutputProfiles = "powerModeConfigs"
         case legacyModeShortcuts = "powerModeShortcuts"
     }
 

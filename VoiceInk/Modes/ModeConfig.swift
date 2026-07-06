@@ -257,10 +257,10 @@ class OutputProfileManager: ObservableObject {
     }
 
     private func loadConfigurations() {
-        if let data = migratedOutputProfileurationData(for: configKey),
+        if let data = migratedOutputProfilesData(for: configKey),
            let configs = try? JSONDecoder().decode([OutputProfile].self, from: data) {
             configurations = configs
-            migrateLoadedOutputProfileurationsIfNeeded()
+            migrateLoadedOutputProfilesIfNeeded()
         }
     }
 

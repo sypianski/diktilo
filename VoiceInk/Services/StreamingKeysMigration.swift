@@ -37,7 +37,7 @@ enum StreamingKeysMigration {
         // Check both the renamed key and the legacy key so older saved data is fixed
         // before ModeDataMigration copies it forward.
         // Uses JSONSerialization so the migration stays independent of the OutputProfile struct shape.
-        for modeKey in ["modeConfigurationsV2", "powerOutputProfileurationsV2"] {
+        for modeKey in ["modeConfigurationsV2", "powerModeConfigurationsV2"] {
             if let data = defaults.data(forKey: modeKey),
                var configs = (try? JSONSerialization.jsonObject(with: data)) as? [[String: Any]] {
                 var changed = false

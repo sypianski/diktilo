@@ -136,7 +136,7 @@ struct OutputProfileView: View {
                                         .frame(minHeight: geometry.size.height)
                                     } else {
                                         VStack(spacing: 0) {
-                                            OutputProfileurationsGrid(
+                                            OutputProfilesGrid(
                                                 modeManager: modeManager,
                                                 onEditConfig: { config in
                                                     openPanel(mode: .edit(config))
