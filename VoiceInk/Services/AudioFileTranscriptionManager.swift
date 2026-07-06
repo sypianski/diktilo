@@ -69,7 +69,7 @@ class AudioTranscriptionManager: ObservableObject {
     }
 
     /// Start processing pending items in the queue sequentially.
-    func startProcessing(modelContext: ModelContext, engine: VoiceInkEngine, mode: ModeConfig) {
+    func startProcessing(modelContext: ModelContext, engine: VoiceInkEngine, mode: OutputProfile) {
         guard !isProcessingQueue else { return }
         isProcessingQueue = true
         processingGeneration &+= 1
@@ -112,7 +112,7 @@ class AudioTranscriptionManager: ObservableObject {
         queue.first { if case .pending = $0.status { return true }; return false }
     }
 
-    private func processItem(_ item: AudioFileQueueItem, modelContext: ModelContext, engine: VoiceInkEngine, mode: ModeConfig) async {
+    private func processItem(_ item: AudioFileQueueItem, modelContext: ModelContext, engine: VoiceInkEngine, mode: OutputProfile) async {
         let serviceRegistry = TranscriptionServiceRegistry(
             modelProvider: engine.whisperModelManager,
             modelsDirectory: engine.whisperModelManager.modelsDirectory,
@@ -120,8 +120,8 @@ class AudioTranscriptionManager: ObservableObject {
         )
 
         do {
-            guard let transcriptionConfiguration = ModeRuntimeResolver.transcriptionConfiguration(
-                mode: mode,
+            guard let transcriptionConfiguration = ProfileRuntimeResolver.transcriptionConfiguration(
+                profile: mode,
                 transcriptionModelManager: engine.transcriptionModelManager
             ) else {
                 throw TranscriptionError.noModelSelected
@@ -168,7 +168,7 @@ class AudioTranscriptionManager: ObservableObject {
             text = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
             let modeMetadata = transcriptionConfiguration.metadata
-            let formattingConfiguration = ModeRuntimeResolver.transcriptionFormattingConfiguration(mode: mode)
+            let formattingConfiguration = ProfileRuntimeResolver.transcriptionFormattingConfiguration(profile: mode)
 
             if formattingConfiguration.isTextFormattingEnabled {
                 text = ParagraphFormatter.format(text)
@@ -184,8 +184,8 @@ class AudioTranscriptionManager: ObservableObject {
             let enhancementConfiguration = engine.enhancementService
                 .flatMap { enhancementService in
                     enhancementService.getAIService().map { aiService in
-                        ModeRuntimeResolver.currentEnhancementConfiguration(
-                            mode: mode,
+                        ProfileRuntimeResolver.currentEnhancementConfiguration(
+                            profile: mode,
                             enhancementService: enhancementService,
                             aiService: aiService
                         )

@@ -1,27 +1,27 @@
 import SwiftUI
 
-struct ModeConfigEditorView: View {
+struct OutputProfileEditorView: View {
     let mode: ConfigurationMode
-    let modeManager: ModeManager
+    let modeManager: OutputProfileManager
     let onDismiss: () -> Void
 
     @EnvironmentObject private var enhancementService: AIEnhancementService
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
-    @EnvironmentObject private var modeWarmupStore: ModeFormWarmupStore
+    @EnvironmentObject private var modeWarmupStore: OutputProfileFormWarmupStore
 
-    @State private var draft: ModeConfigDraft
+    @State private var draft: OutputProfileDraft
     @State private var validationErrors: [ModeValidationError] = []
     @State private var showValidationAlert = false
     @State private var promptEditorMode: PromptEditorView.Mode?
     @State private var promptEditorID = UUID()
     @State private var didSaveConfiguration = false
 
-    init(mode: ConfigurationMode, modeManager: ModeManager, onDismiss: @escaping () -> Void) {
+    init(mode: ConfigurationMode, modeManager: OutputProfileManager, onDismiss: @escaping () -> Void) {
         self.mode = mode
         self.modeManager = modeManager
         self.onDismiss = onDismiss
-        _draft = State(initialValue: ModeConfigDraft(mode: mode, modeManager: modeManager))
+        _draft = State(initialValue: OutputProfileDraft(mode: mode, modeManager: modeManager))
     }
 
     var body: some View {
@@ -37,7 +37,7 @@ struct ModeConfigEditorView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .id(promptEditorID)
             } else {
-                ModeConfigFormView(
+                OutputProfileFormView(
                     mode: mode,
                     modeManager: modeManager,
                     draft: $draft,
@@ -95,25 +95,14 @@ struct ModeConfigEditorView: View {
 
         if case .add = mode {
             draft.applyAddModeDefaults(snapshot: snapshot)
-            draft.inheritUsableTranscriptionModelSelection(from: snapshot)
-        } else {
-            draft.ensureTranscriptionModelSelection(
-                fallback: snapshot.usableTranscriptionModels.first?.name
-            )
         }
 
         draft.ensurePromptSelection(firstPromptId: snapshot.firstPromptId)
-
-        if let selectedModelName = draft.selectedTranscriptionModelName,
-           let model = snapshot.transcriptionModel(named: selectedModelName),
-           model.provider != .gemini {
-            draft.useCompatibleLanguage(for: model)
-        }
     }
 
     private func saveConfiguration() {
         let config = draft.makeConfig(mode: mode)
-        let validator = ModeValidator(modeManager: modeManager)
+        let validator = OutputProfileValidator(modeManager: modeManager)
         validationErrors = validator.validateForSave(config: config, mode: mode)
 
         if !validationErrors.isEmpty {
@@ -146,6 +135,6 @@ struct ModeConfigEditorView: View {
             return
         }
 
-        ShortcutStore.removeShortcutStorage(for: .mode(draft.id))
+        ShortcutStore.removeShortcutStorage(for: .profile(draft.id))
     }
 }

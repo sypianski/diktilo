@@ -275,7 +275,7 @@ struct OnboardingView: View {
 
             coordinator.flow.refreshExperienceModeState(enhancementService: enhancementService)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .modeConfigurationsDidChange)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .outputProfilesDidChange)) { _ in
             coordinator.flow.refreshExperienceModeState(enhancementService: enhancementService)
         }
         .onChange(of: coordinator.stage) { _, _ in

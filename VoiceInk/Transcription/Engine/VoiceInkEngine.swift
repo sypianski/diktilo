@@ -181,7 +181,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
 
     // MARK: - Toggle Record
 
-    func toggleRecord(modeId: UUID? = nil, isAssistantFollowUp: Bool = false) async {
+    func toggleRecord(profileId: UUID? = nil, isAssistantFollowUp: Bool = false) async {
         if recordingState == .starting {
             await cancelRecording()
             return
@@ -242,7 +242,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                     Task { @MainActor [self] in
                         let startID = UUID()
                         self.activeRecordingStartID = startID
-                        let activeModeTask = ActiveWindowService.shared.beginApplyingConfiguration(modeId: modeId) { [weak self] in
+                        let activeModeTask = ActiveWindowService.shared.beginApplyingConfiguration(profileId: profileId) { [weak self] in
                             guard let self else { return false }
                             return self.activeRecordingStartID == startID && !self.shouldCancelRecording
                         }
@@ -287,7 +287,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
 
                             self.startRecordingContextCapture()
 
-                            guard let transcriptionConfiguration = ModeRuntimeResolver.transcriptionConfiguration(
+                            guard let transcriptionConfiguration = ProfileRuntimeResolver.transcriptionConfiguration(
                                 transcriptionModelManager: self.transcriptionModelManager
                             ) else {
                                 NotificationManager.shared.showNotification(title: String(localized: "No AI Model Selected"), type: .error)
@@ -343,7 +343,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                             Task { @MainActor [weak self] in
                                 guard let self else { return }
 
-                                let currentModel = ModeRuntimeResolver.transcriptionConfiguration(
+                                let currentModel = ProfileRuntimeResolver.transcriptionConfiguration(
                                     transcriptionModelManager: self.transcriptionModelManager
                                 )?.model
 
@@ -420,7 +420,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
             return
         }
 
-        let configuration = ModeRuntimeResolver.currentEnhancementConfiguration(
+        let configuration = ProfileRuntimeResolver.currentEnhancementConfiguration(
             enhancementService: enhancementService,
             aiService: aiService
         )
@@ -429,7 +429,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
             return
         }
 
-        let formattingConfiguration = ModeRuntimeResolver.transcriptionFormattingConfiguration()
+        let formattingConfiguration = ProfileRuntimeResolver.transcriptionFormattingConfiguration()
         let modelContext = self.modelContext
         let contextStore = activeRecordingContextStore
 
@@ -461,7 +461,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
         contextStore: RecordingContextSnapshotStore?
     ) async {
         guard let transcriptionConfiguration = currentSessionTranscriptionConfiguration ??
-            ModeRuntimeResolver.transcriptionConfiguration(transcriptionModelManager: transcriptionModelManager) else {
+            ProfileRuntimeResolver.transcriptionConfiguration(transcriptionModelManager: transcriptionModelManager) else {
             transcription.text = String(localized: "Transcription Failed: No model selected")
             transcription.transcriptionStatus = TranscriptionStatus.failed.rawValue
             try? modelContext.save()
@@ -479,7 +479,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
             audioURL: audioURL,
             transcriptionConfiguration: transcriptionConfiguration,
             formattingConfiguration: {
-                ModeRuntimeResolver.transcriptionFormattingConfiguration()
+                ProfileRuntimeResolver.transcriptionFormattingConfiguration()
             },
             session: session,
             triggerWordModeSelection: { [weak self] text in
@@ -491,7 +491,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                       let aiService = enhancementService.getAIService() else {
                     return nil
                 }
-                return ModeRuntimeResolver.currentEnhancementConfiguration(
+                return ProfileRuntimeResolver.currentEnhancementConfiguration(
                     enhancementService: enhancementService,
                     aiService: aiService
                 )
@@ -505,7 +505,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                 }
             },
             outputConfiguration: {
-                ModeRuntimeResolver.outputConfiguration()
+                ProfileRuntimeResolver.outputConfiguration()
             },
             onStateChange: { [weak self] state in
                 guard let self, self.activePipelineTranscriptionID == transcriptionID else { return }
@@ -536,8 +536,8 @@ class VoiceInkEngine: NSObject, ObservableObject {
                         transcript: transcript,
                         provider: configuration.provider,
                         modelName: configuration.modelName ?? configuration.provider?.defaultModel,
-                        modeName: configuration.mode?.name,
-                        modeEmoji: configuration.mode?.icon.value,
+                        modeName: configuration.profile?.name,
+                        modeEmoji: configuration.profile?.icon.value,
                         promptName: configuration.prompt?.title
                     )
                 },
@@ -573,11 +573,11 @@ class VoiceInkEngine: NSObject, ObservableObject {
     }
 
     private func selectTriggerWordModeIfNeeded(for text: String) -> String? {
-        guard let (triggeredMode, processedText) = ModeManager.shared.getConfigurationForTriggerWord(text) else {
+        guard let (triggeredMode, processedText) = OutputProfileManager.shared.getConfigurationForTriggerWord(text) else {
             return nil
         }
 
-        ModeManager.shared.setActiveConfiguration(triggeredMode)
+        OutputProfileManager.shared.setActiveConfiguration(triggeredMode)
         return processedText
     }
 
@@ -682,7 +682,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
             text: text,
             duration: duration,
             audioFileURL: audioURL.absoluteString,
-            transcriptionModelName: ModeRuntimeResolver.transcriptionConfiguration(
+            transcriptionModelName: ProfileRuntimeResolver.transcriptionConfiguration(
                 transcriptionModelManager: transcriptionModelManager
             )?.model.displayName,
             modeName: modeMetadata.name,
@@ -692,7 +692,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
     }
 
     private func currentModeMetadata() -> (name: String?, emoji: String?) {
-        guard let mode = ModeManager.shared.currentEffectiveConfiguration,
+        guard let mode = OutputProfileManager.shared.currentEffectiveConfiguration,
               mode.isEnabled else {
             return (nil, nil)
         }

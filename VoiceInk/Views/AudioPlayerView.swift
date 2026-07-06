@@ -354,12 +354,12 @@ struct AudioPlayerView: View {
     @State private var isRetranscribing = false
     @State private var isReEnhancing = false
     @State private var operationFeedback: OperationFeedback?
-    @State private var showModePopover = false
+    @State private var showOutputProfilePopover = false
     @State private var showPromptPopover = false
     @State private var selectedModeId: UUID?
     @EnvironmentObject private var engine: VoiceInkEngine
     @EnvironmentObject private var enhancementService: AIEnhancementService
-    @ObservedObject private var modeManager = ModeManager.shared
+    @ObservedObject private var modeManager = OutputProfileManager.shared
     @Environment(\.modelContext) private var modelContext
 
     private var isOperationInProgress: Bool {
@@ -368,7 +368,7 @@ struct AudioPlayerView: View {
 
     private var currentEnhancementConfiguration: EnhancementRuntimeConfiguration? {
         guard let aiService = enhancementService.getAIService() else { return nil }
-        return ModeRuntimeResolver.currentEnhancementConfiguration(
+        return ProfileRuntimeResolver.currentEnhancementConfiguration(
             mode: selectedMode,
             enhancementService: enhancementService,
             aiService: aiService
@@ -379,7 +379,7 @@ struct AudioPlayerView: View {
         AudioTranscriptionService(modelContext: modelContext, engine: engine)
     }
 
-    private var selectedMode: ModeConfig? {
+    private var selectedMode: OutputProfile? {
         modeManager.resolvedEnabledConfiguration(preferredId: selectedModeId)
     }
 
@@ -493,7 +493,7 @@ struct AudioPlayerView: View {
 
     private var modeSelectorButton: some View {
         Button {
-            showModePopover.toggle()
+            showOutputProfilePopover.toggle()
         } label: {
             Circle()
                 .fill(selectedMode == nil ? AppTheme.Surface.subtle : AppTheme.Surface.controlActive)
@@ -511,17 +511,17 @@ struct AudioPlayerView: View {
         .buttonStyle(.plain)
         .opacity(selectedMode == nil ? 0.4 : 1.0)
         .help(selectedMode.map { "Mode: \($0.name)" } ?? "Select mode")
-        .popover(isPresented: $showModePopover, arrowEdge: .bottom) {
-            ModePopover(selectedModeId: selectedMode?.id) { mode in
+        .popover(isPresented: $showOutputProfilePopover, arrowEdge: .bottom) {
+            OutputProfilePopover(selectedModeId: selectedMode?.id) { mode in
                 selectMode(mode)
             }
         }
     }
 
-    private func selectMode(_ mode: ModeConfig) {
+    private func selectMode(_ mode: OutputProfile) {
         selectedModeId = mode.id
         modeManager.setActiveConfiguration(mode)
-        showModePopover = false
+        showOutputProfilePopover = false
     }
 
     private func syncSelectedMode() {
@@ -636,7 +636,7 @@ struct AudioPlayerView: View {
             return
         }
 
-        guard let transcriptionConfiguration = ModeRuntimeResolver.transcriptionConfiguration(
+        guard let transcriptionConfiguration = ProfileRuntimeResolver.transcriptionConfiguration(
             mode: selectedMode,
             transcriptionModelManager: engine.transcriptionModelManager
         ) else {

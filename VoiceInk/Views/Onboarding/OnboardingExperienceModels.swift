@@ -20,7 +20,7 @@ enum OnboardingShortcutSource {
         case .primaryRecording:
             return .primaryRecording
         case .starterMode:
-            return .mode(modeTemplate.id)
+            return .profile(modeTemplate.id)
         }
     }
 

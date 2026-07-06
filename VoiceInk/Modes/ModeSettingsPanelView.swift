@@ -1,8 +1,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct ModeSettingsPanelView: View {
-    @ObservedObject var modeManager: ModeManager
+struct OutputProfileSettingsPanelView: View {
+    @ObservedObject var modeManager: OutputProfileManager
     let onDismiss: () -> Void
 
     @AppStorage("ModeTipDismissed")
@@ -52,7 +52,7 @@ struct ModeSettingsPanelView: View {
                 .padding(.horizontal, contentInset)
 
             if !isTipDismissed {
-                ModeSettingsQuickSwitchTip {
+                OutputProfileQuickSwitchTip {
                     withAnimation(.easeInOut(duration: 0.16)) {
                         isTipDismissed = true
                     }
@@ -71,7 +71,7 @@ struct ModeSettingsPanelView: View {
 }
 
 private struct ModeReorderList: View {
-    @ObservedObject var modeManager: ModeManager
+    @ObservedObject var modeManager: OutputProfileManager
 
     @State private var draggedConfigID: UUID?
     @State private var targetedConfigID: UUID?
@@ -116,7 +116,7 @@ private struct ModeReorderList: View {
 }
 
 private struct ModeReorderRow: View {
-    let config: ModeConfig
+    let config: OutputProfile
     let isDragged: Bool
     let isTargeted: Bool
 
@@ -265,7 +265,7 @@ private struct ModeReorderBadge: View {
 }
 
 private struct ModeReorderDragPreview: View {
-    let config: ModeConfig
+    let config: OutputProfile
 
     var body: some View {
         HStack(spacing: 10) {
@@ -286,8 +286,8 @@ private struct ModeReorderDragPreview: View {
 }
 
 private struct ModeReorderDropDelegate: DropDelegate {
-    let item: ModeConfig
-    let modeManager: ModeManager
+    let item: OutputProfile
+    let modeManager: OutputProfileManager
     @Binding var draggedConfigID: UUID?
     @Binding var targetedConfigID: UUID?
 

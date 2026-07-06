@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ModeSettingsQuickSwitchTip: View {
+struct OutputProfileQuickSwitchTip: View {
     let onDismiss: () -> Void
 
     var body: some View {

@@ -16,7 +16,7 @@ extension View {
 
 enum ConfigurationMode: Hashable {
     case add
-    case edit(ModeConfig)
+    case edit(OutputProfile)
     
     var isAdding: Bool {
         if case .add = self { return true }
@@ -50,9 +50,9 @@ enum ConfigurationType {
     case website
 }
 
-struct ModeView: View {
-    @StateObject private var modeManager = ModeManager.shared
-    @StateObject private var modeWarmupStore = ModeFormWarmupStore.shared
+struct OutputProfileView: View {
+    @StateObject private var modeManager = OutputProfileManager.shared
+    @StateObject private var modeWarmupStore = OutputProfileFormWarmupStore.shared
     @EnvironmentObject private var enhancementService: AIEnhancementService
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
@@ -136,7 +136,7 @@ struct ModeView: View {
                                         .frame(minHeight: geometry.size.height)
                                     } else {
                                         VStack(spacing: 0) {
-                                            ModeConfigurationsGrid(
+                                            OutputProfileurationsGrid(
                                                 modeManager: modeManager,
                                                 onEditConfig: { config in
                                                     openPanel(mode: .edit(config))
@@ -161,11 +161,11 @@ struct ModeView: View {
             ), dismissOnExitCommand: false) {
                 switch activePanel {
                 case .configuration(let mode)?:
-                    ModeConfigEditorView(mode: mode, modeManager: modeManager, onDismiss: closePanel)
+                    OutputProfileEditorView(mode: mode, modeManager: modeManager, onDismiss: closePanel)
                         .environmentObject(modeWarmupStore)
                         .id(panelID)
                 case .settings?:
-                    ModeSettingsPanelView(modeManager: modeManager, onDismiss: closePanel)
+                    OutputProfileSettingsPanelView(modeManager: modeManager, onDismiss: closePanel)
                 case nil:
                     EmptyView()
                 }

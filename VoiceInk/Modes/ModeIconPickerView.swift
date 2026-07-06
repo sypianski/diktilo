@@ -40,7 +40,7 @@ struct ModeIconPickerView: View {
         var seen = Set<String>()
         var emojis: [String] = []
 
-        for config in ModeManager.shared.configurations where config.icon.kind == .emoji {
+        for config in OutputProfileManager.shared.configurations where config.icon.kind == .emoji {
             if seen.insert(config.icon.value).inserted {
                 emojis.append(config.icon.value)
             }
@@ -184,7 +184,7 @@ struct ModeIconPickerView: View {
     }
 
     private func canRemoveEmoji(_ emoji: String) -> Bool {
-        emojiManager.isCustomEmoji(emoji) && !ModeManager.shared.isEmojiInUse(emoji)
+        emojiManager.isCustomEmoji(emoji) && !OutputProfileManager.shared.isEmojiInUse(emoji)
     }
 
     private func removeCustomEmoji(_ emoji: String) {

@@ -26,7 +26,7 @@ struct ModeTriggerGroup: Codable, Identifiable, Equatable {
     }
 }
 
-extension ModeConfig {
+extension OutputProfile {
     var allAppConfigs: [AppConfig] {
         (appConfigs ?? []) + (triggerGroups ?? []).flatMap(\.appConfigs)
     }

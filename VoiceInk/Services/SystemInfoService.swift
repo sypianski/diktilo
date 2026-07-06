@@ -160,7 +160,7 @@ class SystemInfoService {
     }
 
     private func getCurrentTranscriptionModel() -> String {
-        if let modelName = ModeManager.shared.currentEffectiveConfiguration?.selectedTranscriptionModelName {
+        if let modelName = OutputProfileManager.shared.currentEffectiveConfiguration?.selectedTranscriptionModelName {
             if let model = TranscriptionModelRegistry.models.first(where: { $0.name == modelName }) {
                 return model.displayName
             }
@@ -170,15 +170,15 @@ class SystemInfoService {
     }
 
     private func getAIEnhancementStatus() -> String {
-        ModeManager.shared.currentEffectiveConfiguration?.isAIEnhancementEnabled == true ? "Enabled" : "Disabled"
+        OutputProfileManager.shared.currentEffectiveConfiguration?.isAIEnhancementEnabled == true ? "Enabled" : "Disabled"
     }
 
     private func getAIProvider() -> String {
-        ModeManager.shared.currentEffectiveConfiguration?.selectedAIProvider ?? "None selected"
+        OutputProfileManager.shared.currentEffectiveConfiguration?.selectedAIProvider ?? "None selected"
     }
 
     private func getAIModel() -> String {
-        ModeManager.shared.currentEffectiveConfiguration?.selectedAIModel ?? "None selected"
+        OutputProfileManager.shared.currentEffectiveConfiguration?.selectedAIModel ?? "None selected"
     }
     private func getAccessibilityStatus() -> String {
         return AXIsProcessTrusted() ? "Granted" : "Not Granted"

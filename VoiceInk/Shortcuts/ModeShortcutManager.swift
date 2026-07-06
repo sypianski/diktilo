@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-class ModeShortcutManager {
+class ProfileShortcutManager {
     private let shortcutMonitor = ShortcutMonitor()
     private let modeProvider: @MainActor () -> RecordingShortcutManager.Mode
     private let shortcutModeHandler: RecordingShortcutModeHandler
@@ -23,7 +23,7 @@ class ModeShortcutManager {
         ) { [weak self] notification in
             guard
                 let action = notification.object as? ShortcutAction,
-                case .mode = action
+                case .profile = action
             else {
                 return
             }
@@ -35,8 +35,8 @@ class ModeShortcutManager {
 
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(modeShortcutAvailabilityDidChange),
-            name: .modeShortcutAvailabilityDidChange,
+            selector: #selector(profileShortcutAvailabilityDidChange),
+            name: .profileShortcutAvailabilityDidChange,
             object: nil
         )
     }
@@ -51,15 +51,15 @@ class ModeShortcutManager {
         }
     }
 
-    @objc private func modeShortcutAvailabilityDidChange() {
+    @objc private func profileShortcutAvailabilityDidChange() {
         Task { @MainActor in
             refreshModeShortcuts()
         }
     }
 
     private func refreshModeShortcuts() {
-        let shortcuts = ModeManager.shared.enabledConfigurations.reduce(into: [ShortcutAction: Shortcut]()) { result, config in
-            let action = ShortcutAction.mode(config.id)
+        let shortcuts = OutputProfileManager.shared.enabledConfigurations.reduce(into: [ShortcutAction: Shortcut]()) { result, config in
+            let action = ShortcutAction.profile(config.id)
             if let shortcut = ShortcutStore.shortcut(for: action) {
                 result[action] = shortcut
             }
@@ -71,7 +71,7 @@ class ModeShortcutManager {
             onKeyDown: { [weak self] action, eventTime in
                 Task { @MainActor in
                     guard let self,
-                          let modeId = self.modeId(for: action) else {
+                          let profileId = self.profileId(for: action) else {
                         return
                     }
 
@@ -79,14 +79,14 @@ class ModeShortcutManager {
                         action: action,
                         eventTime: eventTime,
                         mode: self.modeProvider(),
-                        modeId: modeId
+                        profileId: profileId
                     )
                 }
             },
             onKeyUp: { [weak self] action, eventTime in
                 Task { @MainActor in
                     guard let self,
-                          case .mode(let modeId) = action else {
+                          case .profile(let profileId) = action else {
                         return
                     }
 
@@ -94,27 +94,27 @@ class ModeShortcutManager {
                         action: action,
                         eventTime: eventTime,
                         mode: self.modeProvider(),
-                        modeId: modeId
+                        profileId: profileId
                     )
                 }
             },
             onShortcutInterrupted: { [weak self] action, _ in
                 Task { @MainActor in
-                    guard let self, case .mode = action else { return }
+                    guard let self, case .profile = action else { return }
                     await self.shortcutModeHandler.handleInterruption(action: action)
                 }
             }
         )
     }
 
-    private func modeId(for action: ShortcutAction) -> UUID? {
-        guard case .mode(let modeId) = action,
-              let config = ModeManager.shared.getConfiguration(with: modeId),
+    private func profileId(for action: ShortcutAction) -> UUID? {
+        guard case .profile(let profileId) = action,
+              let config = OutputProfileManager.shared.getConfiguration(with: profileId),
               config.isEnabled,
-              ShortcutStore.shortcut(for: .mode(config.id)) != nil else {
+              ShortcutStore.shortcut(for: .profile(config.id)) != nil else {
             return nil
         }
 
-        return modeId
+        return profileId
     }
 }

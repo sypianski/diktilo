@@ -5,14 +5,14 @@ import UniformTypeIdentifiers
 struct AudioTranscribeView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var engine: VoiceInkEngine
-    @ObservedObject private var modeManager = ModeManager.shared
+    @ObservedObject private var modeManager = OutputProfileManager.shared
     @StateObject private var transcriptionManager = AudioTranscriptionManager.shared
     @State private var isDropTargeted = false
-    @State private var showModePopover = false
+    @State private var showOutputProfilePopover = false
     @State private var selectedModeId: UUID?
     @State private var expandedItemId: UUID?
 
-    private var selectedMode: ModeConfig? {
+    private var selectedMode: OutputProfile? {
         modeManager.resolvedEnabledConfiguration(preferredId: selectedModeId)
     }
 
@@ -261,7 +261,7 @@ struct AudioTranscribeView: View {
                     .fixedSize(horizontal: true, vertical: false)
             } else if let selectedMode {
                 Button {
-                    showModePopover.toggle()
+                    showOutputProfilePopover.toggle()
                 } label: {
                     HStack(spacing: 6) {
                         ModeIconView(icon: selectedMode.icon, size: selectedMode.icon.kind == .emoji ? 13 : 11)
@@ -288,8 +288,8 @@ struct AudioTranscribeView: View {
                     )
                 }
                 .buttonStyle(.plain)
-                .popover(isPresented: $showModePopover, arrowEdge: .bottom) {
-                    ModePopover(selectedModeId: selectedMode.id) { mode in
+                .popover(isPresented: $showOutputProfilePopover, arrowEdge: .bottom) {
+                    OutputProfilePopover(selectedModeId: selectedMode.id) { mode in
                         selectMode(mode)
                     }
                 }
@@ -311,10 +311,10 @@ struct AudioTranscribeView: View {
         selectedModeId = modeManager.resolvedEnabledConfigurationId(preferredId: selectedModeId)
     }
 
-    private func selectMode(_ mode: ModeConfig) {
+    private func selectMode(_ mode: OutputProfile) {
         selectedModeId = mode.id
         modeManager.setActiveConfiguration(mode)
-        showModePopover = false
+        showOutputProfilePopover = false
     }
 
     private func startProcessing() {

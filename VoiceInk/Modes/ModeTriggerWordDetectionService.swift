@@ -2,13 +2,13 @@ import Foundation
 
 enum ModeTriggerWordDetectionService {
     struct Detection {
-        let mode: ModeConfig
+        let mode: OutputProfile
         let processedText: String
     }
 
-    static func detect(in text: String, configurations: [ModeConfig]) -> Detection? {
+    static func detect(in text: String, configurations: [OutputProfile]) -> Detection? {
         struct Candidate {
-            let mode: ModeConfig
+            let mode: OutputProfile
             let triggerWord: String
             let modeIndex: Int
             let wordIndex: Int

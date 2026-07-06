@@ -79,7 +79,7 @@ struct ContentView: View {
         case .dictionary:
             DictionarySettingsView()
         case .modes:
-            ModeView()
+            OutputProfileView()
         case .settings:
             SettingsView()
         case .license:

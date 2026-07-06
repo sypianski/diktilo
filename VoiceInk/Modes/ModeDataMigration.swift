@@ -1,7 +1,7 @@
 import Foundation
 
-extension ModeManager {
-    func migratedModeConfigurationData(for configKey: String) -> Data? {
+extension OutputProfileManager {
+    func migratedOutputProfileurationData(for configKey: String) -> Data? {
         let defaults = UserDefaults.standard
         if let data = defaults.data(forKey: configKey) {
             return data
@@ -15,7 +15,7 @@ extension ModeManager {
         return legacyData
     }
 
-    func migrateLoadedModeConfigurationsIfNeeded() {
+    func migrateLoadedOutputProfileurationsIfNeeded() {
         var didChange = false
 
         for index in configurations.indices {
@@ -65,7 +65,7 @@ extension ModeManager {
 
         for config in configurations {
             let oldShortcutKey = "\(LegacyModeDataKey.shortcutPrefix)\(config.id.uuidString)"
-            let newShortcutKey = ShortcutAction.mode(config.id).userDefaultsKey
+            let newShortcutKey = ShortcutAction.profile(config.id).userDefaultsKey
 
             if defaults.object(forKey: newShortcutKey) == nil,
                let oldShortcutData = defaults.data(forKey: oldShortcutKey) {
@@ -83,6 +83,6 @@ extension ModeManager {
 }
 
 private enum LegacyModeDataKey {
-    static let configurations = "powerModeConfigurationsV2"
+    static let configurations = "powerOutputProfileurationsV2"
     static let shortcutPrefix = "Shortcut_powerMode_"
 }

@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct ModeConfigFormView: View {
+struct OutputProfileFormView: View {
     let mode: ConfigurationMode
-    let modeManager: ModeManager
-    @Binding var draft: ModeConfigDraft
+    let modeManager: OutputProfileManager
+    @Binding var draft: OutputProfileDraft
     @Binding var validationErrors: [ModeValidationError]
     @Binding var showValidationAlert: Bool
     let onDismiss: () -> Void
@@ -12,23 +12,15 @@ struct ModeConfigFormView: View {
     let openPromptEditor: (PromptEditorView.Mode) -> Void
 
     @EnvironmentObject private var aiService: AIService
-    @EnvironmentObject private var modeWarmupStore: ModeFormWarmupStore
+    @EnvironmentObject private var modeWarmupStore: OutputProfileFormWarmupStore
     @FocusState private var isNameFieldFocused: Bool
 
     @State private var isShowingIconPicker = false
     @State private var isShowingDeleteConfirmation = false
     @State private var isContextAwarenessExpanded = false
 
-    private var effectiveModelName: String? {
-        draft.selectedTranscriptionModelName
-    }
-
     private var warmupSnapshot: ModeFormWarmupSnapshot {
         modeWarmupStore.snapshot
-    }
-
-    private var selectedTranscriptionModel: (any TranscriptionModel)? {
-        warmupSnapshot.transcriptionModel(named: effectiveModelName)
     }
 
     private var selectedPrompt: CustomPrompt? {
@@ -102,7 +94,7 @@ struct ModeConfigFormView: View {
                 )
             }
 
-            TextField("Mode name", text: $draft.name)
+            TextField("Profile name", text: $draft.name)
                 .textFieldStyle(.plain)
                 .font(.system(size: 16, weight: .semibold))
                 .focused($isNameFieldFocused)
@@ -132,10 +124,9 @@ struct ModeConfigFormView: View {
                 websiteConfigs: $draft.websiteConfigs,
                 triggerGroups: $draft.triggerGroups,
                 triggerWords: $draft.triggerWords,
-                modeId: draft.id,
+                profileId: draft.id,
                 cleanURL: modeManager.cleanURL
             )
-            transcriptionSection
             aiEnhancementSection
             advancedSection
         }
@@ -143,7 +134,7 @@ struct ModeConfigFormView: View {
         .scrollContentBackground(.hidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .confirmationDialog(
-            "Delete Mode?",
+            "Delete Profile?",
             isPresented: $isShowingDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -157,132 +148,6 @@ struct ModeConfigFormView: View {
             Text(String(format: String(localized: "Are you sure you want to delete '%@'? This action cannot be undone."), draft.name))
         }
         .modeValidationAlert(errors: validationErrors, isPresented: $showValidationAlert)
-    }
-
-    private var transcriptionSection: some View {
-        Section("Transcription") {
-            if warmupSnapshot.usableTranscriptionModels.isEmpty {
-                Text("No transcription models available. Please connect to a cloud service or download a local model in the AI Models tab.")
-                    .foregroundColor(.secondary)
-            } else {
-                let modelBinding = Binding<String?>(
-                    get: { draft.selectedTranscriptionModelName },
-                    set: { draft.selectedTranscriptionModelName = $0 }
-                )
-
-                Picker("Model", selection: modelBinding) {
-                    ForEach(warmupSnapshot.usableTranscriptionModels, id: \.name) { model in
-                        Text(model.displayName).tag(model.name as String?)
-                    }
-                }
-                .onChange(of: draft.selectedTranscriptionModelName) { _, newModelName in
-                    if let modelName = newModelName,
-                       let model = warmupSnapshot.transcriptionModel(named: modelName) {
-                        draft.isRealtimeTranscriptionEnabled = TranscriptionRealtimeSupport.isAvailable(for: model)
-                        if model.provider == .gemini {
-                            draft.selectedLanguage = "auto"
-                        } else {
-                            draft.useCompatibleLanguage(for: model)
-                        }
-                    }
-                }
-
-                realtimeToggle
-            }
-
-            languagePicker
-
-            ExpandableSettingsRow(
-                title: "Transcription Formatting",
-                isExpanded: $draft.isTranscriptionFormattingExpanded
-            ) {
-                Toggle(isOn: $draft.isTextFormattingEnabled) {
-                    HStack(spacing: 4) {
-                        Text("Paragraph breaks")
-                        InfoTip("Apply intelligent text formatting to break large block of text into paragraphs.")
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var realtimeToggle: some View {
-        if let model = selectedTranscriptionModel,
-           TranscriptionRealtimeSupport.isAvailable(for: model) {
-            Toggle("Real-time", isOn: $draft.isRealtimeTranscriptionEnabled)
-                .disabled(TranscriptionRealtimeSupport.isRequired(for: model))
-                .onAppear {
-                    if TranscriptionRealtimeSupport.isRequired(for: model) {
-                        draft.isRealtimeTranscriptionEnabled = true
-                    }
-                }
-                .onChange(of: draft.isRealtimeTranscriptionEnabled) { _, _ in
-                    draft.useCompatibleLanguage(for: model)
-                }
-        }
-    }
-
-    @ViewBuilder
-    private var languagePicker: some View {
-        if languageSelectionDisabled() {
-            LabeledContent("Language") {
-                Text("Autodetected")
-                    .foregroundColor(.secondary)
-            }
-            .onAppear {
-                draft.selectedLanguage = "auto"
-            }
-        } else if let selectedModel = effectiveModelName,
-                  let modelInfo = warmupSnapshot.transcriptionModel(named: selectedModel),
-                  modelInfo.isMultilingualModel {
-            let languageBinding = Binding<String?>(
-                get: { effectiveLanguage(for: modelInfo) },
-                set: { draft.selectedLanguage = $0 }
-            )
-
-            HStack(spacing: 8) {
-                HStack(spacing: 4) {
-                    Text("Language")
-                }
-
-                Spacer(minLength: 12)
-
-                if modelInfo.provider == .nativeApple {
-                    NativeAppleLanguageAssetControl(
-                        localeIdentifier: effectiveLanguage(for: modelInfo),
-                        isVisible: true,
-                        startsDownloadAutomatically: true,
-                        allowsReservationReplacement: true
-                    )
-                    .layoutPriority(1)
-                    .frame(width: 28, height: 24)
-                }
-
-                Picker("", selection: languageBinding) {
-                    ForEach(availableLanguages(for: modelInfo).sorted(by: {
-                        if $0.key == "auto" { return true }
-                        if $1.key == "auto" { return false }
-                        return $0.value < $1.value
-                    }), id: \.key) { key, value in
-                        Text(value).tag(key as String?)
-                    }
-                }
-                .labelsHidden()
-            }
-            .onAppear {
-                draft.selectedLanguage = effectiveLanguage(for: modelInfo)
-            }
-        } else if let selectedModel = effectiveModelName,
-                  let modelInfo = warmupSnapshot.transcriptionModel(named: selectedModel),
-                  !modelInfo.isMultilingualModel {
-            EmptyView()
-                .onAppear {
-                    if draft.selectedLanguage == nil {
-                        draft.selectedLanguage = "pl"
-                    }
-                }
-        }
     }
 
     private var aiEnhancementSection: some View {
@@ -474,28 +339,28 @@ struct ModeConfigFormView: View {
             Toggle(isOn: $draft.useSelectedTextContext) {
                 HStack(spacing: 4) {
                     Text("Selected Text")
-                    InfoTip("Use selected text from the active app as context for this mode.")
+                    InfoTip("Use selected text from the active app as context for this profile.")
                 }
             }
 
             Toggle(isOn: $draft.useClipboardContext) {
                 HStack(spacing: 4) {
                     Text("Clipboard")
-                    InfoTip("Use clipboard text as context for this mode.")
+                    InfoTip("Use clipboard text as context for this profile.")
                 }
             }
 
             Toggle(isOn: $draft.useScreenCapture) {
                 HStack(spacing: 4) {
                     Text("Screen")
-                    InfoTip("Use captured on-screen text as context for this mode.")
+                    InfoTip("Use captured on-screen text as context for this profile.")
                 }
             }
         }
     }
 
-    private var outputChoices: [ModeOutputMode] {
-        ModeOutputMode.choices(canRespond: canRespond)
+    private var outputChoices: [OutputMode] {
+        OutputMode.choices(canRespond: canRespond)
     }
 
     private var canRespond: Bool {
@@ -524,7 +389,7 @@ struct ModeConfigFormView: View {
                 Toggle(isOn: $draft.isDefault) {
                     HStack(spacing: 6) {
                         Text("Set as default")
-                        InfoTip("Default mode is used when no specific app or website matches are found.")
+                        InfoTip("Default profile is used when no specific app or website matches are found.")
                     }
                 }
             }
@@ -614,24 +479,4 @@ struct ModeConfigFormView: View {
             .padding(.vertical, 16)
         }
     }
-
-    private func languageSelectionDisabled() -> Bool {
-        guard let selectedModelName = effectiveModelName,
-              let model = warmupSnapshot.transcriptionModel(named: selectedModelName)
-        else { return false }
-        return model.provider == .gemini
-    }
-
-    private func availableLanguages(for model: any TranscriptionModel) -> [String: String] {
-        TranscriptionLanguageSupport.languages(for: model, realtimeEnabled: draft.isRealtimeTranscriptionEnabled)
-    }
-
-    private func effectiveLanguage(for model: any TranscriptionModel) -> String {
-        TranscriptionLanguageSupport.validLanguageOrFallback(
-            draft.selectedLanguage ?? UserDefaults.standard.string(forKey: "SelectedLanguage"),
-            for: model,
-            realtimeEnabled: draft.isRealtimeTranscriptionEnabled
-        )
-    }
-
 }

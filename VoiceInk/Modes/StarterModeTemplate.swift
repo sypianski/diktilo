@@ -18,7 +18,7 @@ struct StarterModeTemplate: Identifiable {
     let description: String
     let guidance: String
     let promptId: UUID?
-    let outputMode: ModeOutputMode
+    let outputMode: OutputMode
     let usesAIEnhancement: Bool
     let useSelectedTextContext: Bool
     let useScreenCapture: Bool

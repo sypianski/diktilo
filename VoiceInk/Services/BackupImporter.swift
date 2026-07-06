@@ -42,9 +42,9 @@ enum BackupImporter {
         }
 
         if categories.contains(.modes) {
-            let modeManager = ModeManager.shared
+            let modeManager = OutputProfileManager.shared
             for config in modeManager.configurations {
-                ShortcutStore.removeShortcutStorage(for: .mode(config.id))
+                ShortcutStore.removeShortcutStorage(for: .profile(config.id))
             }
 
             modeManager.configurations = backup.modeConfigs
@@ -59,7 +59,7 @@ enum BackupImporter {
                         continue
                     }
 
-                    ShortcutStore.setShortcut(shortcutBackup.shortcut, for: .mode(id))
+                    ShortcutStore.setShortcut(shortcutBackup.shortcut, for: .profile(id))
                 }
             }
 

@@ -473,7 +473,7 @@ class AIEnhancementService: ObservableObject {
     func repairModePromptSelections() {
         let availablePromptIds = Set(allPrompts.map { $0.id.uuidString })
         let fallbackPromptId = allPrompts.first?.id.uuidString
-        let modeManager = ModeManager.shared
+        let modeManager = OutputProfileManager.shared
         var updatedConfigurations = modeManager.configurations
         var didUpdateModes = false
 

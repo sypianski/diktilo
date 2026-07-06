@@ -1,11 +1,11 @@
 import SwiftUI
 
-struct ModePopover: View {
-    @ObservedObject var modeManager = ModeManager.shared
+struct OutputProfilePopover: View {
+    @ObservedObject var modeManager = OutputProfileManager.shared
     let selectedModeId: UUID?
-    let onSelect: ((ModeConfig) -> Void)?
+    let onSelect: ((OutputProfile) -> Void)?
 
-    init(selectedModeId: UUID? = nil, onSelect: ((ModeConfig) -> Void)? = nil) {
+    init(selectedModeId: UUID? = nil, onSelect: ((OutputProfile) -> Void)? = nil) {
         self.selectedModeId = selectedModeId
         self.onSelect = onSelect
     }
@@ -69,7 +69,7 @@ struct ModePopover: View {
 }
 
 struct ModeRow: View {
-    let config: ModeConfig
+    let config: OutputProfile
     let isSelected: Bool
     let action: () -> Void
     

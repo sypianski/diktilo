@@ -49,9 +49,9 @@ struct ModeEmptyStateView: View {
     }
 }
 
-struct ModeConfigurationsGrid: View {
-    @ObservedObject var modeManager: ModeManager
-    let onEditConfig: (ModeConfig) -> Void
+struct OutputProfileurationsGrid: View {
+    @ObservedObject var modeManager: OutputProfileManager
+    let onEditConfig: (OutputProfile) -> Void
     @EnvironmentObject var enhancementService: AIEnhancementService
     
     var body: some View {
@@ -98,10 +98,10 @@ struct DefaultModeIndicator: View {
 }
 
 struct ConfigurationRow: View {
-    @Binding var config: ModeConfig
+    @Binding var config: OutputProfile
     let isEditing: Bool
-    let modeManager: ModeManager
-    let onEditConfig: (ModeConfig) -> Void
+    let modeManager: OutputProfileManager
+    let onEditConfig: (OutputProfile) -> Void
     @EnvironmentObject var enhancementService: AIEnhancementService
     @EnvironmentObject var transcriptionModelManager: TranscriptionModelManager
     @State private var isHovering = false
@@ -114,32 +114,7 @@ struct ConfigurationRow: View {
         return enhancementService.allPrompts.first { $0.id == uuid }
     }
     
-    private var selectedModel: String? {
-        if let modelName = config.selectedTranscriptionModelName,
-           let model = transcriptionModelManager.allAvailableModels.first(where: { $0.name == modelName }) {
-            return model.displayName
-        }
-        return "Default"
-    }
-    
-    private var selectedLanguage: String? {
-        if let langCode = config.selectedLanguage {
-            if langCode == "auto" { return String(localized: "Auto") }
-            if langCode == "en" { return String(localized: "English") }
-            
-            if let modelName = config.selectedTranscriptionModelName,
-               let model = transcriptionModelManager.allAvailableModels.first(where: { $0.name == modelName }),
-               let langName = TranscriptionLanguageSupport.languages(for: model, realtimeEnabled: config.isRealtimeTranscriptionEnabled)[langCode] {
-                return langName
-            }
-            return langCode.uppercased()
-        }
-        return "Default"
-    }
-
     private var hasVisibleMetadata: Bool {
-        (selectedModel.map { $0 != "Default" } ?? false) ||
-        (selectedLanguage.map { $0 != "Default" } ?? false) ||
         config.isAIEnhancementEnabled ||
         config.outputMode != .paste ||
         config.autoSendKey.isEnabled
@@ -263,40 +238,6 @@ struct ConfigurationRow: View {
                 Divider()
                 
                 HStack(spacing: 8) {
-                    if let model = selectedModel, model != "Default" {
-                        HStack(spacing: 4) {
-                            Image(systemName: "waveform")
-                                .font(.system(size: 10))
-                            Text(model)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(AppTheme.Surface.control))
-                        .overlay(
-                            Capsule()
-                                .stroke(AppTheme.Border.control, lineWidth: 0.5)
-                        )
-                    }
-
-                    if let language = selectedLanguage, language != "Default" {
-                        HStack(spacing: 4) {
-                            Image(systemName: "globe")
-                                .font(.system(size: 10))
-                            Text(language)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(AppTheme.Surface.control))
-                        .overlay(
-                            Capsule()
-                                .stroke(AppTheme.Border.control, lineWidth: 0.5)
-                        )
-                    }
-
                     if config.isAIEnhancementEnabled,
                        config.selectedAIProvider != AIProvider.localCLI.rawValue,
                        let modelName = config.selectedAIModel,

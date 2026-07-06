@@ -61,8 +61,8 @@ struct TriggerPickerPopover: View {
         isWebsiteLike(websiteCandidate)
     }
 
-    private var otherConfigurations: [ModeConfig] {
-        ModeManager.shared.configurations.filter { $0.id != currentModeId }
+    private var otherConfigurations: [OutputProfile] {
+        OutputProfileManager.shared.configurations.filter { $0.id != currentModeId }
     }
 
     private var isWebsiteAlreadyAdded: Bool {
@@ -77,19 +77,19 @@ struct TriggerPickerPopover: View {
         triggerWords.contains { $0.localizedCaseInsensitiveCompare(query) == .orderedSame }
     }
 
-    private var triggerWordClaimedByOtherMode: ModeConfig? {
+    private var triggerWordClaimedByOtherMode: OutputProfile? {
         otherConfigurations.first { mode in
             mode.triggerWords.contains { $0.localizedCaseInsensitiveCompare(query) == .orderedSame }
         }
     }
 
-    private func appClaimedByOtherMode(_ bundleId: String) -> ModeConfig? {
+    private func appClaimedByOtherMode(_ bundleId: String) -> OutputProfile? {
         otherConfigurations.first { mode in
             mode.allAppConfigs.contains { $0.bundleIdentifier == bundleId }
         }
     }
 
-    private var websiteClaimedByOtherMode: ModeConfig? {
+    private var websiteClaimedByOtherMode: OutputProfile? {
         otherConfigurations.first { mode in
             mode.allURLConfigs.contains { cleanURL($0.url) == websiteCandidate }
         }
@@ -232,7 +232,7 @@ struct TriggerPickerPopover: View {
     private func triggerCandidateRow(
         systemName: String,
         isSelected: Bool,
-        claimedBy: ModeConfig?,
+        claimedBy: OutputProfile?,
         unavailableMessage: LocalizedStringKey,
         addTitle: LocalizedStringKey,
         removeTitle: LocalizedStringKey,
@@ -396,7 +396,7 @@ struct TriggerPickerPopover: View {
 
     private func addTriggerWordIfPossible() {
         guard canOfferTriggerWord, !isTriggerWordAlreadyAdded, triggerWordClaimedByOtherMode == nil else { return }
-        let normalized = ModeConfig.normalizedTriggerWords([query]).first ?? query
+        let normalized = OutputProfile.normalizedTriggerWords([query]).first ?? query
         triggerWords.append(normalized)
         searchText = ""
     }

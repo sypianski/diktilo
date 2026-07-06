@@ -1,16 +1,16 @@
 import Foundation
 
 struct TranscriptionRuntimeConfiguration {
-    let mode: ModeConfig?
+    let profile: OutputProfile?
     let model: any TranscriptionModel
     let language: String
     let isRealtimeEnabled: Bool
 
     var metadata: (name: String?, emoji: String?) {
-        guard let mode, mode.isEnabled else {
+        guard let profile, profile.isEnabled else {
             return (nil, nil)
         }
-        return (mode.name, mode.icon.value)
+        return (profile.name, profile.icon.value)
     }
 
     var requestContext: TranscriptionRequestContext {
@@ -22,12 +22,12 @@ struct TranscriptionRuntimeConfiguration {
 }
 
 struct TranscriptionFormattingConfiguration {
-    let mode: ModeConfig?
+    let profile: OutputProfile?
     let isTextFormattingEnabled: Bool
 }
 
 struct EnhancementRuntimeConfiguration {
-    let mode: ModeConfig?
+    let profile: OutputProfile?
     let isEnabled: Bool
     let prompt: CustomPrompt?
     let provider: AIProvider?
@@ -38,7 +38,7 @@ struct EnhancementRuntimeConfiguration {
 
     func replacingPrompt(_ prompt: CustomPrompt) -> EnhancementRuntimeConfiguration {
         EnhancementRuntimeConfiguration(
-            mode: mode,
+            profile: profile,
             isEnabled: true,
             prompt: prompt,
             provider: provider,
@@ -51,89 +51,96 @@ struct EnhancementRuntimeConfiguration {
 }
 
 struct OutputRuntimeConfiguration {
-    let mode: ModeConfig?
-    let outputMode: ModeOutputMode
+    let profile: OutputProfile?
+    let outputMode: OutputMode
     let autoSendKey: AutoSendKey
-    let customCommand: ModeCustomCommand?
+    let customCommand: OutputCommand?
 }
 
+/// Resolves the four runtime configurations for a recording.
+///
+/// Transcription (model / language / realtime / paragraph formatting) is now
+/// **global** - see `GlobalTranscriptionSettings`. Only AI enhancement and
+/// output destination vary per `OutputProfile`; the profile is still threaded
+/// through so history metadata (name / icon) reflects the active profile.
 @MainActor
-enum ModeRuntimeResolver {
+enum ProfileRuntimeResolver {
     static func transcriptionConfiguration(
-        mode: ModeConfig? = nil,
+        profile: OutputProfile? = nil,
         transcriptionModelManager: TranscriptionModelManager
     ) -> TranscriptionRuntimeConfiguration? {
-        let mode = mode ?? ModeManager.shared.currentEffectiveConfiguration
+        let profile = profile ?? OutputProfileManager.shared.currentEffectiveConfiguration
         let model = resolvedModel(
-            named: mode?.selectedTranscriptionModelName,
+            named: GlobalTranscriptionSettings.modelName,
             transcriptionModelManager: transcriptionModelManager
         )
 
         guard let model else { return nil }
 
+        let realtimeEnabled = GlobalTranscriptionSettings.isRealtimeEnabled
         let language = TranscriptionLanguageSupport.validLanguageOrFallback(
-            mode?.selectedLanguage,
+            GlobalTranscriptionSettings.language,
             for: model,
-            realtimeEnabled: mode?.isRealtimeTranscriptionEnabled
+            realtimeEnabled: realtimeEnabled
         )
 
         return TranscriptionRuntimeConfiguration(
-            mode: mode,
+            profile: profile,
             model: model,
             language: language,
-            isRealtimeEnabled: TranscriptionRealtimeSupport.isEnabled(for: model, modeValue: mode?.isRealtimeTranscriptionEnabled)
+            isRealtimeEnabled: TranscriptionRealtimeSupport.isEnabled(for: model, modeValue: realtimeEnabled)
         )
     }
 
-    static func transcriptionFormattingConfiguration(mode: ModeConfig? = nil) -> TranscriptionFormattingConfiguration {
-        let mode = mode ?? ModeManager.shared.currentEffectiveConfiguration
+    static func transcriptionFormattingConfiguration(profile: OutputProfile? = nil) -> TranscriptionFormattingConfiguration {
+        let profile = profile ?? OutputProfileManager.shared.currentEffectiveConfiguration
 
         return TranscriptionFormattingConfiguration(
-            mode: mode,
-            isTextFormattingEnabled: mode?.isTextFormattingEnabled ?? UserDefaults.standard.bool(forKey: "IsTextFormattingEnabled")
+            profile: profile,
+            isTextFormattingEnabled: GlobalTranscriptionSettings.isTextFormattingEnabled
         )
     }
 
     static func currentEnhancementConfiguration(
-        mode: ModeConfig? = nil,
+        profile: OutputProfile? = nil,
         enhancementService: AIEnhancementService,
         aiService: AIService
     ) -> EnhancementRuntimeConfiguration {
-        let mode = mode ?? ModeManager.shared.currentEffectiveConfiguration
+        let profile = profile ?? OutputProfileManager.shared.currentEffectiveConfiguration
         let prompt = resolvedPrompt(
-            promptId: mode?.selectedPrompt,
+            promptId: profile?.selectedPrompt,
             enhancementService: enhancementService
         )
         let provider = resolvedProvider(
-            providerName: mode?.selectedAIProvider,
+            providerName: profile?.selectedAIProvider,
             aiService: aiService
         )
         let modelName = resolvedEnhancementModelName(
             provider: provider,
-            configuredModelName: mode?.selectedAIModel,
+            configuredModelName: profile?.selectedAIModel,
             aiService: aiService
         )
 
         return EnhancementRuntimeConfiguration(
-            mode: mode,
-            isEnabled: mode?.isAIEnhancementEnabled ?? false,
+            profile: profile,
+            isEnabled: profile?.isAIEnhancementEnabled ?? false,
             prompt: prompt,
             provider: provider,
             modelName: modelName,
-            useClipboardContext: mode?.useClipboardContext ?? false,
-            useSelectedTextContext: mode?.useSelectedTextContext ?? true,
-            useScreenCaptureContext: mode?.useScreenCapture ?? false
+            useClipboardContext: profile?.useClipboardContext ?? false,
+            useSelectedTextContext: profile?.useSelectedTextContext ?? true,
+            useScreenCaptureContext: profile?.useScreenCapture ?? false
         )
     }
 
-    static func outputConfiguration(mode: ModeConfig? = nil) -> OutputRuntimeConfiguration {
-        let mode = mode ?? ModeManager.shared.currentEffectiveConfiguration
+    static func outputConfiguration(profile: OutputProfile? = nil) -> OutputRuntimeConfiguration {
+        let profile = profile ?? OutputProfileManager.shared.currentEffectiveConfiguration
 
         return OutputRuntimeConfiguration(
-            mode: mode,
-            outputMode: mode?.outputMode ?? .paste,
-            autoSendKey: mode?.autoSendKey ?? .none,
-            customCommand: mode?.customCommand
+            profile: profile,
+            outputMode: profile?.outputMode ?? .paste,
+            autoSendKey: profile?.autoSendKey ?? .none,
+            customCommand: profile?.customCommand
         )
     }
 
