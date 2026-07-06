@@ -104,14 +104,6 @@ struct DashboardContent: View {
 
     private func dashboardMainContent(availableWidth: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: DashboardLayout.sectionSpacing) {
-            licenseStatusMessage
-
-            greetingHeader
-
-            nameEditorDismissArea {
-                heroSection
-            }
-
             if !isAccessibilityEnabled {
                 nameEditorDismissArea {
                     accessibilityReminder
