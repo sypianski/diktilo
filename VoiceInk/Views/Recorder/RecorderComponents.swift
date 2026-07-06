@@ -301,32 +301,54 @@ struct RecorderModeButton: View {
 
 // MARK: - Live Transcript View
 
+private struct TranscriptHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+}
+
 struct LiveTranscriptView: View {
     let text: String
+
+    // Grow with the spoken text (panel is bottom-anchored, so height grows
+    // upward) up to a cap, then scroll. Keeps early lines visible instead of
+    // scrolling them out of a fixed-height window.
+    private let minHeight: CGFloat = 30
+    private let maxHeight: CGFloat = 220
+    @State private var contentHeight: CGFloat = 0
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 Text(text)
                     .font(.system(size: 13))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white.opacity(0.85))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 8)
+                    .background(
+                        GeometryReader { geo in
+                            Color.clear.preference(key: TranscriptHeightKey.self, value: geo.size.height)
+                        }
+                    )
                     .id("bottom")
             }
-            .frame(height: 56)
+            .frame(height: min(max(contentHeight, minHeight), maxHeight))
+            .onPreferenceChange(TranscriptHeightKey.self) { newValue in
+                contentHeight = newValue
+            }
             .mask(
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0.0),
-                        .init(color: .black, location: 0.18),
-                        .init(color: .black, location: 1.0)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                contentHeight > maxHeight
+                    ? AnyView(LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0.0),
+                            .init(color: .black, location: 0.14),
+                            .init(color: .black, location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ))
+                    : AnyView(Color.black)
             )
             .onChange(of: text) {
                 proxy.scrollTo("bottom", anchor: .bottom)
