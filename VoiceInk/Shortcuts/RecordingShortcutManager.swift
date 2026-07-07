@@ -303,7 +303,7 @@ class RecordingShortcutManager: ObservableObject {
         case .openVimEditor:
             TranscriptEditManager.shared.present(text: "")
         case .openWorek:
-            WorekWindowController.shared.toggle()
+            SakoClient.shared.openApp()
         default:
             break
         }

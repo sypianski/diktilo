@@ -133,7 +133,7 @@ struct SettingsView: View {
                         .controlSize(.small)
                 }
 
-                LabeledContent("Open Worek") {
+                LabeledContent("Open Sako") {
                     ShortcutRecorder(action: .openWorek) {
                         recordingShortcutManager.updateShortcutStatus()
                     }

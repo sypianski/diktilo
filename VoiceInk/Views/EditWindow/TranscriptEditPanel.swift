@@ -44,7 +44,7 @@ final class TranscriptEditManager {
             },
             onSaveToWorek: saveToWorek ? { [weak self] savedText in
                 Task { @MainActor in
-                    WorekStore.shared.add(text: savedText)
+                    SakoClient.shared.send(text: savedText)
                     SoundManager.shared.playStopSound()
                     self?.hide()
                     onDone?()

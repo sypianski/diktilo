@@ -80,7 +80,7 @@ enum ShortcutAction: Hashable {
         case .openVimEditor:
             return String(localized: "Open Vim Editor")
         case .openWorek:
-            return String(localized: "Open Worek")
+            return String(localized: "Open Sako")
         case .profile(let id):
             if let config = OutputProfileManager.shared.getConfiguration(with: id) {
                 return String(format: String(localized: "%@ Mode"), config.name)
