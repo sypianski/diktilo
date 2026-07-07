@@ -689,12 +689,49 @@ final class VimEngine {
 final class VimNSTextView: NSTextView {
     var engine: VimEngine?
     var vimEnabled = false
-    /// Cmd+Return commit handler (works in every mode).
+    /// Cmd+Return / Ctrl+Return commit handler (works in every mode).
     var onCommit: (() -> Void)?
     /// Opt+Return save-to-bag handler (works in every mode).
     var onSaveToWorek: (() -> Void)?
     /// Escape-with-no-Vim cancel handler.
     var onCancelPlain: (() -> Void)?
+
+    // Local event monitor — catches ⌘↵/⌃↵ regardless of how AppKit routes
+    // the event. Karabiner-generated Enter events may arrive without the
+    // expected modifier flags in keyDown/performKeyEquivalent, so we inspect
+    // both event.modifierFlags and NSEvent.modifierFlags (live keyboard state).
+    private var keyMonitor: Any?
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if window != nil {
+            installMonitor()
+        } else {
+            removeMonitor()
+        }
+    }
+
+    private func installMonitor() {
+        guard keyMonitor == nil else { return }
+        keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self, event.keyCode == 36,
+                  self.window?.isKeyWindow == true else { return event }
+            let ev   = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            let live = NSEvent.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            let cmd  = ev.contains(.command)  || live.contains(.command)
+            let ctrl = ev.contains(.control)  || live.contains(.control)
+            let opt  = ev.contains(.option)   || live.contains(.option)
+            if (cmd || ctrl) && !opt { self.onCommit?(); return nil }
+            if opt && !cmd && !ctrl  { self.onSaveToWorek?(); return nil }
+            return event
+        }
+    }
+
+    private func removeMonitor() {
+        if let m = keyMonitor { NSEvent.removeMonitor(m); keyMonitor = nil }
+    }
+
+    deinit { removeMonitor() }
 
     // Block cursor in NORMAL/VISUAL modes.
     override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn: Bool) {
