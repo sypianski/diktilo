@@ -722,8 +722,19 @@ final class VimNSTextView: NSTextView {
         setNeedsDisplay(visibleRect)
     }
 
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        // ⌘Enter commits — intercepted here because AppKit routes ⌘+key
+        // through performKeyEquivalent, not keyDown.
+        if event.keyCode == 36, event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command {
+            onCommit?()
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+
     override func keyDown(with event: NSEvent) {
-        // Cmd+Return always commits.
+        // Cmd+Return always commits — fallback for synthesised events
+        // (e.g. Karabiner) that arrive via keyDown instead of performKeyEquivalent.
         if event.keyCode == 36, event.modifierFlags.contains(.command) {
             onCommit?()
             return
