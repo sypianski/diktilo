@@ -734,18 +734,22 @@ final class VimNSTextView: NSTextView {
 
     override func keyDown(with event: NSEvent) {
         if event.keyCode == 36 {
-            // Use NSEvent.modifierFlags (live keyboard state) in addition to
-            // event.modifierFlags — Karabiner strips Command from synthesised
-            // Enter events even when the physical ⌘ key is held.
-            let liveCmd  = NSEvent.modifierFlags.contains(.command)
-            let evtCmd   = event.modifierFlags.contains(.command)
-            let liveOpt  = NSEvent.modifierFlags.contains(.option)
-            let evtOpt   = event.modifierFlags.contains(.option)
-            if evtCmd || (liveCmd && !liveOpt) {
+            // Use NSEvent.modifierFlags (live keyboard state) alongside
+            // event.modifierFlags — Karabiner may strip modifiers from
+            // synthesised Enter events.
+            let liveCmd = NSEvent.modifierFlags.contains(.command)
+            let liveCtrl = NSEvent.modifierFlags.contains(.control)
+            let evtCmd  = event.modifierFlags.contains(.command)
+            let evtCtrl = event.modifierFlags.contains(.control)
+            let liveOpt = NSEvent.modifierFlags.contains(.option)
+            let evtOpt  = event.modifierFlags.contains(.option)
+            // ⌘↵ or ⌃↵ → commit
+            if evtCmd || evtCtrl || (liveCmd && !liveOpt) || (liveCtrl && !liveOpt) {
                 onCommit?()
                 return
             }
-            if (evtOpt || liveOpt), !evtCmd, !liveCmd {
+            // ⌥↵ → Worek
+            if (evtOpt || liveOpt), !evtCmd, !liveCmd, !evtCtrl, !liveCtrl {
                 onSaveToWorek?()
                 return
             }

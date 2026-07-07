@@ -251,7 +251,7 @@ struct TranscriptEditView: View {
                 switch mode {
                 case .insert:
                     hint("ESC", "→ NORMAL")
-                    hint("⌘↵", "Kopiuj")
+                    hint("⌘↵/⌃↵", "Kopiuj")
                     if onSaveToWorek != nil { hint("⌥↵", "Worek") }
                 case .commandLine, .search:
                     hint("↵", "Wykonaj")
@@ -266,7 +266,7 @@ struct TranscriptEditView: View {
                 }
             } else {
                 Spacer()
-                hint("⌘↵", "Kopiuj")
+                hint("⌘↵/⌃↵", "Kopiuj")
                 if onSaveToWorek != nil { hint("⌥↵", "Worek") }
                 hint("ESC", "Anuluj")
             }
