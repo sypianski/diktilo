@@ -733,17 +733,22 @@ final class VimNSTextView: NSTextView {
     }
 
     override func keyDown(with event: NSEvent) {
-        // Cmd+Return always commits — fallback for synthesised events
-        // (e.g. Karabiner) that arrive via keyDown instead of performKeyEquivalent.
-        if event.keyCode == 36, event.modifierFlags.contains(.command) {
-            onCommit?()
-            return
-        }
-        // Opt+Return saves to bag.
-        if event.keyCode == 36, event.modifierFlags.contains(.option),
-           !event.modifierFlags.contains(.command) {
-            onSaveToWorek?()
-            return
+        if event.keyCode == 36 {
+            // Use NSEvent.modifierFlags (live keyboard state) in addition to
+            // event.modifierFlags — Karabiner strips Command from synthesised
+            // Enter events even when the physical ⌘ key is held.
+            let liveCmd  = NSEvent.modifierFlags.contains(.command)
+            let evtCmd   = event.modifierFlags.contains(.command)
+            let liveOpt  = NSEvent.modifierFlags.contains(.option)
+            let evtOpt   = event.modifierFlags.contains(.option)
+            if evtCmd || (liveCmd && !liveOpt) {
+                onCommit?()
+                return
+            }
+            if (evtOpt || liveOpt), !evtCmd, !liveCmd {
+                onSaveToWorek?()
+                return
+            }
         }
 
         guard vimEnabled, let engine else {
