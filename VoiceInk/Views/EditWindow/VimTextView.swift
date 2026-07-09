@@ -807,39 +807,47 @@ final class VimNSTextView: NSTextView {
 
     deinit { removeMonitor() }
 
-    // Block cursor in NORMAL mode; thin line in INSERT/COMMAND/SEARCH.
+    // In normal mode: hide the system cursor, draw our own block in draw(_:).
+    // In other modes: let the system draw the standard blinking line.
     override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn: Bool) {
         guard vimEnabled, let engine, engine.mode == .normal else {
             super.drawInsertionPoint(in: rect, color: color, turnedOn: turnedOn)
             return
         }
-        // Normal mode: solid block (vim convention — no blink, always visible).
-        let blockWidth = glyphWidth(at: selectedRange().location)
-        color.withAlphaComponent(0.55).setFill()
-        NSRect(x: rect.minX, y: rect.minY, width: blockWidth, height: rect.height).fill()
+        // Do nothing — block is drawn in draw(_:) instead.
     }
 
-    private func glyphWidth(at loc: Int) -> CGFloat {
-        if let lm = layoutManager, let tc = textContainer, loc < string.utf16.count {
-            let glyph = lm.glyphIndexForCharacter(at: loc)
-            let r = lm.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: tc)
-            if r.width > 0 { return r.width }
-        }
-        // Font-metric fallback (reliable for monospace; works when TextKit 2 is active).
-        if let f = font {
-            let w = (" " as NSString).size(withAttributes: [.font: f]).width
-            if w > 0 { return w }
-        }
-        return 8
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+
+        guard vimEnabled, let engine, engine.mode == .normal,
+              let lm = layoutManager, let tc = textContainer else { return }
+
+        let loc     = selectedRange().location
+        let inset   = textContainerInset
+        let charIdx = min(loc, max(0, string.utf16.count - 1))
+        let glyph   = lm.glyphIndexForCharacter(at: charIdx)
+        let lineRect = lm.lineFragmentRect(forGlyphAt: glyph, effectiveRange: nil)
+        let glyphPt  = lm.location(forGlyphAt: glyph)
+        let charW    = lm.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: tc).width
+        let w        = charW > 0 ? charW : monoCharWidth()
+        let blockRect = NSRect(x: lineRect.minX + glyphPt.x + inset.width,
+                               y: lineRect.minY + inset.height,
+                               width: w, height: lineRect.height)
+
+        insertionPointColor.withAlphaComponent(0.55).setFill()
+        blockRect.fill()
+    }
+
+    private func monoCharWidth() -> CGFloat {
+        guard let f = font else { return 8 }
+        return ceil((" " as NSString).size(withAttributes: [.font: f]).width)
     }
 
     // Trigger redraw on mode change so cursor shape updates immediately.
     func updateCursorDisplay() {
         needsDisplay = true
         setNeedsDisplay(visibleRect)
-        // Restart blink timer in the ON phase so the block appears right away
-        // instead of waiting for the next timer tick.
-        updateInsertionPointStateAndRestartTimer(true)
     }
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
