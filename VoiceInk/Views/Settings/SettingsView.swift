@@ -15,7 +15,6 @@ struct SettingsView: View {
     @ObservedObject private var playbackController = PlaybackController.shared
     @AppStorage("hasCompletedOnboardingV2") private var hasCompletedOnboardingV2 = true
     @AppStorage("enableAnnouncements") private var enableAnnouncements = true
-    @AppStorage(TranscriptEditManager.vimEnabledKey) private var editWindowVimEnabled = false
     @AppStorage("restoreClipboardAfterPaste") private var restoreClipboardAfterPaste = true
     @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
     @AppStorage(PasteMethod.userDefaultsKey) private var pasteMethodRawValue = PasteMethod.standard.rawValue
@@ -281,13 +280,6 @@ struct SettingsView: View {
                             AnnouncementsService.shared.stop()
                         }
                     }
-
-                Toggle(isOn: $editWindowVimEnabled) {
-                    HStack(spacing: 4) {
-                        Text("Vim Mode in Edit Window")
-                        InfoTip("Enables Vim keybindings (normal/insert/visual, motions, operators, /search) when a mode outputs to the Edit Window. Press ⌘↵ or :w to copy the edited text back to the clipboard.")
-                    }
-                }
 
                 HStack {
                     Button("Check for Updates") {
