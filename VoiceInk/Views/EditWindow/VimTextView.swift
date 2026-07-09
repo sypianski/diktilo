@@ -807,51 +807,107 @@ final class VimNSTextView: NSTextView {
 
     deinit { removeMonitor() }
 
-    // Block cursor in normal mode using the system-supplied rect (correct position).
+    // MARK: - Block cursor
+
+    // On macOS 14+, NSTextView uses NSTextInsertionIndicator (a subview) for
+    // cursor rendering — drawInsertionPoint is no longer called. We work around
+    // this by:
+    //   1. Hiding the system indicator subview in normal mode.
+    //   2. Positioning our own NSView overlay at the glyph rect.
+    //   3. Keeping drawInsertionPoint as a fallback for TextKit 1 paths.
+
+    private weak var blockCursorOverlay: NSView?
+
+    // Called whenever the caret moves (normal editing + vim engine).
+    override func setSelectedRange(_ charRange: NSRange) {
+        super.setSelectedRange(charRange)
+        refreshBlockCursor()
+    }
+
+    override func setSelectedRanges(_ ranges: [NSValue],
+                                    affinity: NSSelectionAffinity,
+                                    stillSelecting flag: Bool) {
+        super.setSelectedRanges(ranges, affinity: affinity, stillSelecting: flag)
+        refreshBlockCursor()
+    }
+
+    private func refreshBlockCursor() {
+        let inNormal = vimEnabled && engine?.mode == .normal
+        // Hide the system indicator.
+        for v in subviews where String(describing: type(of: v)) == "NSTextInsertionIndicator" {
+            v.isHidden = inNormal
+        }
+        guard inNormal, let lm = layoutManager, let tc = textContainer else {
+            blockCursorOverlay?.isHidden = true
+            return
+        }
+        // Lazy-create overlay.
+        if blockCursorOverlay == nil {
+            let v = NSView()
+            v.wantsLayer = true
+            addSubview(v, positioned: .above, relativeTo: nil)
+            blockCursorOverlay = v
+        }
+        guard let overlay = blockCursorOverlay else { return }
+        overlay.layer?.backgroundColor =
+            NSColor.controlTextColor.withAlphaComponent(0.55).cgColor
+        // Compute block rect in view coordinates.
+        let loc     = selectedRange().location
+        let charIdx = min(loc, max(0, string.utf16.count - 1))
+        let glyph   = lm.glyphIndexForCharacter(at: charIdx)
+        let origin  = textContainerOrigin
+        var r = lm.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: tc)
+        if r.width < 1 { r.size.width = monoCharWidth() }
+        r.origin.x += origin.x
+        r.origin.y += origin.y
+        overlay.frame = r
+        overlay.isHidden = false
+    }
+
+    // Fallback for TextKit 1 paths where drawInsertionPoint is still called.
     override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn: Bool) {
         guard vimEnabled, let engine, engine.mode == .normal else {
             super.drawInsertionPoint(in: rect, color: color, turnedOn: turnedOn)
             return
         }
-        // Solid block — always on, no blink, width = one character.
-        let w = glyphWidth(at: selectedRange().location)
+        // Solid block using system rect (correct position, no blink).
+        let w = monoCharWidth()
         NSColor.controlTextColor.withAlphaComponent(0.55).setFill()
         NSRect(x: rect.minX, y: rect.minY, width: w, height: rect.height).fill()
     }
 
-    private func glyphWidth(at loc: Int) -> CGFloat {
-        if let lm = layoutManager, let tc = textContainer, loc < string.utf16.count {
-            let glyph = lm.glyphIndexForCharacter(at: loc)
-            let r = lm.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: tc)
-            if r.width > 0 { return r.width }
-        }
-        if let f = font {
-            let w = (" " as NSString).size(withAttributes: [.font: f]).width
-            if w > 0 { return w }
-        }
-        return 8
-    }
-
-    // Hide/show NSTextInsertionIndicator — the macOS 14+ view-based cursor
-    // that renders independently of drawInsertionPoint.
     override func updateInsertionPointStateAndRestartTimer(_ flag: Bool) {
         super.updateInsertionPointStateAndRestartTimer(flag)
-        applyIndicatorVisibility()
+        // Re-hide indicator after every system update.
+        if vimEnabled, engine?.mode == .normal {
+            for v in subviews where String(describing: type(of: v)) == "NSTextInsertionIndicator" {
+                v.isHidden = true
+            }
+        }
     }
 
-    private func applyIndicatorVisibility() {
-        let hide = vimEnabled && engine?.mode == .normal
-        for v in subviews where String(describing: type(of: v)) == "NSTextInsertionIndicator" {
-            v.isHidden = hide
+    private func monoCharWidth() -> CGFloat {
+        guard let f = font else { return 8 }
+        if let lm = layoutManager, let tc = textContainer {
+            let loc = selectedRange().location
+            if loc < string.utf16.count {
+                let g = lm.glyphIndexForCharacter(at: loc)
+                let w = lm.boundingRect(forGlyphRange: NSRange(location: g, length: 1), in: tc).width
+                if w > 0 { return w }
+            }
         }
+        return ceil((" " as NSString).size(withAttributes: [.font: f]).width)
     }
 
     // Trigger redraw on mode change so cursor shape updates immediately.
     func updateCursorDisplay() {
-        applyIndicatorVisibility()
+        refreshBlockCursor()
         needsDisplay = true
         setNeedsDisplay(visibleRect)
-        updateInsertionPointStateAndRestartTimer(true)
+        if vimEnabled, engine?.mode != .normal {
+            blockCursorOverlay?.isHidden = true
+            updateInsertionPointStateAndRestartTimer(true)
+        }
     }
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
