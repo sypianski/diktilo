@@ -913,14 +913,29 @@ struct VimTextView: NSViewRepresentable {
     var onSaveToWorek: (() -> Void)? = nil
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = NSTextView.scrollableTextView()
-        guard let defaultTextView = scrollView.documentView as? NSTextView else {
-            return scrollView
-        }
+        // Build the TextKit 1 stack explicitly.
+        // NSTextView.scrollableTextView() uses TextKit 2 on macOS 12+, which
+        // bypasses drawInsertionPoint entirely. Explicit NSLayoutManager forces
+        // TextKit 1, restoring the drawInsertionPoint block-cursor override.
+        let storage = NSTextStorage()
+        let layoutManager = NSLayoutManager()
+        storage.addLayoutManager(layoutManager)
+        let container = NSTextContainer(size: NSSize(width: 0, height: 1_000_000))
+        container.widthTracksTextView = true
+        layoutManager.addTextContainer(container)
 
-        // Swap in our subclass sharing the same text container.
-        let textView = VimNSTextView(frame: defaultTextView.frame, textContainer: defaultTextView.textContainer)
-        textView.autoresizingMask = defaultTextView.autoresizingMask
+        let textView = VimNSTextView(frame: .zero, textContainer: container)
+        textView.minSize = .zero
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude,
+                                  height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
+
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
         scrollView.documentView = textView
 
         textView.delegate = context.coordinator
