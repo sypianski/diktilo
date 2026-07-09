@@ -62,6 +62,11 @@ final class VimEngine {
     private var pendingOperator: Character?   // 'd', 'c', 'y'
     private var pendingG = false
     private var visualAnchor = 0
+    // The moving end of the visual selection. NSTextView only exposes
+    // location+length, so deriving the caret from selectedRange().location
+    // would snap back to the selection start after every motion — the head
+    // must be tracked separately.
+    private var visualHead = 0
 
     // Registers.
     private var register = ""
@@ -76,7 +81,9 @@ final class VimEngine {
     }
 
     private var ns: NSString { textView.string as NSString }
-    private var caret: Int { textView.selectedRange().location }
+    private var caret: Int {
+        isVisual ? visualHead : textView.selectedRange().location
+    }
 
     // MARK: Entry point
 
@@ -139,6 +146,7 @@ final class VimEngine {
         case "u", "d": // half-page scroll — approximate with several lines
             let motion: Motion = key == "u" ? .up : .down
             for _ in 0..<10 { moveCaret(to: motionTarget(motion, from: caret, count: 1)) }
+            if isVisual { extendVisualSelection() }
             return true
         default:
             return true
@@ -203,24 +211,35 @@ final class VimEngine {
 
         // Inserts
         case "i": enterInsert(at: caret)
-        case "a": enterInsert(at: min(caret + 1, lineContentEnd(at: caret) + 1))
+        case "a": enterInsert(at: min(caret + 1, lineContentEnd(at: caret)))
         case "I": enterInsert(at: firstNonBlank(at: caret))
-        case "A": enterInsert(at: lineContentEnd(at: caret) + (isEmptyLine(at: caret) ? 0 : 1))
+        case "A": enterInsert(at: lineContentEnd(at: caret))
         case "o": openLine(below: true)
         case "O": openLine(below: false)
 
         // Paste
-        case "p": paste(after: true)
-        case "P": paste(after: false)
+        case "p", "P":
+            if isVisual { pasteOverVisual() }
+            else { paste(after: ch == "p") }
 
         // Visual
         case "v":
             if mode == .visual { enterNormal(clampLeft: false) }
-            else { visualAnchor = caret; mode = .visual }
+            else {
+                visualAnchor = caret
+                visualHead = visualAnchor
+                mode = .visual
+                extendVisualSelection()
+            }
             resetPendingKeepMode()
         case "V":
             if mode == .visualLine { enterNormal(clampLeft: false) }
-            else { visualAnchor = caret; mode = .visualLine; extendVisualSelection() }
+            else {
+                visualAnchor = caret
+                visualHead = visualAnchor
+                mode = .visualLine
+                extendVisualSelection()
+            }
             resetPendingKeepMode()
 
         // Undo
@@ -259,8 +278,16 @@ final class VimEngine {
         replace(range: sel, with: "")
         if op == "c" {
             mode = .insert
+            moveCaret(to: sel.location)
+            resetPendingKeepMode()
         } else {
-            enterNormal(clampLeft: true)
+            // Caret lands where the selection began, clamped into the line —
+            // the pre-delete visual head is stale by now.
+            mode = .normal
+            let ls = lineStart(at: sel.location)
+            let le = lineContentEnd(at: sel.location)
+            moveCaret(to: min(sel.location, max(ls, le - (le > ls ? 1 : 0))))
+            resetPendingKeepMode()
         }
     }
 
@@ -275,9 +302,15 @@ final class VimEngine {
                 let lines = motion == .down ? count : -count
                 applyLinewiseOperator(op, lineCount: abs(lines) + 1, upward: lines < 0)
             } else {
+                // Vim quirk: "cw" on a word acts like "ce" — it must not eat
+                // the whitespace after the word.
+                let effective: Motion =
+                    (op == "c" && motion == .wordFwd && caret < ns.length
+                     && classOf(ns.character(at: caret)) != .whitespace)
+                    ? .wordEnd : motion
                 var target = caret
-                for _ in 0..<count { target = motionTarget(motion, from: target, count: 1) }
-                let inclusive = (motion == .wordEnd || motion == .lineEnd)
+                for _ in 0..<count { target = motionTarget(effective, from: target, count: 1) }
+                let inclusive = (effective == .wordEnd || effective == .lineEnd)
                 let end = inclusive ? min(target + 1, ns.length) : target
                 operatorRange(from: caret, to: end, linewise: false, op: op)
             }
@@ -300,7 +333,8 @@ final class VimEngine {
             return max(ls, pos - 1)
         case .right:
             let le = lineContentEnd(at: pos)
-            let cap = (mode == .normal) ? max(le - 1, lineStart(at: pos)) : le
+            // Both normal and visual keep the caret ON the last character.
+            let cap = max(le - 1, lineStart(at: pos))
             return min(cap, pos + 1)
         case .down:
             return verticalMove(from: pos, lines: 1)
@@ -318,7 +352,7 @@ final class VimEngine {
             return firstNonBlank(at: pos)
         case .lineEnd:
             let le = lineContentEnd(at: pos)
-            return (mode == .normal) ? max(le - 1, lineStart(at: pos)) : le
+            return max(le - 1, lineStart(at: pos))
         case .fileStart:
             return firstNonBlank(at: 0)
         case .fileEnd:
@@ -399,6 +433,7 @@ final class VimEngine {
         }
         if found.location != NSNotFound {
             moveCaret(to: found.location)
+            if isVisual { extendVisualSelection() }
         }
     }
 
@@ -411,12 +446,16 @@ final class VimEngine {
     }
 
     private func enterNormal(clampLeft: Bool) {
+        let head = caret // visualHead while visual — read before the mode flips
         mode = .normal
+        let ls = lineStart(at: head)
+        let le = lineContentEnd(at: head)
+        // Normal-mode caret sits ON a character, never past the last one.
+        let capped = min(head, max(ls, le - (le > ls ? 1 : 0)))
         if clampLeft {
-            let ls = lineStart(at: caret)
-            moveCaret(to: max(ls, caret - 1))
+            moveCaret(to: max(ls, min(head, le) - 1))
         } else {
-            moveCaret(to: min(caret, max(0, ns.length)))
+            moveCaret(to: capped)
         }
         resetPendingKeepMode()
     }
@@ -436,7 +475,6 @@ final class VimEngine {
     }
 
     private func openLine(below: Bool) {
-        let target = below ? lineContentEnd(at: caret) + (isEmptyLine(at: caret) ? 0 : 1) : lineStart(at: caret)
         if below {
             let insertAt = min(lineFullEnd(at: caret), ns.length)
             replace(range: NSRange(location: insertAt, length: 0), with: "\n")
@@ -446,7 +484,6 @@ final class VimEngine {
             replace(range: NSRange(location: ls, length: 0), with: "\n")
             enterInsert(at: ls)
         }
-        _ = target
     }
 
     private func applyLinewiseOperator(_ op: Character, lineCount: Int, upward: Bool = false) {
@@ -481,9 +518,16 @@ final class VimEngine {
             return
         }
 
-        // delete whole line(s)
-        replace(range: range, with: "")
-        let newCaret = min(startLine, max(0, ns.length - 1))
+        // delete whole line(s); when the range reaches EOF without a trailing
+        // newline, consume the preceding newline instead so no empty line is
+        // left behind (matches Vim's dd on the last line)
+        var delRange = range
+        if endExclusive >= ns.length, startLine > 0,
+           ns.character(at: startLine - 1) == 10 {
+            delRange = NSRange(location: startLine - 1, length: endExclusive - (startLine - 1))
+        }
+        replace(range: delRange, with: "")
+        let newCaret = min(delRange.location, max(0, ns.length - 1))
         moveCaret(to: firstNonBlank(at: newCaret))
     }
 
@@ -511,15 +555,41 @@ final class VimEngine {
     private func paste(after: Bool) {
         guard !register.isEmpty else { return }
         if registerLinewise {
-            let insertAt = after ? lineFullEnd(at: caret) : lineStart(at: caret)
-            let payload = register.hasSuffix("\n") ? register : register + "\n"
+            var insertAt = after ? lineFullEnd(at: caret) : lineStart(at: caret)
+            var payload = register.hasSuffix("\n") ? register : register + "\n"
+            var pastedLineStart = insertAt
+            if after, insertAt >= ns.length, ns.length > 0,
+               ns.character(at: ns.length - 1) != 10 {
+                // Pasting below a last line that has no trailing newline:
+                // lead with \n instead of appending one, or the register
+                // glues onto the current line.
+                payload = "\n" + String(payload.dropLast())
+                insertAt = ns.length
+                pastedLineStart = insertAt + 1
+            }
             replace(range: NSRange(location: insertAt, length: 0), with: payload)
-            moveCaret(to: firstNonBlank(at: insertAt))
+            moveCaret(to: firstNonBlank(at: pastedLineStart))
         } else {
             let insertAt = after ? min(caret + (isEmptyLine(at: caret) ? 0 : 1), lineContentEnd(at: caret) + 1) : caret
             replace(range: NSRange(location: insertAt, length: 0), with: register)
             moveCaret(to: insertAt + (register as NSString).length - 1)
         }
+    }
+
+    /// Visual-mode p: replace the selection with the register contents.
+    private func pasteOverVisual() {
+        let sel = textView.selectedRange()
+        guard sel.length > 0, !register.isEmpty else {
+            enterNormal(clampLeft: false)
+            return
+        }
+        let payload = registerLinewise
+            ? register.trimmingCharacters(in: .newlines)
+            : register
+        replace(range: sel, with: payload)
+        mode = .normal
+        moveCaret(to: max(sel.location, sel.location + (payload as NSString).length - 1))
+        resetPendingKeepMode()
     }
 
     private func yankRange(_ range: NSRange, linewise: Bool) {
@@ -539,6 +609,10 @@ final class VimEngine {
 
     private func moveCaret(to index: Int) {
         let clamped = min(max(0, index), ns.length)
+        visualHead = clamped
+        // In visual modes the selection is owned by extendVisualSelection();
+        // collapsing it here would flicker and lose the anchor.
+        guard !isVisual else { return }
         textView.setSelectedRange(NSRange(location: clamped, length: 0))
     }
 
@@ -596,7 +670,7 @@ final class VimEngine {
         let le = lineContentEnd(at: pos)
         var i = ls
         while i < le, isWhitespace(ns.character(at: i)) { i += 1 }
-        return min(i, max(ls, le - (mode == .normal && le > ls ? 1 : 0)))
+        return min(i, max(ls, le - (le > ls ? 1 : 0)))
     }
 
     private func isEmptyLine(at pos: Int) -> Bool {
@@ -610,13 +684,13 @@ final class VimEngine {
             let nextStart = lineFullEnd(at: pos)
             guard nextStart < ns.length else { return pos }
             let nextEnd = lineContentEnd(at: nextStart)
-            let cap = (mode == .normal) ? max(nextStart, nextEnd - 1) : nextEnd
+            let cap = max(nextStart, nextEnd - 1)
             return min(nextStart + col, cap)
         } else {
             guard ls > 0 else { return pos }
             let prevStart = lineStart(at: ls - 1)
             let prevEnd = lineContentEnd(at: prevStart)
-            let cap = (mode == .normal) ? max(prevStart, prevEnd - 1) : prevEnd
+            let cap = max(prevStart, prevEnd - 1)
             return min(prevStart + col, cap)
         }
     }
