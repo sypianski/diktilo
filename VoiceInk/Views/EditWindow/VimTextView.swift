@@ -807,47 +807,51 @@ final class VimNSTextView: NSTextView {
 
     deinit { removeMonitor() }
 
-    // In normal mode: hide the system cursor, draw our own block in draw(_:).
-    // In other modes: let the system draw the standard blinking line.
+    // Block cursor in normal mode using the system-supplied rect (correct position).
     override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn: Bool) {
         guard vimEnabled, let engine, engine.mode == .normal else {
             super.drawInsertionPoint(in: rect, color: color, turnedOn: turnedOn)
             return
         }
-        // Do nothing — block is drawn in draw(_:) instead.
+        // Solid block — always on, no blink, width = one character.
+        let w = glyphWidth(at: selectedRange().location)
+        NSColor.controlTextColor.withAlphaComponent(0.55).setFill()
+        NSRect(x: rect.minX, y: rect.minY, width: w, height: rect.height).fill()
     }
 
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-
-        guard vimEnabled, let engine, engine.mode == .normal,
-              let lm = layoutManager, let tc = textContainer else { return }
-
-        let loc     = selectedRange().location
-        let inset   = textContainerInset
-        let charIdx = min(loc, max(0, string.utf16.count - 1))
-        let glyph   = lm.glyphIndexForCharacter(at: charIdx)
-        let lineRect = lm.lineFragmentRect(forGlyphAt: glyph, effectiveRange: nil)
-        let glyphPt  = lm.location(forGlyphAt: glyph)
-        let charW    = lm.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: tc).width
-        let w        = charW > 0 ? charW : monoCharWidth()
-        let blockRect = NSRect(x: lineRect.minX + glyphPt.x + inset.width,
-                               y: lineRect.minY + inset.height,
-                               width: w, height: lineRect.height)
-
-        insertionPointColor.withAlphaComponent(0.55).setFill()
-        blockRect.fill()
+    private func glyphWidth(at loc: Int) -> CGFloat {
+        if let lm = layoutManager, let tc = textContainer, loc < string.utf16.count {
+            let glyph = lm.glyphIndexForCharacter(at: loc)
+            let r = lm.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: tc)
+            if r.width > 0 { return r.width }
+        }
+        if let f = font {
+            let w = (" " as NSString).size(withAttributes: [.font: f]).width
+            if w > 0 { return w }
+        }
+        return 8
     }
 
-    private func monoCharWidth() -> CGFloat {
-        guard let f = font else { return 8 }
-        return ceil((" " as NSString).size(withAttributes: [.font: f]).width)
+    // Hide/show NSTextInsertionIndicator — the macOS 14+ view-based cursor
+    // that renders independently of drawInsertionPoint.
+    override func updateInsertionPointStateAndRestartTimer(_ flag: Bool) {
+        super.updateInsertionPointStateAndRestartTimer(flag)
+        applyIndicatorVisibility()
+    }
+
+    private func applyIndicatorVisibility() {
+        let hide = vimEnabled && engine?.mode == .normal
+        for v in subviews where String(describing: type(of: v)) == "NSTextInsertionIndicator" {
+            v.isHidden = hide
+        }
     }
 
     // Trigger redraw on mode change so cursor shape updates immediately.
     func updateCursorDisplay() {
+        applyIndicatorVisibility()
         needsDisplay = true
         setNeedsDisplay(visibleRect)
+        updateInsertionPointStateAndRestartTimer(true)
     }
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
