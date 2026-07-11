@@ -136,14 +136,21 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
 
     // MARK: - Presets
 
-    /// Notaro (cc.sypianski.notaro) ingests via notaro://add?text=…&source=…;
-    /// the source parameter feeds its note classifier, so keep it stable.
+    /// Notaro ingest goes through its CLI (`notaro add`), not the notaro://
+    /// URL scheme — macOS activates the handler app on a cold start no matter
+    /// what the opener asks for, while the CLI writes straight to the shared
+    /// SQLite database and the GUI picks changes up via a file watcher.
+    /// Bundle path avoids depending on a PATH symlink. --quiet: diktilo
+    /// already confirms delivery in the recorder panel. The source value
+    /// feeds Notaro's note classifier, so keep it stable.
     static func notaroPreset() -> SaveTargetConfig {
         SaveTargetConfig(
             id: UUID(),
             name: "Notaro",
             icon: "note.text",
-            strategy: .urlScheme(template: "notaro://add?text={{text}}&source=diktilo", activates: false)
+            strategy: .shellCommand(
+                command: "'/Applications/Notaro.app/Contents/MacOS/notaro' add - --source diktilo --quiet"
+            )
         )
     }
 }
