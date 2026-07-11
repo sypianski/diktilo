@@ -158,6 +158,12 @@ final class TranscriptionDelivery {
             return
         }
 
+        // Safety net: the save runs detached after the panel dismisses, so put
+        // the text on the clipboard first — it survives even a forced quit.
+        if !ClipboardManager.setClipboard(text) {
+            logger.error("Pre-save clipboard safety copy failed")
+        }
+
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 

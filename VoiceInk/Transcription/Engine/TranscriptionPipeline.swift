@@ -282,6 +282,10 @@ class TranscriptionPipeline {
             // Override destinations are never .respond, so drop any pending
             // in-recorder response so the delivery routes to the new mode.
             deliveryResponseConfig = nil
+        } else if assistant.isFollowUp {
+            // Follow-up sessions always deliver via the assistant path; drain
+            // any override armed mid-session so it cannot linger as state.
+            DeliveryDestinationOverride.shared.clear()
         }
 
         await delivery.deliver(
