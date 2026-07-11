@@ -33,6 +33,34 @@ enum ShortcutMigration {
     static func migrateLegacyShortcutsIfNeeded() {
         discardLegacyCustomRecordingShortcutsIfNeeded()
         migrateLegacyKeyboardShortcutsIfNeeded()
+        migrateOptionNSaveTargetsToControlOptionIfNeeded()
+    }
+
+    /// The Notaro preset used to default to ⌥N, and the three fixed
+    /// destinations to ⌥C/⌥V/⌥E. All are now Ctrl+Option to dodge the Polish
+    /// Pro dead keys (ć/ę/ń). The fixed fallbacks were never persisted (only the
+    /// constants changed), but an explicitly stored save-target ⌥N binding needs
+    /// rewriting once. Migrate ONLY an exact ⌥N (option, no other modifiers) →
+    /// ⌃⌥N; leave every other user binding untouched.
+    private static func migrateOptionNSaveTargetsToControlOptionIfNeeded() {
+        let migrationKey = "Shortcut_OptionNSaveTargetsToControlOptionMigrated"
+        guard !UserDefaults.standard.bool(forKey: migrationKey) else {
+            return
+        }
+
+        let oldShortcut = Shortcut.key(keyCode: UInt16(kVK_ANSI_N), modifierFlags: [.option])
+        let newShortcut = Shortcut.key(keyCode: UInt16(kVK_ANSI_N), modifierFlags: [.control, .option])
+
+        for target in SaveTargetManager.shared.targets {
+            let action = ShortcutAction.finishWithSaveTarget(target.id)
+            guard let stored = ShortcutStore.rawShortcut(for: action),
+                  stored == oldShortcut else {
+                continue
+            }
+            ShortcutStore.setShortcut(newShortcut, for: action)
+        }
+
+        UserDefaults.standard.set(true, forKey: migrationKey)
     }
 
     static func migrateLegacyKeyboardShortcutsIfNeeded() {
@@ -270,7 +298,7 @@ enum ShortcutMigration {
             return ["mode_\(id.uuidString)", "powerMode_\(id.uuidString)"]
         case .openVimEditor, .openWorek,
              .finishWithCopy, .finishWithPaste, .finishWithEditWindow, .finishWithSaveTarget,
-             .recorderPanelEscape, .recorderPanelMode:
+             .recorderPanelEscape, .recorderPanelMode, .recorderPanelFinish:
             return []
         }
     }

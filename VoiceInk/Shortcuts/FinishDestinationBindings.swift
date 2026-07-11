@@ -14,10 +14,12 @@ enum FinishDestinationBindings {
 
     // MARK: - Fallbacks (same values that used to be private in the manager)
 
+    // Ctrl+Option so the letters don't collide with dead-key composition on the
+    // Polish Pro layout (⌥C/⌥E/⌥N type ć/ę/ń there).
     static let fallbacks: [(ShortcutAction, Shortcut)] = [
-        (.finishWithCopy,       .key(keyCode: UInt16(kVK_ANSI_C), modifierFlags: [.option])),
-        (.finishWithPaste,      .key(keyCode: UInt16(kVK_ANSI_V), modifierFlags: [.option])),
-        (.finishWithEditWindow, .key(keyCode: UInt16(kVK_ANSI_E), modifierFlags: [.option]))
+        (.finishWithCopy,       .key(keyCode: UInt16(kVK_ANSI_C), modifierFlags: [.control, .option])),
+        (.finishWithPaste,      .key(keyCode: UInt16(kVK_ANSI_V), modifierFlags: [.control, .option])),
+        (.finishWithEditWindow, .key(keyCode: UInt16(kVK_ANSI_E), modifierFlags: [.control, .option]))
     ]
 
     // MARK: - Effective shortcut for a fixed destination action
@@ -40,13 +42,15 @@ enum FinishDestinationBindings {
 
     /// Gives a freshly created Notaro preset target a working shortcut out of
     /// the box. No-op when the user already bound or deliberately cleared one,
-    /// or when Option+N fails validation (e.g. collides with another binding).
+    /// or when Ctrl+Option+N fails validation (e.g. collides with another
+    /// binding). Ctrl+Option (not plain Option) avoids the ń dead key on the
+    /// Polish Pro layout.
     static func assignDefaultNotaroShortcut(targetID: UUID) {
         let action = ShortcutAction.finishWithSaveTarget(targetID)
         guard ShortcutStore.shortcut(for: action) == nil,
               !ShortcutStore.isShortcutCleared(for: action) else { return }
         ShortcutStore.setShortcut(
-            .key(keyCode: UInt16(kVK_ANSI_N), modifierFlags: [.option]),
+            .key(keyCode: UInt16(kVK_ANSI_N), modifierFlags: [.control, .option]),
             for: action
         )
     }
@@ -96,6 +100,15 @@ enum FinishDestinationBindings {
                 shortcutDisplay: shortcut.displayString
             ))
         }
+
+        // Always-present hint: ⌘↩ finishes the current session in whatever mode
+        // is active. Fixed chip, not a stored/rebindable shortcut.
+        items.append(HUDItem(
+            id: "recorderPanelFinish",
+            icon: "return",
+            label: String(localized: "Finish"),
+            shortcutDisplay: "⌘↩"
+        ))
 
         return items
     }

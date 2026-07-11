@@ -587,8 +587,9 @@ class VoiceInkEngine: NSObject, ObservableObject {
     // MARK: - Cancellation
 
     func cancelRecording() async {
-        // A canceled session must not carry its armed destination forward.
-        DeliveryDestinationOverride.shared.clear()
+        // A canceled session must not carry its armed destination forward —
+        // including one staged for a not-yet-started session.
+        DeliveryDestinationOverride.shared.clearAll()
 
         let shouldFinishSessionImmediately: Bool
         switch recordingState {

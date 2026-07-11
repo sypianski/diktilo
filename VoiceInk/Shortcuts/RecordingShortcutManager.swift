@@ -50,6 +50,7 @@ class RecordingShortcutManager: ObservableObject {
     private var shortcutChangeObserver: NSObjectProtocol?
     private let shortcutModeHandler: RecordingShortcutModeHandler
     private let primaryRecordingShortcutModeSource: RecordingShortcutModeSource
+    private var saveTargetsObserverTask: Task<Void, Never>?
 
     // MARK: - Helper Properties
     private var canHandleShortcutAction: Bool {
@@ -173,6 +174,19 @@ class RecordingShortcutManager: ObservableObject {
             try? await Task.sleep(nanoseconds: 100_000_000)
             self.refreshShortcutMonitoring()
         }
+
+        // Re-register global finish shortcuts when the save-target list changes
+        // (a new target may carry an explicit binding; a removed one must drop
+        // out of the monitor). Mirrors the visibility-driven refresh the
+        // RecorderPanelShortcutManager used to do for these.
+        saveTargetsObserverTask = Task { @MainActor [weak self] in
+            var iterator = SaveTargetManager.shared.$targets.values.makeAsyncIterator()
+            // Drop the initial replay so we only react to genuine changes.
+            _ = await iterator.next()
+            while await iterator.next() != nil {
+                self?.refreshShortcutMonitoring()
+            }
+        }
     }
     
     private func refreshShortcutMonitoring() {
@@ -230,6 +244,26 @@ class RecordingShortcutManager: ObservableObject {
         if let secondaryShortcut {
             shortcuts[.secondaryRecording] = secondaryShortcut
             interruptibleRecordingActions.insert(.secondaryRecording)
+        }
+
+        // One-shot "finish with …" destination shortcuts, registered GLOBALLY
+        // (not just when the recorder panel is visible). User-configured
+        // bindings win; otherwise the three fixed destinations fall back to
+        // ⌃⌥C / ⌃⌥V / ⌃⌥E. Save-target finishers have no default — only
+        // explicitly configured ones are registered. See handleGlobalShortcut
+        // for the idle-start / recording-arm-stop / transcribing-rearm routing.
+        for action in ShortcutAction.finishDestinationActions {
+            // effectiveShortcut returns the user binding, else the ⌃⌥ fallback,
+            // else nil when the user deliberately cleared it.
+            if let shortcut = FinishDestinationBindings.effectiveShortcut(for: action) {
+                shortcuts[action] = shortcut
+            }
+        }
+        for target in SaveTargetManager.shared.targets {
+            let action = ShortcutAction.finishWithSaveTarget(target.id)
+            if let shortcut = ShortcutStore.shortcut(for: action) {
+                shortcuts[action] = shortcut
+            }
         }
 
         shortcutMonitor.start(
@@ -304,9 +338,90 @@ class RecordingShortcutManager: ObservableObject {
             TranscriptEditManager.shared.present(text: "")
         case .openWorek:
             SakoClient.shared.openApp()
+        case .finishWithCopy:
+            await handleFinishDestinationShortcut(
+                outputMode: .copy,
+                startNotice: String(localized: "Recording → Copy"),
+                finishNotice: String(localized: "Finishing → Copy")
+            )
+        case .finishWithPaste:
+            await handleFinishDestinationShortcut(
+                outputMode: .paste,
+                startNotice: String(localized: "Recording → Paste"),
+                finishNotice: String(localized: "Finishing → Paste")
+            )
+        case .finishWithEditWindow:
+            await handleFinishDestinationShortcut(
+                outputMode: .editWindow,
+                startNotice: String(localized: "Recording → Edit Window"),
+                finishNotice: String(localized: "Finishing → Edit Window")
+            )
+        case .finishWithSaveTarget(let id):
+            let name = SaveTargetManager.shared.target(withID: id)?.name
+            let startNotice = name.map { String(format: String(localized: "Recording → %@"), $0) }
+                ?? String(localized: "Recording → Save Target")
+            let finishNotice = name.map { String(format: String(localized: "Finishing → %@"), $0) }
+                ?? String(localized: "Finishing → Save Target")
+            await handleFinishDestinationShortcut(
+                outputMode: .saveTarget,
+                saveTargetID: id,
+                startNotice: startNotice,
+                finishNotice: finishNotice
+            )
         default:
             break
         }
+    }
+
+    /// Routes a global "finish with …" destination shortcut by engine state:
+    ///
+    /// • idle (no active session) → START a fresh recording with the chosen
+    ///   destination staged. The user dictates, then ⌘↩ / the recording hotkey
+    ///   ends it and delivery goes to the staged destination.
+    /// • recording → ARM the override + stop immediately (change-of-mind: the
+    ///   later shortcut wins) → normal stop→transcribe→deliver.
+    /// • transcribing / enhancing → RE-ARM only; the pipeline consumes the
+    ///   override just before delivery, so nothing else is needed.
+    ///
+    /// Pre-arm start applies only to toggle-style recording. See notes below.
+    private func handleFinishDestinationShortcut(
+        outputMode: OutputMode,
+        saveTargetID: UUID? = nil,
+        startNotice: String,
+        finishNotice: String
+    ) async {
+        let state = recorderUIManager.engineRecordingState ?? .idle
+        let panelVisible = recorderUIManager.isRecorderPanelVisible
+
+        // Treat "idle and no panel" as the pre-arm start case. If a panel is up
+        // (e.g. assistant-follow-up idle), fall through to the arm+finish path
+        // so we never spawn a competing session.
+        if state == .idle, !panelVisible {
+            guard canHandleShortcutAction else { return }
+
+            // Stage the destination so it survives the clear() that
+            // toggleRecord fires synchronously when opening the new session
+            // (DeliveryDestinationOverride.armForNextSessionStart: the first
+            // clear() promotes it into the live override instead of wiping it).
+            // We stage BEFORE starting because that clear() is exactly the point
+            // where an ordinary arm() would be lost — the deferred slot is what
+            // makes ordering safe here.
+            DeliveryDestinationOverride.shared.armForNextSessionStart(
+                outputMode: outputMode,
+                saveTargetID: saveTargetID
+            )
+            NotificationManager.shared.showNotification(title: startNotice, type: .info)
+            await recorderUIManager.toggleRecorderPanel()
+            return
+        }
+
+        // Active session (recording / transcribing / enhancing): arm now. The
+        // override is consumed once, at delivery. finishRecordingIfActive stops
+        // only while .recording; during transcribe/enhance it is a no-op and the
+        // re-arm alone suffices.
+        DeliveryDestinationOverride.shared.arm(outputMode: outputMode, saveTargetID: saveTargetID)
+        NotificationManager.shared.showNotification(title: finishNotice, type: .info)
+        await recorderUIManager.finishRecordingIfActive()
     }
 
     private func removeAllMonitoring() {
@@ -338,6 +453,8 @@ class RecordingShortcutManager: ObservableObject {
         if let shortcutChangeObserver {
             NotificationCenter.default.removeObserver(shortcutChangeObserver)
         }
+
+        saveTargetsObserverTask?.cancel()
 
         MainActor.assumeIsolated {
             removeAllMonitoring()
