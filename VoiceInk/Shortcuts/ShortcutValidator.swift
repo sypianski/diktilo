@@ -91,6 +91,8 @@ enum ShortcutValidator {
     private static var allStoredActions: [ShortcutAction] {
         var seenActions = Set<ShortcutAction>()
         let actions = ShortcutAction.legacyKeyboardShortcutActions +
+            ShortcutAction.finishDestinationActions +
+            SaveTargetManager.shared.targets.map { ShortcutAction.finishWithSaveTarget($0.id) } +
             OutputProfileManager.shared.configurations.map { ShortcutAction.profile($0.id) }
 
         return actions.filter { seenActions.insert($0).inserted }

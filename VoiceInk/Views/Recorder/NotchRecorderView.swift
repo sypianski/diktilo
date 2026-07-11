@@ -20,6 +20,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     let onCloseTapped: () -> Void
     let onAssistantFollowUp: (String) -> Void
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
+    @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
 
     // MARK: - Display State
 
@@ -71,8 +72,14 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private let activeHeightBonus: CGFloat = 6
     private let transcriptPanelHeight: CGFloat = 57
     private let assistantPanelHeight: CGFloat = 320
+    private let hudPanelHeight: CGFloat = 28
 
     private var mainRowHeight: CGFloat { notchHeight + activeHeightBonus }
+
+    // The HUD appears only when: recording, live transcript not shown, assistant hidden.
+    private var shouldShowHUD: Bool {
+        destinationHUDEnabled && displayState == .active
+    }
 
     // MARK: - Pill Dimensions
 
@@ -86,12 +93,14 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     }
 
     private var pillHeight: CGFloat {
+        let base: CGFloat
         switch displayState {
         case .collapsed: return 0
-        case .active:    return mainRowHeight
+        case .active:    base = mainRowHeight
         case .liveText:  return mainRowHeight + transcriptPanelHeight
         case .assistant: return mainRowHeight + assistantPanelHeight
         }
+        return base + (shouldShowHUD ? hudPanelHeight : 0)
     }
 
     private var sideExpansion: CGFloat {
@@ -136,6 +145,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
             pill.position(x: geo.size.width / 2, y: pillHeight / 2)
         }
         .animation(pillAnimation, value: displayState)
+        .animation(expandAnimation, value: shouldShowHUD)
     }
 
     // MARK: - Pill
@@ -143,6 +153,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private var pill: some View {
         VStack(spacing: 0) {
             mainRow
+            hudPanel
             liveTextPanel
             assistantPanel
         }
@@ -156,9 +167,23 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         .clipShape(
             NotchShape(
                 topCornerRadius: displayState == .liveText ? 12 : 8,
-                bottomCornerRadius: displayState == .liveText || displayState == .assistant ? 22 : 16
+                bottomCornerRadius: displayState == .liveText || displayState == .assistant || shouldShowHUD ? 22 : 16
             )
         )
+    }
+
+    // MARK: - Destination HUD Panel
+
+    private var hudPanel: some View {
+        VStack(spacing: 0) {
+            if shouldShowHUD {
+                Divider().background(Color.white.opacity(0.10))
+                RecorderDestinationHUDView()
+            }
+        }
+        .frame(height: shouldShowHUD ? hudPanelHeight : 0)
+        .clipped()
+        .animation(expandAnimation, value: shouldShowHUD)
     }
 
     // MARK: - Main Row

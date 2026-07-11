@@ -21,6 +21,7 @@ struct SettingsView: View {
     @AppStorage(AppAppearancePreference.userDefaultsKey) private var appAppearancePreference = AppAppearancePreference.system
     @AppStorage(AppLanguagePreference.userDefaultsKey) private var appLanguagePreference = AppLanguagePreference.systemValue
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
+    @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isRealtimeEnabled) private var globalRealtimeEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isTextFormattingEnabled) private var globalTextFormattingEnabled = true
     @State private var showResetOnboardingAlert = false
@@ -30,6 +31,7 @@ struct SettingsView: View {
 
     @State private var isMiddleClickExpanded = false
     @State private var isRestoreClipboardExpanded = false
+    @State private var isShowingSaveTargets = false
 
     var body: some View {
         Form {
@@ -134,6 +136,27 @@ struct SettingsView: View {
 
                 LabeledContent("Open Sako") {
                     ShortcutRecorder(action: .openWorek) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                        .controlSize(.small)
+                }
+
+                LabeledContent("Finish → Copy") {
+                    ShortcutRecorder(action: .finishWithCopy) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                        .controlSize(.small)
+                }
+
+                LabeledContent("Finish → Paste") {
+                    ShortcutRecorder(action: .finishWithPaste) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                        .controlSize(.small)
+                }
+
+                LabeledContent("Finish → Edit Window") {
+                    ShortcutRecorder(action: .finishWithEditWindow) {
                         recordingShortcutManager.updateShortcutStatus()
                     }
                         .controlSize(.small)
@@ -260,6 +283,13 @@ struct SettingsView: View {
                         InfoTip("Shows live text while recording with realtime models.")
                     }
                 }
+
+                Toggle(isOn: $destinationHUDEnabled) {
+                    HStack(spacing: 4) {
+                        Text("Destination Shortcut Hints")
+                        InfoTip("Show a compact bar with finish-destination shortcuts (Copy, Paste, Edit Window, Save Targets) while recording.")
+                    }
+                }
             }
 
             Section("General") {
@@ -328,6 +358,14 @@ struct SettingsView: View {
                 Text("Export all settings, or choose specific categories when importing a backup.")
             }
 
+            Section("Save Targets") {
+                LabeledContent("Save Targets") {
+                    Button("Manage") {
+                        isShowingSaveTargets = true
+                    }
+                }
+            }
+
             Section("Diagnostics") {
                 DiagnosticsSettingsView()
             }
@@ -348,6 +386,18 @@ struct SettingsView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text("Your language change will take full effect after you quit and reopen Diktilo.")
+        }
+        .sheet(isPresented: $isShowingSaveTargets) {
+            NavigationStack {
+                SaveTargetsSettingsView()
+                    .navigationTitle("Save Targets")
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { isShowingSaveTargets = false }
+                        }
+                    }
+            }
+            .frame(minWidth: 500, minHeight: 420)
         }
     }
 

@@ -20,6 +20,7 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     let onCloseTapped: () -> Void
     let onAssistantFollowUp: (String) -> Void
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
+    @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
 
     // MARK: - Layout Constants
 
@@ -45,6 +46,11 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         hasAssistantResponse &&
             stateProvider.recordingState == .idle &&
             !assistantSession.isBusy
+    }
+
+    // Show HUD only while actively recording (not during transcribing/enhancing).
+    private var shouldShowHUD: Bool {
+        destinationHUDEnabled && stateProvider.recordingState == .recording && !hasAssistantResponse
     }
 
     private var liveAssistantFollowUpText: String {
@@ -93,6 +99,20 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         }
     }
 
+    // When the HUD is visible the panel must be at least expandedWidth so the
+    // chips have room to render without truncation.
+    private var currentWidth: CGFloat {
+        if hasAssistantResponse { return assistantWidth }
+        if hasLiveTranscript || shouldShowHUD { return expandedWidth }
+        return compactWidth
+    }
+
+    private var currentCornerRadius: CGFloat {
+        hasLiveTranscript || hasAssistantResponse || shouldShowHUD
+            ? expandedCornerRadius
+            : compactCornerRadius
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if hasAssistantResponse {
@@ -106,17 +126,22 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 transcriptSection
             }
             controlBar
+            if shouldShowHUD {
+                Divider().background(Color.white.opacity(0.10))
+                RecorderDestinationHUDView()
+            }
         }
-        .frame(width: hasAssistantResponse ? assistantWidth : (hasLiveTranscript ? expandedWidth : compactWidth))
+        .frame(width: currentWidth)
         .background(
             ZStack {
                 VisualEffectBlur()
                 Color.black.opacity(0.72)
             }
         )
-        .clipShape(RoundedRectangle(cornerRadius: hasLiveTranscript || hasAssistantResponse ? expandedCornerRadius : compactCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: currentCornerRadius, style: .continuous))
         .animation(.easeInOut(duration: 0.3), value: hasLiveTranscript)
         .animation(.easeInOut(duration: 0.3), value: hasAssistantResponse)
+        .animation(.easeInOut(duration: 0.3), value: shouldShowHUD)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 }

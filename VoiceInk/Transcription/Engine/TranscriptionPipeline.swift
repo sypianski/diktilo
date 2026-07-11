@@ -265,12 +265,31 @@ class TranscriptionPipeline {
             return
         }
 
+        // Resolve the delivery destination as late as possible so a one-shot
+        // override armed during .transcribing / .enhancing (via a "finish
+        // with …" shortcut) still wins. Precedence: override > trigger word
+        // (already applied above) > profile.
+        var deliveryOutput = outputForDelivery ?? outputConfiguration()
+        var deliveryResponseConfig = responseConfig
+        if !assistant.isFollowUp, let override = DeliveryDestinationOverride.shared.consume() {
+            deliveryOutput = OutputRuntimeConfiguration(
+                profile: deliveryOutput.profile,
+                outputMode: override.outputMode,
+                autoSendKey: deliveryOutput.autoSendKey,
+                customCommand: deliveryOutput.customCommand,
+                saveTargetID: override.saveTargetID ?? deliveryOutput.saveTargetID
+            )
+            // Override destinations are never .respond, so drop any pending
+            // in-recorder response so the delivery routes to the new mode.
+            deliveryResponseConfig = nil
+        }
+
         await delivery.deliver(
             TranscriptionDelivery.Request(
                 transcription: transcription,
                 text: finalText,
-                output: outputForDelivery ?? outputConfiguration(),
-                responseConfig: responseConfig,
+                output: deliveryOutput,
+                responseConfig: deliveryResponseConfig,
                 responseError: responseError,
                 isAssistantFollowUp: assistant.isFollowUp
             ),

@@ -4,6 +4,7 @@ import SwiftUI
 enum ModeValidationError: Error, Identifiable {
     case emptyName
     case emptyCustomCommand
+    case saveTargetNotConfigured
     case duplicateName(String)
     case duplicateAppTrigger(String, String) // (app name, existing mode name)
     case duplicateWebsiteTrigger(String, String) // (website, existing mode name)
@@ -12,6 +13,7 @@ enum ModeValidationError: Error, Identifiable {
         switch self {
         case .emptyName: return "emptyName"
         case .emptyCustomCommand: return "emptyCustomCommand"
+        case .saveTargetNotConfigured: return "saveTargetNotConfigured"
         case .duplicateName: return "duplicateName"
         case .duplicateAppTrigger: return "duplicateAppTrigger"
         case .duplicateWebsiteTrigger: return "duplicateWebsiteTrigger"
@@ -24,6 +26,8 @@ enum ModeValidationError: Error, Identifiable {
             return String(localized: "Mode name cannot be empty.")
         case .emptyCustomCommand:
             return String(localized: "Custom command cannot be empty.")
+        case .saveTargetNotConfigured:
+            return String(localized: "Save to Target mode requires a configured save target. Add one in Settings → Save Targets.")
         case .duplicateName(let name):
             return String(
                 format: String(localized: "A mode with the name '%@' already exists."),
@@ -62,6 +66,14 @@ struct OutputProfileValidator {
         if config.outputMode == .customCommand,
            config.customCommand?.trimmedCommand == nil {
             errors.append(.emptyCustomCommand)
+        }
+
+        if config.outputMode == .saveTarget {
+            let targetExists = config.saveTargetID
+                .flatMap { SaveTargetManager.shared.target(withID: $0) } != nil
+            if !targetExists {
+                errors.append(.saveTargetNotConfigured)
+            }
         }
 
         let isDuplicateName = modeManager.configurations.contains { existingConfig in

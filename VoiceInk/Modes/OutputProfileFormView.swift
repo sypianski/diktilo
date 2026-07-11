@@ -410,6 +410,34 @@ struct OutputProfileFormView: View {
             if draft.outputMode == .customCommand {
                 customCommandControls
             }
+
+            if draft.outputMode == .saveTarget {
+                saveTargetControls
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var saveTargetControls: some View {
+        let targets = SaveTargetManager.shared.targets
+        if targets.isEmpty {
+            LabeledContent("Save Target") {
+                Text("No targets configured — add one in Settings → Save Targets.")
+                    .foregroundColor(.secondary)
+                    .italic()
+            }
+        } else {
+            let targetBinding = Binding<UUID?>(
+                get: { draft.saveTargetID },
+                set: { draft.saveTargetID = $0 }
+            )
+            Picker("Save Target", selection: targetBinding) {
+                Text("None").tag(UUID?.none)
+                ForEach(targets) { target in
+                    Label(target.name, systemImage: target.icon)
+                        .tag(Optional(target.id))
+                }
+            }
         }
     }
 

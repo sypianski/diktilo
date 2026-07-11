@@ -12,6 +12,10 @@ enum ShortcutAction: Hashable {
     case openVimEditor
     case openWorek
     case profile(UUID)
+    case finishWithCopy
+    case finishWithPaste
+    case finishWithEditWindow
+    case finishWithSaveTarget(UUID)
     case recorderPanelEscape
     case recorderPanelMode(Int)
 
@@ -52,6 +56,14 @@ enum ShortcutAction: Hashable {
             return "openWorek"
         case .profile(let id):
             return "mode_\(id.uuidString)"
+        case .finishWithCopy:
+            return "finishWithCopy"
+        case .finishWithPaste:
+            return "finishWithPaste"
+        case .finishWithEditWindow:
+            return "finishWithEditWindow"
+        case .finishWithSaveTarget(let id):
+            return "finishSaveTarget_\(id.uuidString)"
         case .recorderPanelEscape:
             return "recorderPanelEscape"
         case .recorderPanelMode(let index):
@@ -91,6 +103,17 @@ enum ShortcutAction: Hashable {
             }
 
             return String(localized: "Mode")
+        case .finishWithCopy:
+            return String(localized: "Finish → Copy")
+        case .finishWithPaste:
+            return String(localized: "Finish → Paste")
+        case .finishWithEditWindow:
+            return String(localized: "Finish → Edit Window")
+        case .finishWithSaveTarget(let id):
+            if let target = SaveTargetManager.shared.target(withID: id) {
+                return String(format: String(localized: "Finish → %@"), target.name)
+            }
+            return String(localized: "Finish → Save Target")
         case .recorderPanelEscape:
             return String(localized: "Recorder Cancel")
         case .recorderPanelMode(let index):
@@ -110,6 +133,14 @@ enum ShortcutAction: Hashable {
 
     static let recorderPanelStoredActions: [Self] = [
         .cancelRecorder
+    ]
+
+    /// One-shot "finish with …" destination actions with fixed identity
+    /// (save-target variants are enumerated dynamically from the target list).
+    static let finishDestinationActions: [Self] = [
+        .finishWithCopy,
+        .finishWithPaste,
+        .finishWithEditWindow
     ]
 
     static let legacyKeyboardShortcutActions: [Self] = [

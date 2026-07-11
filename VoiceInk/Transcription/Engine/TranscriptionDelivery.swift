@@ -44,6 +44,11 @@ final class TranscriptionDelivery {
             return
         }
 
+        if request.output.outputMode == .saveTarget {
+            await deliverSaveTarget(request, actions: actions)
+            return
+        }
+
         if request.output.outputMode == .copy {
             await deliverCopy(request, actions: actions)
             return
@@ -127,6 +132,62 @@ final class TranscriptionDelivery {
         Task {
             await runCustomCommand(command: command, commandText: commandText)
         }
+    }
+
+    private func deliverSaveTarget(_ item: Request, actions: Actions) async {
+        // Pick text the same way deliverCopy does.
+        let textToSave = item.text.map { deliverableText(from: $0) }
+
+        guard let text = textToSave else {
+            // Nothing to save — fall back to clipboard.
+            notifySaveTargetFallback(reason: String(localized: "No transcription text was available."))
+            SoundManager.shared.playStopSound()
+            await actions.dismiss()
+            return
+        }
+
+        guard let targetID = item.output.saveTargetID,
+              let target = SaveTargetManager.shared.target(withID: targetID) else {
+            // No target configured — fall back to clipboard.
+            if !ClipboardManager.setClipboard(text) {
+                logger.error("Save target not configured and clipboard copy also failed")
+            }
+            notifySaveTargetFallback(reason: String(localized: "Save target not configured — copied to clipboard."))
+            SoundManager.shared.playStopSound()
+            await actions.dismiss()
+            return
+        }
+
+        SoundManager.shared.playStopSound()
+        await actions.dismiss()
+
+        Task {
+            do {
+                let description = try await SaveTargetDeliveryService.deliver(text: text, target: target)
+                await MainActor.run {
+                    NotificationManager.shared.showNotification(
+                        title: String(format: String(localized: "Saved to %@"), target.name),
+                        type: .success
+                    )
+                    logger.notice("Save target delivery succeeded: \(description, privacy: .public)")
+                }
+            } catch {
+                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                await MainActor.run {
+                    // Fallback: copy to clipboard so text is never lost.
+                    _ = ClipboardManager.setClipboard(text)
+                    NotificationManager.shared.showNotification(
+                        title: String(format: String(localized: "Save failed (%@) — copied to clipboard."), message),
+                        type: .error
+                    )
+                    logger.error("Save target delivery failed: \(message, privacy: .public)")
+                }
+            }
+        }
+    }
+
+    private func notifySaveTargetFallback(reason: String) {
+        NotificationManager.shared.showNotification(title: reason, type: .warning)
     }
 
     private func runCustomCommand(command: String, commandText: String) async {

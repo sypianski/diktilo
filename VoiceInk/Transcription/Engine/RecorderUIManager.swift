@@ -211,6 +211,20 @@ class RecorderUIManager: ObservableObject, RecorderPanelPresenting {
         await dismissRecorderPanel()
     }
 
+    /// Current recording state of the underlying engine, or nil if unconfigured.
+    var engineRecordingState: RecordingState? {
+        engine?.recordingState
+    }
+
+    /// Normal stop → transcribe → deliver, used by "finish with …" shortcuts.
+    /// Only acts while actively recording; during transcription / enhancement
+    /// the delivery hasn't happened yet, so arming the override alone suffices
+    /// and this is a no-op.
+    func finishRecordingIfActive() async {
+        guard let engine = engine, engine.recordingState == .recording else { return }
+        await engine.toggleRecord()
+    }
+
     // MARK: - Notification Handling
 
     private func setupNotifications() {

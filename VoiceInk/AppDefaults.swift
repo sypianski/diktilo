@@ -39,6 +39,7 @@ enum AppDefaults {
             "AppendTrailingSpace": true,
             "RecorderType": "mini",
             RecorderDisplaySettingsKeys.showLiveTranscript: true,
+            "RecorderDestinationHUDEnabled": true,
 
             // Cleanup
             CleanupSettingsKeys.isTranscriptionCleanupEnabled: false,

@@ -55,6 +55,7 @@ struct OutputRuntimeConfiguration {
     let outputMode: OutputMode
     let autoSendKey: AutoSendKey
     let customCommand: OutputCommand?
+    let saveTargetID: UUID?
 }
 
 /// Resolves the four runtime configurations for a recording.
@@ -140,7 +141,8 @@ enum ProfileRuntimeResolver {
             profile: profile,
             outputMode: profile?.outputMode ?? .paste,
             autoSendKey: profile?.autoSendKey ?? .none,
-            customCommand: profile?.customCommand
+            customCommand: profile?.customCommand,
+            saveTargetID: profile?.saveTargetID
         )
     }
 

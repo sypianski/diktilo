@@ -18,6 +18,7 @@ struct OutputProfileDraft {
     var outputMode: OutputMode
     var autoSendKey: AutoSendKey
     var customCommand: String
+    var saveTargetID: UUID?
     var isDefault: Bool
 
     private var sourceConfig: OutputProfile?
@@ -44,6 +45,7 @@ struct OutputProfileDraft {
             outputMode = .paste
             autoSendKey = .none
             customCommand = inheritedConfig?.customCommand?.command ?? ""
+            saveTargetID = nil
             isDefault = false
             sourceConfig = nil
 
@@ -66,6 +68,7 @@ struct OutputProfileDraft {
             outputMode = latestConfig.outputMode
             autoSendKey = latestConfig.autoSendKey
             customCommand = latestConfig.customCommand?.command ?? ""
+            saveTargetID = latestConfig.saveTargetID
             isDefault = latestConfig.isDefault
             sourceConfig = latestConfig
         }
@@ -122,6 +125,7 @@ struct OutputProfileDraft {
         let savedAutoSendKey: AutoSendKey = outputMode.usesPasteOptions ? autoSendKey : .none
         let savedIsDefault = outputMode == .respond ? false : isDefault
         let savedCustomCommand = makeCustomCommand()
+        let savedSaveTargetID = outputMode == .saveTarget ? saveTargetID : nil
 
         switch mode {
         case .add:
@@ -143,6 +147,7 @@ struct OutputProfileDraft {
                 outputMode: outputMode,
                 autoSendKey: savedAutoSendKey,
                 customCommand: savedCustomCommand,
+                saveTargetID: savedSaveTargetID,
                 isDefault: savedIsDefault
             )
 
@@ -164,6 +169,7 @@ struct OutputProfileDraft {
             updatedConfig.outputMode = outputMode
             updatedConfig.autoSendKey = savedAutoSendKey
             updatedConfig.customCommand = savedCustomCommand
+            updatedConfig.saveTargetID = savedSaveTargetID
             updatedConfig.isDefault = savedIsDefault
             return updatedConfig
         }

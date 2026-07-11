@@ -26,12 +26,16 @@ final class RecorderPanelShortcutManager: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard
-                let action = notification.object as? ShortcutAction,
-                action == .cancelRecorder
-            else {
-                return
+            guard let action = notification.object as? ShortcutAction else { return }
+
+            let isRelevant: Bool
+            switch action {
+            case .cancelRecorder, .finishWithCopy, .finishWithPaste, .finishWithEditWindow, .finishWithSaveTarget:
+                isRelevant = true
+            default:
+                isRelevant = false
             }
+            guard isRelevant else { return }
 
             Task { @MainActor in
                 self?.refreshVisibleShortcuts()
@@ -84,6 +88,26 @@ final class RecorderPanelShortcutManager: ObservableObject {
             }
         }
 
+        // One-shot "finish with …" destination shortcuts. User-configured
+        // bindings win; otherwise fall back to Option+C / V / E for the three
+        // fixed destinations. Save-target finishers have no default binding —
+        // only explicitly configured ones are registered.
+        var finishShortcuts = ShortcutStore.shortcuts(for: ShortcutAction.finishDestinationActions)
+        for (action, fallback) in FinishDestinationBindings.fallbacks {
+            if finishShortcuts[action] == nil, !ShortcutStore.isShortcutCleared(for: action) {
+                finishShortcuts[action] = fallback
+            }
+        }
+        for target in SaveTargetManager.shared.targets {
+            let action = ShortcutAction.finishWithSaveTarget(target.id)
+            if let shortcut = ShortcutStore.shortcut(for: action) {
+                finishShortcuts[action] = shortcut
+            }
+        }
+        for (action, shortcut) in finishShortcuts {
+            shortcuts[action] = shortcut
+        }
+
         visibleRecorderMonitor.start(
             shortcuts: shortcuts,
             onKeyDown: { [weak self] action, _ in
@@ -106,9 +130,37 @@ final class RecorderPanelShortcutManager: ObservableObject {
             await handleEscapeShortcut()
         case .recorderPanelMode(let index):
             handleModeSelectionShortcut(index: index)
+        case .finishWithCopy:
+            await handleFinishShortcut(outputMode: .copy, notice: String(localized: "Finishing → Copy"))
+        case .finishWithPaste:
+            await handleFinishShortcut(outputMode: .paste, notice: String(localized: "Finishing → Paste"))
+        case .finishWithEditWindow:
+            await handleFinishShortcut(outputMode: .editWindow, notice: String(localized: "Finishing → Edit Window"))
+        case .finishWithSaveTarget(let id):
+            let name = SaveTargetManager.shared.target(withID: id)?.name
+            let notice = name.map { String(format: String(localized: "Finishing → %@"), $0) }
+                ?? String(localized: "Finishing → Save Target")
+            await handleFinishShortcut(outputMode: .saveTarget, saveTargetID: id, notice: notice)
         default:
             break
         }
+    }
+
+    private func handleFinishShortcut(
+        outputMode: OutputMode,
+        saveTargetID: UUID? = nil,
+        notice: String
+    ) async {
+        // Arm the one-shot override for this session (overrides profile mode +
+        // trigger words). Consumed exactly once when delivery is built.
+        DeliveryDestinationOverride.shared.arm(outputMode: outputMode, saveTargetID: saveTargetID)
+
+        NotificationManager.shared.showNotification(title: notice, type: .info)
+
+        // If we're still recording, run the normal stop → transcribe → deliver.
+        // During .transcribing / .enhancing the override alone is enough (the
+        // pipeline consumes it just before delivery), so this is a no-op there.
+        await recorderUIManager.finishRecordingIfActive()
     }
 
     private func handleEscapeShortcut() async {

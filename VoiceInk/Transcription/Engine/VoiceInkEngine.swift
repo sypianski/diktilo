@@ -235,6 +235,9 @@ class VoiceInkEngine: NSObject, ObservableObject {
 
             if !recordingUseCase.isAssistantFollowUp {
                 assistantSession.reset()
+                // Drop any override left over from a prior/abandoned session so
+                // a stale destination never leaks into this fresh recording.
+                DeliveryDestinationOverride.shared.clear()
             }
 
             requestRecordPermission { [self] granted in
@@ -584,6 +587,9 @@ class VoiceInkEngine: NSObject, ObservableObject {
     // MARK: - Cancellation
 
     func cancelRecording() async {
+        // A canceled session must not carry its armed destination forward.
+        DeliveryDestinationOverride.shared.clear()
+
         let shouldFinishSessionImmediately: Bool
         switch recordingState {
         case .starting, .recording:
