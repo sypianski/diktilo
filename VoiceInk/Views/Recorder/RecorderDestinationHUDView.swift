@@ -16,18 +16,28 @@ import SwiftUI
 struct RecorderDestinationHUDView: View {
     // Observe SaveTargetManager so the view rebuilds when targets change.
     @ObservedObject private var targetManager = SaveTargetManager.shared
+    @ObservedObject private var messageCenter = RecorderStatusMessageCenter.shared
 
     // Rebuilt via .onReceive(shortcutDidChange) — see body.
     @State private var items: [FinishDestinationBindings.HUDItem] = []
 
     var body: some View {
         Group {
-            if items.isEmpty {
-                EmptyView()
-            } else {
+            if let msg = messageCenter.current {
+                // Status message takes over the strip, crossfading with chips.
+                HStack {
+                    Spacer(minLength: 0)
+                    RecorderStatusMessageView(message: msg)
+                    Spacer(minLength: 0)
+                }
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+            } else if !items.isEmpty {
                 chipRow
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
         }
+        .animation(.easeOut(duration: 0.22), value: messageCenter.current)
+        .frame(height: 28)
         .onAppear { rebuildItems() }
         .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { _ in
             rebuildItems()
@@ -51,8 +61,6 @@ struct RecorderDestinationHUDView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
         }
-        // Cap height so the row never grows unexpectedly.
-        .frame(height: 28)
     }
 
     // MARK: - Rebuild helper

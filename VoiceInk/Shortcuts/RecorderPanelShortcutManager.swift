@@ -142,14 +142,16 @@ final class RecorderPanelShortcutManager: ObservableObject {
         if let firstTime = firstEscapePressTime,
            now.timeIntervalSince(firstTime) <= escapeDoublePressThreshold {
             resetEscapeState()
+            RecorderStatusMessageCenter.shared.clear()
             await recorderUIManager.cancelRecording()
             return
         }
 
         firstEscapePressTime = now
-        NotificationManager.shared.showNotification(
-            title: String(localized: "Press Esc again to cancel"),
-            type: .info,
+        RecorderStatusMessageCenter.shared.show(
+            .warning,
+            icon: "escape",
+            text: String(localized: "Press Esc again to cancel"),
             duration: escapeDoublePressThreshold
         )
         escapeTimeoutTask = Task { [weak self] in

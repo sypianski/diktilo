@@ -21,6 +21,7 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     let onAssistantFollowUp: (String) -> Void
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
+    @ObservedObject private var messageCenter = RecorderStatusMessageCenter.shared
 
     // MARK: - Layout Constants
 
@@ -48,9 +49,13 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
             !assistantSession.isBusy
     }
 
-    // Show HUD only while actively recording (not during transcribing/enhancing).
+    // Show HUD strip while actively recording or when a status message is active.
+    // A status message wins even when the HUD toggle is off or during transcribing/enhancing.
     private var shouldShowHUD: Bool {
-        destinationHUDEnabled && stateProvider.recordingState == .recording && !hasAssistantResponse
+        !hasAssistantResponse && (
+            (destinationHUDEnabled && stateProvider.recordingState == .recording)
+            || messageCenter.current != nil
+        )
     }
 
     private var liveAssistantFollowUpText: String {

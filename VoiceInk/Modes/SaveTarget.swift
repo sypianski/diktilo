@@ -31,13 +31,13 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
 
     enum Strategy: Codable, Equatable {
         case file(FileStrategy)
-        case urlScheme(template: String)
+        case urlScheme(template: String, activates: Bool)
         case shellCommand(command: String)
         case sako
 
         // Manual Codable so associated values round-trip cleanly.
         private enum CodingKeys: String, CodingKey {
-            case type, fileStrategy, urlTemplate, shellCommand
+            case type, fileStrategy, urlTemplate, urlActivates, shellCommand
         }
         private enum TypeTag: String, Codable {
             case file, urlScheme, shellCommand, sako
@@ -52,7 +52,10 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
                 self = .file(fs)
             case .urlScheme:
                 let template = try container.decode(String.self, forKey: .urlTemplate)
-                self = .urlScheme(template: template)
+                // Back-compat: existing saved targets without `urlActivates` default to true
+                // (previously activating was always the behavior).
+                let activates = try container.decodeIfPresent(Bool.self, forKey: .urlActivates) ?? true
+                self = .urlScheme(template: template, activates: activates)
             case .shellCommand:
                 let cmd = try container.decode(String.self, forKey: .shellCommand)
                 self = .shellCommand(command: cmd)
@@ -67,9 +70,10 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
             case .file(let fs):
                 try container.encode(TypeTag.file, forKey: .type)
                 try container.encode(fs, forKey: .fileStrategy)
-            case .urlScheme(let template):
+            case .urlScheme(let template, let activates):
                 try container.encode(TypeTag.urlScheme, forKey: .type)
                 try container.encode(template, forKey: .urlTemplate)
+                try container.encode(activates, forKey: .urlActivates)
             case .shellCommand(let cmd):
                 try container.encode(TypeTag.shellCommand, forKey: .type)
                 try container.encode(cmd, forKey: .shellCommand)
@@ -121,6 +125,15 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
         }
     }
 
+    /// Whether the target opens and activates the destination app on delivery.
+    /// Only applies to `.urlScheme`; all other strategies return true by convention.
+    var activatesOnDelivery: Bool {
+        switch strategy {
+        case .urlScheme(_, let activates): return activates
+        default: return true
+        }
+    }
+
     // MARK: - Presets
 
     /// Notaro (cc.sypianski.notaro) ingests via notaro://add?text=…&source=…;
@@ -130,7 +143,7 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
             id: UUID(),
             name: "Notaro",
             icon: "note.text",
-            strategy: .urlScheme(template: "notaro://add?text={{text}}&source=diktilo")
+            strategy: .urlScheme(template: "notaro://add?text={{text}}&source=diktilo", activates: false)
         )
     }
 }

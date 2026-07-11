@@ -54,8 +54,8 @@ enum SaveTargetDeliveryService {
             return try await Task.detached(priority: .userInitiated) {
                 try deliverFile(text: text, strategy: fileStrategy)
             }.value
-        case .urlScheme(let template):
-            return try deliverURLScheme(text: text, template: template)
+        case .urlScheme(let template, let activates):
+            return try await deliverURLScheme(text: text, template: template, activates: activates)
         case .shellCommand(let command):
             return try await deliverShellCommand(text: text, command: command)
         case .sako:
@@ -106,7 +106,7 @@ enum SaveTargetDeliveryService {
 
     // MARK: - URL scheme strategy
 
-    private static func deliverURLScheme(text: String, template: String) throws -> String {
+    private static func deliverURLScheme(text: String, template: String, activates: Bool) async throws -> String {
         let allowedCharacters = CharacterSet.alphanumerics
         let encoded = text.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? text
 
@@ -119,11 +119,27 @@ enum SaveTargetDeliveryService {
             throw SaveTargetDeliveryError.invalidURLScheme(template)
         }
 
-        guard NSWorkspace.shared.open(url) else {
-            throw SaveTargetDeliveryError.urlOpenFailed(urlString)
+        if activates {
+            // Classic path: open URL and bring the target app to front.
+            guard NSWorkspace.shared.open(url) else {
+                throw SaveTargetDeliveryError.urlOpenFailed(urlString)
+            }
+        } else {
+            // Silent path: deliver in the background without activating the target app.
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                let config = NSWorkspace.OpenConfiguration()
+                config.activates = false
+                NSWorkspace.shared.open(url, configuration: config) { _, error in
+                    if let error {
+                        continuation.resume(throwing: SaveTargetDeliveryError.urlOpenFailed(error.localizedDescription))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
         }
 
-        logger.notice("Opened URL scheme: \(url.scheme ?? "?", privacy: .public)://…")
+        logger.notice("Opened URL scheme (activates=\(activates, privacy: .public)): \(url.scheme ?? "?", privacy: .public)://…")
         return urlString
     }
 

@@ -410,7 +410,8 @@ class RecordingShortcutManager: ObservableObject {
                 outputMode: outputMode,
                 saveTargetID: saveTargetID
             )
-            NotificationManager.shared.showNotification(title: startNotice, type: .info)
+            // Set a longer duration so the message survives panel mount (~0.3 s open animation).
+            RecorderStatusMessageCenter.shared.show(.info, icon: "waveform", text: startNotice, duration: 2.5)
             await recorderUIManager.toggleRecorderPanel()
             return
         }
@@ -420,7 +421,7 @@ class RecordingShortcutManager: ObservableObject {
         // only while .recording; during transcribe/enhance it is a no-op and the
         // re-arm alone suffices.
         DeliveryDestinationOverride.shared.arm(outputMode: outputMode, saveTargetID: saveTargetID)
-        NotificationManager.shared.showNotification(title: finishNotice, type: .info)
+        RecorderStatusMessageCenter.shared.show(.info, icon: "waveform", text: finishNotice, duration: 2.0)
         await recorderUIManager.finishRecordingIfActive()
     }
 

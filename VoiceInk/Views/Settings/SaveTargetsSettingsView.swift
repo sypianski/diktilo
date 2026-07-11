@@ -178,6 +178,7 @@ struct SaveTargetEditorView: View {
 
     // URL scheme fields
     @State private var urlTemplate: String
+    @State private var urlActivates: Bool
 
     // Shell command fields
     @State private var shellCommand: String
@@ -216,14 +217,16 @@ struct SaveTargetEditorView: View {
             _fileFormat = State(initialValue: fs.format)
             _appendToExisting = State(initialValue: fs.appendToExisting)
             _urlTemplate = State(initialValue: "")
+            _urlActivates = State(initialValue: true)
             _shellCommand = State(initialValue: "")
-        case .urlScheme(let template):
+        case .urlScheme(let template, let activates):
             _strategyKind = State(initialValue: .urlScheme)
             _directoryPath = State(initialValue: "~/Documents")
             _filenameTemplate = State(initialValue: "{date}-{slug}")
             _fileFormat = State(initialValue: .markdown)
             _appendToExisting = State(initialValue: false)
             _urlTemplate = State(initialValue: template)
+            _urlActivates = State(initialValue: activates)
             _shellCommand = State(initialValue: "")
         case .shellCommand(let cmd):
             _strategyKind = State(initialValue: .shellCommand)
@@ -232,6 +235,7 @@ struct SaveTargetEditorView: View {
             _fileFormat = State(initialValue: .markdown)
             _appendToExisting = State(initialValue: false)
             _urlTemplate = State(initialValue: "")
+            _urlActivates = State(initialValue: true)
             _shellCommand = State(initialValue: cmd)
         case .sako, nil:
             _strategyKind = State(initialValue: t?.strategy == nil ? .file : .sako)
@@ -240,6 +244,7 @@ struct SaveTargetEditorView: View {
             _fileFormat = State(initialValue: .markdown)
             _appendToExisting = State(initialValue: false)
             _urlTemplate = State(initialValue: "")
+            _urlActivates = State(initialValue: true)
             _shellCommand = State(initialValue: "")
         }
     }
@@ -325,6 +330,10 @@ struct SaveTargetEditorView: View {
         Group {
             TextField("URL Template", text: $urlTemplate, prompt: Text("notaro://add?text={{text}}&source=diktilo"))
                 .help("Use {{text}} or {text} as a placeholder for the transcript.")
+            Toggle(String(localized: "Open target app"), isOn: $urlActivates)
+            Text("When off, the text is delivered silently in the background.")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
     }
 
@@ -359,7 +368,7 @@ struct SaveTargetEditorView: View {
                 appendToExisting: appendToExisting
             ))
         case .urlScheme:
-            strategy = .urlScheme(template: urlTemplate)
+            strategy = .urlScheme(template: urlTemplate, activates: urlActivates)
         case .shellCommand:
             strategy = .shellCommand(command: shellCommand)
         case .sako:

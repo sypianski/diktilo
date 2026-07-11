@@ -21,6 +21,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     let onAssistantFollowUp: (String) -> Void
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
+    @ObservedObject private var messageCenter = RecorderStatusMessageCenter.shared
 
     // MARK: - Display State
 
@@ -76,9 +77,16 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
 
     private var mainRowHeight: CGFloat { notchHeight + activeHeightBonus }
 
-    // The HUD appears only when: recording, live transcript not shown, assistant hidden.
+    // HUD strip appears when: recording (active state) with the toggle on,
+    // OR whenever a status message is active (visible in .active/.transcribing/.enhancing).
+    // A status message wins even when the HUD toggle is off.
     private var shouldShowHUD: Bool {
-        destinationHUDEnabled && displayState == .active
+        let hasMsg = messageCenter.current != nil
+        let inNonAssistantState = displayState != .assistant && displayState != .liveText
+        return inNonAssistantState && (
+            (destinationHUDEnabled && displayState == .active)
+            || hasMsg
+        )
     }
 
     // MARK: - Pill Dimensions
