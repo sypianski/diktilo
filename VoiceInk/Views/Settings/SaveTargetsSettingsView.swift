@@ -48,8 +48,13 @@ struct SaveTargetsSettingsView: View {
         }
         .toolbar {
             ToolbarItem {
-                Button {
-                    isAddingNew = true
+                Menu {
+                    Button("Custom Target…") {
+                        isAddingNew = true
+                    }
+                    Button("Notaro") {
+                        manager.add(SaveTargetConfig.notaroPreset())
+                    }
                 } label: {
                     Label("Add Save Target", systemImage: "plus")
                 }
@@ -72,10 +77,17 @@ struct SaveTargetsSettingsView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 340)
 
-            Button("Add Save Target") {
-                isAddingNew = true
+            HStack(spacing: 12) {
+                Button("Add Save Target") {
+                    isAddingNew = true
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button("Add Notaro") {
+                    manager.add(SaveTargetConfig.notaroPreset())
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.borderedProminent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -305,7 +317,7 @@ struct SaveTargetEditorView: View {
 
     private var urlSchemeFields: some View {
         Group {
-            TextField("URL Template", text: $urlTemplate, prompt: Text("notaro://new?text={{text}}"))
+            TextField("URL Template", text: $urlTemplate, prompt: Text("notaro://add?text={{text}}&source=diktilo"))
                 .help("Use {{text}} or {text} as a placeholder for the transcript.")
         }
     }

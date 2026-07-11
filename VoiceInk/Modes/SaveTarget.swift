@@ -120,6 +120,19 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
         case .sako: return String(localized: "Sako")
         }
     }
+
+    // MARK: - Presets
+
+    /// Notaro (cc.sypianski.notaro) ingests via notaro://add?text=…&source=…;
+    /// the source parameter feeds its note classifier, so keep it stable.
+    static func notaroPreset() -> SaveTargetConfig {
+        SaveTargetConfig(
+            id: UUID(),
+            name: "Notaro",
+            icon: "note.text",
+            strategy: .urlScheme(template: "notaro://add?text={{text}}&source=diktilo")
+        )
+    }
 }
 
 // MARK: - SaveTargetManager
