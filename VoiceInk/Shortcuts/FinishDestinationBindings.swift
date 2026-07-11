@@ -36,6 +36,21 @@ enum FinishDestinationBindings {
         return fallbacks.first(where: { $0.0 == action })?.1
     }
 
+    // MARK: - Default per-target bindings
+
+    /// Gives a freshly created Notaro preset target a working shortcut out of
+    /// the box. No-op when the user already bound or deliberately cleared one,
+    /// or when Option+N fails validation (e.g. collides with another binding).
+    static func assignDefaultNotaroShortcut(targetID: UUID) {
+        let action = ShortcutAction.finishWithSaveTarget(targetID)
+        guard ShortcutStore.shortcut(for: action) == nil,
+              !ShortcutStore.isShortcutCleared(for: action) else { return }
+        ShortcutStore.setShortcut(
+            .key(keyCode: UInt16(kVK_ANSI_N), modifierFlags: [.option]),
+            for: action
+        )
+    }
+
     // MARK: - HUD item model
 
     struct HUDItem: Identifiable {

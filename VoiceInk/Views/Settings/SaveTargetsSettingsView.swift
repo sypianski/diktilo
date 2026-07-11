@@ -53,7 +53,7 @@ struct SaveTargetsSettingsView: View {
                         isAddingNew = true
                     }
                     Button("Notaro") {
-                        manager.add(SaveTargetConfig.notaroPreset())
+                        addNotaroPreset()
                     }
                 } label: {
                     Label("Add Save Target", systemImage: "plus")
@@ -84,12 +84,18 @@ struct SaveTargetsSettingsView: View {
                 .buttonStyle(.borderedProminent)
 
                 Button("Add Notaro") {
-                    manager.add(SaveTargetConfig.notaroPreset())
+                    addNotaroPreset()
                 }
                 .buttonStyle(.bordered)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func addNotaroPreset() {
+        let preset = SaveTargetConfig.notaroPreset()
+        manager.add(preset)
+        FinishDestinationBindings.assignDefaultNotaroShortcut(targetID: preset.id)
     }
 
     private var targetList: some View {
