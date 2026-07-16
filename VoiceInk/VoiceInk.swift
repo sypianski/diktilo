@@ -44,6 +44,7 @@ struct VoiceInkApp: App {
         AppLanguagePreference.applyStored()
         AppAppearancePreference.applyStored()
         OnboardingV2Migration.prepareIfNeeded()
+        LegacyFinishShortcutMigration.runIfNeeded()
 
         let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "Initialization")
         // Keep existing model order stable; append new models after synced entities.

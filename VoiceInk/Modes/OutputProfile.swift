@@ -95,9 +95,15 @@ struct OutputProfile: Codable, Identifiable, Equatable {
     var saveTargetID: UUID?
     var isEnabled: Bool = true
     var isDefault: Bool = false
+    // Per-mode paste overrides. nil = fall back to the global Settings value.
+    // Wired to UI in Phase 3; runtime consumption in Phase 2.
+    var pasteMethodOverride: String?
+    var restoreClipboardOverride: Bool?
+    var clipboardRestoreDelayOverride: Double?
 
     enum CodingKeys: String, CodingKey {
         case id, name, icon, appConfigs, urlConfigs, triggerGroups, triggerWords, isAIEnhancementEnabled, selectedPrompt, useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel, outputMode, isAutoSendEnabled, autoSendKey, customCommand, saveTargetID, isEnabled, isDefault
+        case pasteMethodOverride, restoreClipboardOverride, clipboardRestoreDelayOverride
         case legacyEmoji = "emoji"
     }
 
@@ -105,7 +111,8 @@ struct OutputProfile: Codable, Identifiable, Equatable {
          urlConfigs: [URLConfig]? = nil, triggerGroups: [ModeTriggerGroup]? = nil, triggerWords: [String] = [],
          isAIEnhancementEnabled: Bool, selectedPrompt: String? = nil,
          useClipboardContext: Bool = false, useSelectedTextContext: Bool = true, useScreenCapture: Bool = false,
-         selectedAIProvider: String? = nil, selectedAIModel: String? = nil, outputMode: OutputMode = .paste, autoSendKey: AutoSendKey = .none, customCommand: OutputCommand? = nil, saveTargetID: UUID? = nil, isEnabled: Bool = true, isDefault: Bool = false) {
+         selectedAIProvider: String? = nil, selectedAIModel: String? = nil, outputMode: OutputMode = .paste, autoSendKey: AutoSendKey = .none, customCommand: OutputCommand? = nil, saveTargetID: UUID? = nil, isEnabled: Bool = true, isDefault: Bool = false,
+         pasteMethodOverride: String? = nil, restoreClipboardOverride: Bool? = nil, clipboardRestoreDelayOverride: Double? = nil) {
         self.id = id
         self.name = name
         self.icon = icon
@@ -126,6 +133,9 @@ struct OutputProfile: Codable, Identifiable, Equatable {
         self.selectedAIModel = selectedAIModel
         self.isEnabled = isEnabled
         self.isDefault = isDefault
+        self.pasteMethodOverride = pasteMethodOverride
+        self.restoreClipboardOverride = restoreClipboardOverride
+        self.clipboardRestoreDelayOverride = clipboardRestoreDelayOverride
     }
 
     static func normalizedTriggerWords(_ words: [String]) -> [String] {
@@ -182,6 +192,9 @@ struct OutputProfile: Codable, Identifiable, Equatable {
         }
         isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
         isDefault = try container.decodeIfPresent(Bool.self, forKey: .isDefault) ?? false
+        pasteMethodOverride = try container.decodeIfPresent(String.self, forKey: .pasteMethodOverride)
+        restoreClipboardOverride = try container.decodeIfPresent(Bool.self, forKey: .restoreClipboardOverride)
+        clipboardRestoreDelayOverride = try container.decodeIfPresent(Double.self, forKey: .clipboardRestoreDelayOverride)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -206,6 +219,9 @@ struct OutputProfile: Codable, Identifiable, Equatable {
         try container.encodeIfPresent(saveTargetID, forKey: .saveTargetID)
         try container.encode(isEnabled, forKey: .isEnabled)
         try container.encode(isDefault, forKey: .isDefault)
+        try container.encodeIfPresent(pasteMethodOverride, forKey: .pasteMethodOverride)
+        try container.encodeIfPresent(restoreClipboardOverride, forKey: .restoreClipboardOverride)
+        try container.encodeIfPresent(clipboardRestoreDelayOverride, forKey: .clipboardRestoreDelayOverride)
     }
     
     

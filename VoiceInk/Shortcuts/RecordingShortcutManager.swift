@@ -143,12 +143,11 @@ class RecordingShortcutManager: ObservableObject {
         self.recorderPanelShortcutManager = RecorderPanelShortcutManager(recorderUIManager: recorderUIManager)
         self.shortcutModeHandler = shortcutModeHandler
         self.primaryRecordingShortcutModeSource = primaryRecordingShortcutModeSource
-        self.modeShortcutManager = ProfileShortcutManager(
-            modeProvider: {
-                primaryRecordingShortcutModeSource.primaryMode
-            },
-            shortcutModeHandler: shortcutModeHandler
-        )
+        // Weak-self closure so the manager doesn't retain us; RecordingShortcutManager
+        // outlives ProfileShortcutManager (it owns it), so the reference is safe.
+        self.modeShortcutManager = ProfileShortcutManager(finishHandler: { [weak self] profileId in
+            await self?.handleProfileFinishShortcut(profileId: profileId)
+        })
 
         shortcutChangeObserver = NotificationCenter.default.addObserver(
             forName: ShortcutStore.shortcutDidChange,
@@ -422,6 +421,32 @@ class RecordingShortcutManager: ObservableObject {
         // re-arm alone suffices.
         DeliveryDestinationOverride.shared.arm(outputMode: outputMode, saveTargetID: saveTargetID)
         RecorderStatusMessageCenter.shared.show(.info, icon: "waveform", text: finishNotice, duration: 2.0)
+        await recorderUIManager.finishRecordingIfActive()
+    }
+
+    /// Per-mode finish shortcut: fires only while a session is active.
+    ///
+    /// Semantics chosen deliberately (see LegacyFinishShortcutMigration): the
+    /// per-mode shortcut is finish-only — in .idle it is a no-op. Start is
+    /// always via the shared primary/secondary shortcut. During recording it
+    /// arms the mode's own `outputMode` (+ `saveTargetID`) and finishes; during
+    /// transcribing/enhancing it only re-arms, so the pipeline picks up the
+    /// override at delivery time.
+    func handleProfileFinishShortcut(profileId: UUID) async {
+        guard let profile = OutputProfileManager.shared.getConfiguration(with: profileId),
+              profile.isEnabled else { return }
+
+        let state = recorderUIManager.engineRecordingState ?? .idle
+        let panelVisible = recorderUIManager.isRecorderPanelVisible
+
+        // idle + no panel → finish-only means: do nothing.
+        if state == .idle, !panelVisible { return }
+
+        let saveTargetID: UUID? = (profile.outputMode == .saveTarget) ? profile.saveTargetID : nil
+        let notice = String(format: String(localized: "Finishing → %@"), profile.name)
+
+        DeliveryDestinationOverride.shared.arm(outputMode: profile.outputMode, saveTargetID: saveTargetID)
+        RecorderStatusMessageCenter.shared.show(.info, icon: "waveform", text: notice, duration: 2.0)
         await recorderUIManager.finishRecordingIfActive()
     }
 

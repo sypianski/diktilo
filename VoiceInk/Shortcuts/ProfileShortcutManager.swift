@@ -1,18 +1,22 @@
 import Foundation
 
+/// Owns global per-mode ("profile") shortcuts.
+///
+/// Since the per-mode shortcut migration (Phase 2), these are finish-only:
+/// pressing a mode's shortcut during a live session finishes the current
+/// recording and delivers via the mode's own `outputMode`. In .idle it is a
+/// no-op — start is always via the shared primary/secondary shortcut.
+///
+/// The old PTT/hybrid routing through `RecordingShortcutModeHandler` was
+/// removed here because it does not apply to finish-only semantics.
 @MainActor
 class ProfileShortcutManager {
     private let shortcutMonitor = ShortcutMonitor()
-    private let modeProvider: @MainActor () -> RecordingShortcutManager.Mode
-    private let shortcutModeHandler: RecordingShortcutModeHandler
+    private let finishHandler: @MainActor (UUID) async -> Void
     private var shortcutChangeObserver: NSObjectProtocol?
 
-    init(
-        modeProvider: @escaping @MainActor () -> RecordingShortcutManager.Mode,
-        shortcutModeHandler: RecordingShortcutModeHandler
-    ) {
-        self.modeProvider = modeProvider
-        self.shortcutModeHandler = shortcutModeHandler
+    init(finishHandler: @escaping @MainActor (UUID) async -> Void) {
+        self.finishHandler = finishHandler
 
         refreshModeShortcuts()
 
@@ -40,7 +44,7 @@ class ProfileShortcutManager {
             object: nil
         )
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
         if let shortcutChangeObserver {
@@ -67,54 +71,32 @@ class ProfileShortcutManager {
 
         shortcutMonitor.start(
             shortcuts: shortcuts,
-            interruptibleActions: Set(shortcuts.keys),
-            onKeyDown: { [weak self] action, eventTime in
+            interruptibleActions: [],
+            onKeyDown: { [weak self] action, _ in
                 Task { @MainActor in
                     guard let self,
-                          let profileId = self.profileId(for: action) else {
+                          case .profile(let profileId) = action,
+                          self.isValidProfileShortcut(profileId: profileId) else {
                         return
                     }
-
-                    await self.shortcutModeHandler.handleKeyDown(
-                        action: action,
-                        eventTime: eventTime,
-                        mode: self.modeProvider(),
-                        profileId: profileId
-                    )
+                    await self.finishHandler(profileId)
                 }
             },
-            onKeyUp: { [weak self] action, eventTime in
-                Task { @MainActor in
-                    guard let self,
-                          case .profile(let profileId) = action else {
-                        return
-                    }
-
-                    await self.shortcutModeHandler.handleKeyUp(
-                        action: action,
-                        eventTime: eventTime,
-                        mode: self.modeProvider(),
-                        profileId: profileId
-                    )
-                }
+            onKeyUp: { _, _ in
+                // Finish-only: no PTT, nothing to do on key-up.
             },
-            onShortcutInterrupted: { [weak self] action, _ in
-                Task { @MainActor in
-                    guard let self, case .profile = action else { return }
-                    await self.shortcutModeHandler.handleInterruption(action: action)
-                }
+            onShortcutInterrupted: { _, _ in
+                // Finish-only: no accidental-start guard needed.
             }
         )
     }
 
-    private func profileId(for action: ShortcutAction) -> UUID? {
-        guard case .profile(let profileId) = action,
-              let config = OutputProfileManager.shared.getConfiguration(with: profileId),
+    private func isValidProfileShortcut(profileId: UUID) -> Bool {
+        guard let config = OutputProfileManager.shared.getConfiguration(with: profileId),
               config.isEnabled,
               ShortcutStore.shortcut(for: .profile(config.id)) != nil else {
-            return nil
+            return false
         }
-
-        return profileId
+        return true
     }
 }
