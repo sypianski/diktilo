@@ -16536,6 +16536,28 @@
         }
       }
     },
+    "Pasting (Global Defaults)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einfügen (globale Standardwerte)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粘贴（全局默认值）"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklejanie (globalne ustawienia domyślne)"
+          }
+        }
+      }
+    },
     "Pause Media While Recording": {
       "localizations": {
         "de": {
@@ -20786,6 +20808,28 @@
         }
       }
     },
+    "Start and cancel recording shortcuts are configured on the Modes screen.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurzbefehle zum Starten und Abbrechen der Aufnahme werden im Modi-Bildschirm konfiguriert."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始和取消录音的快捷键在“模式”页面中设置。"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty startu i anulowania nagrywania konfigurujesz na ekranie Trybów."
+          }
+        }
+      }
+    },
     "Start or stop the VoiceInk recorder for voice transcription.": {
       "localizations": {
         "de": {
@@ -20961,6 +21005,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uruchamianie nagrywania"
+          }
+        }
+      }
+    },
+    "start, cancel": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start, Abbrechen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始、取消"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "start, anulowanie"
           }
         }
       }

@@ -296,8 +296,7 @@ enum ShortcutMigration {
             return ["quickAddToDictionary"]
         case .profile(let id):
             return ["mode_\(id.uuidString)", "powerMode_\(id.uuidString)"]
-        case .openVimEditor, .openWorek,
-             .finishWithCopy, .finishWithPaste, .finishWithEditWindow, .finishWithSaveTarget,
+        case .finishWithCopy, .finishWithPaste, .finishWithEditWindow, .finishWithSaveTarget,
              .recorderPanelEscape, .recorderPanelMode, .recorderPanelFinish:
             return []
         }

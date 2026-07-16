@@ -22,9 +22,13 @@ struct SettingsView: View {
     @AppStorage(GlobalTranscriptionSettings.Keys.isRealtimeEnabled) private var globalRealtimeEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isTextFormattingEnabled) private var globalTextFormattingEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isAIEnhancementEnabled) private var globalAIEnhancementEnabled = true
+    @AppStorage(PasteMethod.userDefaultsKey) private var pasteMethodRawValue = PasteMethod.standard.rawValue
+    @AppStorage("restoreClipboardAfterPaste") private var restoreClipboardAfterPaste = true
+    @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
     @State private var showResetOnboardingAlert = false
     @State private var showLanguageRestartAlert = false
     @State private var isShowingSaveTargets = false
+    @State private var isMiddleClickExpanded = false
 
     var body: some View {
         Form {
@@ -32,7 +36,7 @@ struct SettingsView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "arrow.up.forward.square")
                         .foregroundColor(.accentColor)
-                    Text("Keyboard shortcuts and paste behavior moved to the Modes screen.")
+                    Text("Start and cancel recording shortcuts are configured on the Modes screen.")
                         .foregroundColor(.secondary)
                     Spacer()
                     Button("Open Modes") {
@@ -45,6 +49,91 @@ struct SettingsView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
                 }
+            }
+
+            Section("Additional Shortcuts") {
+                LabeledContent("Paste Last Transcription (Original)") {
+                    ShortcutRecorder(action: .pasteLastTranscription) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                    .controlSize(.small)
+                }
+
+                LabeledContent("Paste Last Transcription (Enhanced)") {
+                    ShortcutRecorder(action: .pasteLastEnhancement) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                    .controlSize(.small)
+                }
+
+                LabeledContent("Retry Last Transcription") {
+                    ShortcutRecorder(action: .retryLastTranscription) {
+                        recordingShortcutManager.updateShortcutStatus()
+                    }
+                    .controlSize(.small)
+                }
+
+                ExpandableSettingsRow(
+                    isExpanded: $isMiddleClickExpanded,
+                    isEnabled: $recordingShortcutManager.isMiddleClickToggleEnabled,
+                    label: "Middle-Click Recording"
+                ) {
+                    LabeledContent("Activation Delay") {
+                        HStack {
+                            TextField("", value: $recordingShortcutManager.middleClickActivationDelay, formatter: {
+                                let formatter = NumberFormatter()
+                                formatter.minimum = 0
+                                return formatter
+                            }())
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 60)
+                            Text("ms")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+
+            Section {
+                Picker(selection: $pasteMethodRawValue) {
+                    ForEach(PasteMethod.allCases) { method in
+                        Text(method.displayName).tag(method.rawValue)
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Paste Method")
+                        InfoTip("Default uses simulated Cmd+V key events. AppleScript can help when custom keyboard layouts do not paste correctly. Individual modes can override this.")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: pasteMethodRawValue) { _, newValue in
+                    guard let method = PasteMethod(rawValue: newValue) else {
+                        pasteMethodRawValue = PasteMethod.standard.rawValue
+                        return
+                    }
+                    PasteMethod.setCurrent(method)
+                }
+
+                Toggle(isOn: $restoreClipboardAfterPaste) {
+                    HStack(spacing: 4) {
+                        Text("Keep Clipboard Content")
+                        InfoTip("Diktilo temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay.")
+                    }
+                }
+
+                if restoreClipboardAfterPaste {
+                    Picker("Restore Delay", selection: $clipboardRestoreDelay) {
+                        Text("250ms").tag(0.25)
+                        Text("500ms").tag(0.5)
+                        Text("1s").tag(1.0)
+                        Text("2s").tag(2.0)
+                        Text("3s").tag(3.0)
+                        Text("4s").tag(4.0)
+                        Text("5s").tag(5.0)
+                    }
+                }
+            } header: {
+                Text("Pasting (Global Defaults)")
             }
 
             Section("Transcription") {

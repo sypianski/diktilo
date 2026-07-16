@@ -1,35 +1,30 @@
 import SwiftUI
 import Carbon.HIToolbox
 
-/// Global (non-per-mode) shortcuts and utilities shown at the top of the Modes
-/// screen. Everything that is NOT tied to a specific mode lives here:
+/// Global (non-per-mode) recording shortcuts shown at the top of the Modes
+/// screen — only what is tied to the recording flow itself:
 ///
 ///   • Start shortcuts (primary + optional secondary) — the shared entry point
 ///     for recording. Per-mode shortcuts finish; these start.
-///   • Cancel / Middle-click / Vim / Sako — mode-agnostic recorder utilities.
-///   • Paste Last / Retry Last — history-driven actions on the last transcript.
+///   • Cancel — mode-agnostic recorder utility.
+///
+/// History-driven actions (paste last, retry last), middle-click recording and
+/// the global pasting defaults live in the app Settings screen.
 ///
 /// Presented as a `DisclosureGroup` so the top of the screen stays compact by
-/// default; expand to configure. Content mirrors what used to live in the
-/// "Shortcuts" / "Additional Shortcuts" / "Pasting" sections of the app
-/// Settings screen before Phase 3.
+/// default; expand to configure.
 struct ModesGlobalSection: View {
     @EnvironmentObject private var recordingShortcutManager: RecordingShortcutManager
-    @AppStorage(PasteMethod.userDefaultsKey) private var pasteMethodRawValue = PasteMethod.standard.rawValue
-    @AppStorage("restoreClipboardAfterPaste") private var restoreClipboardAfterPaste = true
-    @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
 
     @State private var isExpanded: Bool = false
     @State private var hasCancelShortcut: Bool = ShortcutStore.shortcut(for: .cancelRecorder) != nil
     @State private var cancelResetID = 0
-    @State private var isMiddleClickExpanded = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             Form {
                 startShortcutsSection
                 additionalShortcutsSection
-                pastingSection
             }
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
@@ -40,7 +35,7 @@ struct ModesGlobalSection: View {
                     .foregroundColor(.secondary)
                 Text("Global Shortcuts")
                     .font(.system(size: 14, weight: .semibold))
-                Text("start, cancel, paste last, retry")
+                Text("start, cancel")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
                 Spacer()
@@ -124,107 +119,6 @@ struct ModesGlobalSection: View {
                 guard let action = notification.object as? ShortcutAction, action == .cancelRecorder else { return }
                 hasCancelShortcut = ShortcutStore.shortcut(for: .cancelRecorder) != nil
             }
-
-            LabeledContent("Open Vim Editor") {
-                ShortcutRecorder(action: .openVimEditor) {
-                    recordingShortcutManager.updateShortcutStatus()
-                }
-                .controlSize(.small)
-            }
-
-            LabeledContent("Open Sako") {
-                ShortcutRecorder(action: .openWorek) {
-                    recordingShortcutManager.updateShortcutStatus()
-                }
-                .controlSize(.small)
-            }
-
-            LabeledContent("Paste Last Transcription (Original)") {
-                ShortcutRecorder(action: .pasteLastTranscription) {
-                    recordingShortcutManager.updateShortcutStatus()
-                }
-                .controlSize(.small)
-            }
-
-            LabeledContent("Paste Last Transcription (Enhanced)") {
-                ShortcutRecorder(action: .pasteLastEnhancement) {
-                    recordingShortcutManager.updateShortcutStatus()
-                }
-                .controlSize(.small)
-            }
-
-            LabeledContent("Retry Last Transcription") {
-                ShortcutRecorder(action: .retryLastTranscription) {
-                    recordingShortcutManager.updateShortcutStatus()
-                }
-                .controlSize(.small)
-            }
-
-            ExpandableSettingsRow(
-                isExpanded: $isMiddleClickExpanded,
-                isEnabled: $recordingShortcutManager.isMiddleClickToggleEnabled,
-                label: "Middle-Click Recording"
-            ) {
-                LabeledContent("Activation Delay") {
-                    HStack {
-                        TextField("", value: $recordingShortcutManager.middleClickActivationDelay, formatter: {
-                            let formatter = NumberFormatter()
-                            formatter.minimum = 0
-                            return formatter
-                        }())
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 60)
-                        Text("ms")
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Pasting (global defaults; per-mode overrides live in the mode editor)
-
-    private var pastingSection: some View {
-        Section {
-            Picker(selection: $pasteMethodRawValue) {
-                ForEach(PasteMethod.allCases) { method in
-                    Text(method.displayName).tag(method.rawValue)
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text("Paste Method")
-                    InfoTip("Default uses simulated Cmd+V key events. AppleScript can help when custom keyboard layouts do not paste correctly. Individual modes can override this.")
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: pasteMethodRawValue) { _, newValue in
-                guard let method = PasteMethod(rawValue: newValue) else {
-                    pasteMethodRawValue = PasteMethod.standard.rawValue
-                    return
-                }
-                PasteMethod.setCurrent(method)
-            }
-
-            Toggle(isOn: $restoreClipboardAfterPaste) {
-                HStack(spacing: 4) {
-                    Text("Keep Clipboard Content")
-                    InfoTip("Diktilo temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay.")
-                }
-            }
-
-            if restoreClipboardAfterPaste {
-                Picker("Restore Delay", selection: $clipboardRestoreDelay) {
-                    Text("250ms").tag(0.25)
-                    Text("500ms").tag(0.5)
-                    Text("1s").tag(1.0)
-                    Text("2s").tag(2.0)
-                    Text("3s").tag(3.0)
-                    Text("4s").tag(4.0)
-                    Text("5s").tag(5.0)
-                }
-            }
-        } header: {
-            Text("Pasting (Global Defaults)")
         }
     }
 

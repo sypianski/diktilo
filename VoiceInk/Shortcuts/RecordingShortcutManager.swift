@@ -153,16 +153,6 @@ class RecordingShortcutManager: ObservableObject {
             }
         }
 
-        ShortcutStore.seedShortcut(
-            .key(keyCode: UInt16(kVK_F13), modifierFlags: []),
-            for: .openVimEditor
-        )
-
-        ShortcutStore.seedShortcut(
-            .key(keyCode: UInt16(kVK_F14), modifierFlags: []),
-            for: .openWorek
-        )
-
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 100_000_000)
             self.refreshShortcutMonitoring()
@@ -327,10 +317,6 @@ class RecordingShortcutManager: ObservableObject {
             )
         case .quickAddToDictionary:
             DictionaryQuickAddManager.shared.toggle(modelContainer: engine.modelContext.container)
-        case .openVimEditor:
-            TranscriptEditManager.shared.present(text: "")
-        case .openWorek:
-            SakoClient.shared.openApp()
         // .finishWithCopy/.finishWithPaste/.finishWithEditWindow: no longer
         // registered in refreshShortcutMonitor, so unreachable here — they
         // fall through the switch. Enum cases stay for backward-compat with
