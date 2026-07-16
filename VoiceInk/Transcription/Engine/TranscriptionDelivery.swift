@@ -332,7 +332,7 @@ final class TranscriptionDelivery {
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 
-        let pasteTask = CursorPaster.startPasteAtCursor(pastedText)
+        let pasteTask = CursorPaster.startPasteAtCursor(pastedText, profile: output.profile)
 
         let autoSendKey = output.outputMode == .paste ? output.autoSendKey : .none
         Task { @MainActor in

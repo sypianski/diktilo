@@ -21,6 +21,7 @@ struct SettingsView: View {
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isRealtimeEnabled) private var globalRealtimeEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isTextFormattingEnabled) private var globalTextFormattingEnabled = true
+    @AppStorage(GlobalTranscriptionSettings.Keys.isAIEnhancementEnabled) private var globalAIEnhancementEnabled = true
     @State private var showResetOnboardingAlert = false
     @State private var showLanguageRestartAlert = false
     @State private var isShowingSaveTargets = false
@@ -50,14 +51,21 @@ struct SettingsView: View {
                 Toggle(isOn: $globalRealtimeEnabled) {
                     HStack(spacing: 4) {
                         Text("Real-time Streaming")
-                        InfoTip("Stream audio to the transcription server while you speak. Falls back to batch transcription automatically when unavailable. Applies to every profile.")
+                        InfoTip("Stream audio to the transcription server while you speak. Falls back to batch transcription automatically when unavailable. Applies to every mode.")
                     }
                 }
 
                 Toggle(isOn: $globalTextFormattingEnabled) {
                     HStack(spacing: 4) {
                         Text("Paragraph Formatting")
-                        InfoTip("Break large blocks of transcribed text into paragraphs. Applies to every profile.")
+                        InfoTip("Break large blocks of transcribed text into paragraphs. Applies to every mode.")
+                    }
+                }
+
+                Toggle(isOn: $globalAIEnhancementEnabled) {
+                    HStack(spacing: 4) {
+                        Text("AI Enhancement")
+                        InfoTip("Master switch. Off = no mode enhances, regardless of per-mode setting. On = per-mode toggle decides. Useful for temporarily disabling all LLM calls without touching individual modes.")
                     }
                 }
 

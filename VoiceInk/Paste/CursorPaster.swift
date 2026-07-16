@@ -21,10 +21,10 @@ class CursorPaster {
     private static let pasteShortcutEventDelay: TimeInterval = 0.01
     private static let minimumClipboardRestoreDelay: TimeInterval = 0.25
 
-    static func pasteAtCursor(_ text: String) {
+    static func pasteAtCursor(_ text: String, profile: OutputProfile? = nil) {
         Task {
             let pasteTask = await MainActor.run {
-                startPasteAtCursor(text)
+                startPasteAtCursor(text, profile: profile)
             }
             _ = await pasteTask.value
         }
@@ -32,21 +32,47 @@ class CursorPaster {
 
     @MainActor
     @discardableResult
-    static func startPasteAtCursor(_ text: String) -> Task<PasteResult, Never> {
+    static func startPasteAtCursor(_ text: String, profile: OutputProfile? = nil) -> Task<PasteResult, Never> {
         Task { @MainActor in
-            await performPasteSession(text)
+            await performPasteSession(text, profile: profile)
         }
     }
 
     @MainActor
-    static func pasteAtCursorAndWaitUntilPosted(_ text: String) async -> PasteResult {
-        await startPasteAtCursor(text).value
+    static func pasteAtCursorAndWaitUntilPosted(_ text: String, profile: OutputProfile? = nil) async -> PasteResult {
+        await startPasteAtCursor(text, profile: profile).value
+    }
+
+    // MARK: - Effective per-mode paste settings
+    //
+    // Each override on OutputProfile is nil-by-default; nil means "fall back to
+    // the app-wide value in UserDefaults". A non-nil override wins.
+
+    private static func effectivePasteMethod(profile: OutputProfile?) -> PasteMethod {
+        if let raw = profile?.pasteMethodOverride,
+           let method = PasteMethod(rawValue: raw) {
+            return method
+        }
+        return PasteMethod.current()
+    }
+
+    private static func effectiveShouldRestoreClipboard(profile: OutputProfile?) -> Bool {
+        if let override = profile?.restoreClipboardOverride {
+            return override
+        }
+        return UserDefaults.standard.bool(forKey: "restoreClipboardAfterPaste")
+    }
+
+    private static func effectiveClipboardRestoreDelay(profile: OutputProfile?) -> TimeInterval {
+        let raw = profile?.clipboardRestoreDelayOverride
+            ?? UserDefaults.standard.double(forKey: "clipboardRestoreDelay")
+        return max(raw, minimumClipboardRestoreDelay)
     }
 
     @MainActor
-    private static func performPasteSession(_ text: String) async -> PasteResult {
+    private static func performPasteSession(_ text: String, profile: OutputProfile?) async -> PasteResult {
         let pasteboard = NSPasteboard.general
-        let shouldRestoreClipboard = UserDefaults.standard.bool(forKey: "restoreClipboardAfterPaste")
+        let shouldRestoreClipboard = effectiveShouldRestoreClipboard(profile: profile)
         let savedContents = shouldRestoreClipboard ? snapshotClipboard(from: pasteboard) : []
         let sessionID = UUID().uuidString
 
@@ -61,12 +87,13 @@ class CursorPaster {
 
         await wait(prePasteDelay)
 
-        let pasteResult = await postPasteCommand()
+        let pasteResult = await postPasteCommand(profile: profile)
         if shouldRestoreClipboard {
             scheduleClipboardRestore(
                 savedContents,
                 expectedText: text,
                 sessionID: sessionID,
+                delay: effectiveClipboardRestoreDelay(profile: profile),
                 on: pasteboard
             )
         }
@@ -86,8 +113,8 @@ class CursorPaster {
     }
 
     @MainActor
-    private static func postPasteCommand() async -> PasteResult {
-        if PasteMethod.current() == .appleScript {
+    private static func postPasteCommand(profile: OutputProfile?) async -> PasteResult {
+        if effectivePasteMethod(profile: profile) == .appleScript {
             return pasteUsingAppleScript() ? .commandPosted : .commandNotPosted
         } else {
             return await pasteFromClipboard()
@@ -98,13 +125,9 @@ class CursorPaster {
         _ savedContents: ClipboardSnapshot,
         expectedText: String,
         sessionID: String,
+        delay: TimeInterval,
         on pasteboard: NSPasteboard
     ) {
-        let delay = max(
-            UserDefaults.standard.double(forKey: "clipboardRestoreDelay"),
-            minimumClipboardRestoreDelay
-        )
-
         Task { @MainActor in
             await wait(delay)
             guard pasteboardStillOwnedByPasteSession(pasteboard, expectedText: expectedText, sessionID: sessionID) else {

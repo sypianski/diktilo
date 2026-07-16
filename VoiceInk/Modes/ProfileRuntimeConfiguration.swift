@@ -122,9 +122,14 @@ enum ProfileRuntimeResolver {
             aiService: aiService
         )
 
+        // Enhancement fires only when BOTH the app-wide master switch AND the
+        // per-mode toggle are on. Master OFF hard-disables all enhancement.
+        let isEnabled = GlobalTranscriptionSettings.isAIEnhancementEnabled
+            && (profile?.isAIEnhancementEnabled ?? false)
+
         return EnhancementRuntimeConfiguration(
             profile: profile,
-            isEnabled: profile?.isAIEnhancementEnabled ?? false,
+            isEnabled: isEnabled,
             prompt: prompt,
             provider: provider,
             modelName: modelName,

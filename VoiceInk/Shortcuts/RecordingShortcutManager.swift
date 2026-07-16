@@ -22,7 +22,6 @@ class RecordingShortcutManager: ObservableObject {
     @Published var primaryRecordingShortcutMode: Mode {
         didSet {
             UserDefaults.standard.set(primaryRecordingShortcutMode.rawValue, forKey: "primaryRecordingShortcutMode")
-            primaryRecordingShortcutModeSource.primaryMode = primaryRecordingShortcutMode
         }
     }
     @Published var secondaryRecordingShortcutMode: Mode {
@@ -49,7 +48,6 @@ class RecordingShortcutManager: ObservableObject {
     private let shortcutMonitor = ShortcutMonitor()
     private var shortcutChangeObserver: NSObjectProtocol?
     private let shortcutModeHandler: RecordingShortcutModeHandler
-    private let primaryRecordingShortcutModeSource: RecordingShortcutModeSource
     private var saveTargetsObserverTask: Task<Void, Never>?
 
     // MARK: - Helper Properties
@@ -134,15 +132,10 @@ class RecordingShortcutManager: ObservableObject {
             }
         )
 
-        let primaryRecordingShortcutModeSource = RecordingShortcutModeSource(
-            primaryMode: primaryRecordingShortcutMode
-        )
-
         self.engine = engine
         self.recorderUIManager = recorderUIManager
         self.recorderPanelShortcutManager = RecorderPanelShortcutManager(recorderUIManager: recorderUIManager)
         self.shortcutModeHandler = shortcutModeHandler
-        self.primaryRecordingShortcutModeSource = primaryRecordingShortcutModeSource
         // Weak-self closure so the manager doesn't retain us; RecordingShortcutManager
         // outlives ProfileShortcutManager (it owns it), so the reference is safe.
         self.modeShortcutManager = ProfileShortcutManager(finishHandler: { [weak self] profileId in
@@ -485,15 +478,6 @@ class RecordingShortcutManager: ObservableObject {
         MainActor.assumeIsolated {
             removeAllMonitoring()
         }
-    }
-}
-
-@MainActor
-private final class RecordingShortcutModeSource {
-    var primaryMode: RecordingShortcutManager.Mode
-
-    init(primaryMode: RecordingShortcutManager.Mode) {
-        self.primaryMode = primaryMode
     }
 }
 
