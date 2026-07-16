@@ -44,7 +44,10 @@ class RecordingShortcutManager: ObservableObject {
     private var engine: VoiceInkEngine
     private var recorderUIManager: RecorderUIManager
     private var recorderPanelShortcutManager: RecorderPanelShortcutManager
-    private let modeShortcutManager: ProfileShortcutManager
+    // Implicitly-unwrapped so we can defer init to after all other stored
+    // properties are set — its `finishHandler` closure captures `self` and
+    // Swift's DI otherwise rejects that reference before init completes.
+    private var modeShortcutManager: ProfileShortcutManager!
     private let shortcutMonitor = ShortcutMonitor()
     private var shortcutChangeObserver: NSObjectProtocol?
     private let shortcutModeHandler: RecordingShortcutModeHandler
@@ -136,11 +139,9 @@ class RecordingShortcutManager: ObservableObject {
         self.recorderUIManager = recorderUIManager
         self.recorderPanelShortcutManager = RecorderPanelShortcutManager(recorderUIManager: recorderUIManager)
         self.shortcutModeHandler = shortcutModeHandler
-        // Weak-self closure so the manager doesn't retain us; RecordingShortcutManager
-        // outlives ProfileShortcutManager (it owns it), so the reference is safe.
-        self.modeShortcutManager = ProfileShortcutManager(finishHandler: { [weak self] profileId in
-            await self?.handleProfileFinishShortcut(profileId: profileId)
-        })
+        // modeShortcutManager assignment deferred to end of init (below) —
+        // its finishHandler captures `self`, and Swift's DI rejects that
+        // reference until every stored property has been initialized.
 
         shortcutChangeObserver = NotificationCenter.default.addObserver(
             forName: ShortcutStore.shortcutDidChange,
@@ -179,6 +180,13 @@ class RecordingShortcutManager: ObservableObject {
                 self?.refreshShortcutMonitoring()
             }
         }
+
+        // Final step — every other stored property is set, so `self` is fully
+        // initialized. Safe to capture in ProfileShortcutManager's finish
+        // handler closure. Weak-self so it doesn't retain us.
+        self.modeShortcutManager = ProfileShortcutManager(finishHandler: { [weak self] profileId in
+            await self?.handleProfileFinishShortcut(profileId: profileId)
+        })
     }
     
     private func refreshShortcutMonitoring() {
