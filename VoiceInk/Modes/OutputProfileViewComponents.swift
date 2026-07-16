@@ -52,8 +52,7 @@ struct ModeEmptyStateView: View {
 struct OutputProfilesGrid: View {
     @ObservedObject var modeManager: OutputProfileManager
     let onEditConfig: (OutputProfile) -> Void
-    @EnvironmentObject var enhancementService: AIEnhancementService
-    
+
     var body: some View {
         LazyVStack(spacing: 12) {
             ForEach($modeManager.configurations) { $config in
@@ -102,34 +101,6 @@ struct ConfigurationRow: View {
     let isEditing: Bool
     let modeManager: OutputProfileManager
     let onEditConfig: (OutputProfile) -> Void
-    @EnvironmentObject var enhancementService: AIEnhancementService
-    @EnvironmentObject var transcriptionModelManager: TranscriptionModelManager
-    @State private var isHovering = false
-    
-    private let maxAppIconsToShow = 5
-    
-    private var selectedPrompt: CustomPrompt? {
-        guard let promptId = config.selectedPrompt,
-              let uuid = UUID(uuidString: promptId) else { return nil }
-        return enhancementService.allPrompts.first { $0.id == uuid }
-    }
-    
-    private var hasVisibleMetadata: Bool {
-        if config.isAIEnhancementEnabled,
-           config.selectedAIProvider != AIProvider.localCLI.rawValue,
-           let modelName = config.selectedAIModel,
-           !modelName.isEmpty {
-            return true
-        }
-        if config.isAIEnhancementEnabled {
-            return true
-        }
-        if config.outputMode == .paste && config.autoSendKey.isEnabled {
-            return true
-        }
-        return false
-    }
-
     private var profileShortcut: Shortcut? {
         ShortcutStore.shortcut(for: .profile(config.id))
     }
@@ -148,199 +119,72 @@ struct ConfigurationRow: View {
         .overlay(Capsule().stroke(AppTheme.Border.control, lineWidth: 0.5))
     }
     
-    private var appCount: Int { return config.allAppConfigs.count }
-    private var websiteCount: Int { return config.allURLConfigs.count }
-    
-    private var websiteText: String {
-        if websiteCount == 0 { return "" }
-        return String(localized: "\(websiteCount) Websites")
-    }
-
-    private var appText: String {
-        if appCount == 0 { return "" }
-        return String(localized: "\(appCount) Apps")
-    }
-    
-    private var extraAppsCount: Int {
-        return max(0, appCount - maxAppIconsToShow)
-    }
-    
-    private var visibleAppConfigs: [AppConfig] {
-        return Array(config.allAppConfigs.prefix(maxAppIconsToShow))
-    }
-
-    private var editModeButton: some View {
-        Button {
-            onEditConfig(config)
-        } label: {
-            Text("Edit")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(Capsule()
-                    .fill(AppTheme.Surface.control))
-                .overlay(
-                    Capsule()
-                        .stroke(AppTheme.Border.control, lineWidth: 0.5)
-                )
-        }
-        .buttonStyle(.plain)
-        .help("Edit mode")
-        .accessibilityLabel("Edit mode")
-    }
-    
     var body: some View {
-        VStack(spacing: 0) {
+        HStack(spacing: 12) {
             HStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    ZStack {
-                        ModeIconView(icon: config.icon, size: config.icon.kind == .emoji ? 20 : 16)
-                    }
-                    .frame(width: 40, height: 40)
-                    .background(
-                        AppCardBackground(isSelected: false, cornerRadius: AppTheme.Radius.pill)
+                ZStack {
+                    ModeIconView(icon: config.icon, size: config.icon.kind == .emoji ? 20 : 16)
+                }
+                .frame(width: 40, height: 40)
+                .background(
+                    AppCardBackground(isSelected: false, cornerRadius: AppTheme.Radius.pill)
+                )
+
+                HStack(spacing: 8) {
+                    Text(config.name)
+                        .font(.system(size: 15, weight: .semibold))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+
+                    metadataPill(
+                        icon: config.outputMode.iconName,
+                        text: config.outputMode.displayName
                     )
 
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(config.name)
-                            .font(.system(size: 15, weight: .semibold))
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-
-                        HStack(spacing: 6) {
-                            metadataPill(
-                                icon: config.outputMode.iconName,
-                                text: config.outputMode.displayName
-                            )
-
-                            if let shortcut = profileShortcut {
-                                metadataPill(
-                                    icon: "command",
-                                    text: shortcut.displayString
-                                )
-                            }
-                        }
-                        .padding(.top, 2)
-
-                        HStack(spacing: 12) {
-                            if appCount > 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "app.fill")
-                                        .font(.system(size: 10))
-                                    Text(appText)
-                                        .font(.caption2)
-                                }
-                            }
-
-                            if websiteCount > 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "globe")
-                                        .font(.system(size: 10))
-                                    Text(websiteText)
-                                        .font(.caption2)
-                                }
-                            }
-                        }
-                        .padding(.top, 2)
-                        .foregroundColor(.secondary)
-                    }
-
-                    Spacer()
-
-                    if config.isDefault {
-                        DefaultModeIndicator()
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    onEditConfig(config)
-                }
-
-                if !config.isDefault {
-                    Toggle("", isOn: Binding(
-                        get: { config.isEnabled },
-                        set: { newValue in
-                            if newValue {
-                                modeManager.enableConfiguration(with: config.id)
-                            } else {
-                                modeManager.disableConfiguration(with: config.id)
-                            }
-                        }
-                    ))
-                        .toggleStyle(SwitchToggleStyle(tint: AppTheme.Accent.primary))
-                        .labelsHidden()
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppMaterialCardBackground.fill)
-            
-            if hasVisibleMetadata {
-                Divider()
-                
-                HStack(spacing: 8) {
-                    if config.isAIEnhancementEnabled,
-                       config.selectedAIProvider != AIProvider.localCLI.rawValue,
-                       let modelName = config.selectedAIModel,
-                       !modelName.isEmpty {
+                    if let shortcut = profileShortcut {
                         metadataPill(
-                            icon: "cpu",
-                            text: modelName.count > 20 ? String(modelName.prefix(18)) + "..." : modelName
+                            icon: "command",
+                            text: shortcut.displayString
                         )
                     }
-
-                    if config.outputMode == .paste && config.autoSendKey.isEnabled {
-                        metadataPill(icon: "keyboard", text: config.autoSendKey.displayName)
-                    }
-
-                    if config.isAIEnhancementEnabled {
-                        metadataPill(icon: "sparkles", text: selectedPrompt?.title ?? "AI")
-                    }
-
-                    Spacer()
-
-                    if isHovering {
-                        editModeButton
-                            .transition(.opacity)
-                    }
                 }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    onEditConfig(config)
+
+                Spacer()
+
+                if config.isDefault {
+                    DefaultModeIndicator()
                 }
-                .padding(.vertical, 6)
-                .padding(.horizontal, 16)
-                .background(AppTheme.Surface.card)
             }
-    }
-    .clipShape(RoundedRectangle(cornerRadius: 16))
-    .background {
-        if !hasVisibleMetadata {
+            .contentShape(Rectangle())
+            .onTapGesture {
+                onEditConfig(config)
+            }
+
+            if !config.isDefault {
+                Toggle("", isOn: Binding(
+                    get: { config.isEnabled },
+                    set: { newValue in
+                        if newValue {
+                            modeManager.enableConfiguration(with: config.id)
+                        } else {
+                            modeManager.disableConfiguration(with: config.id)
+                        }
+                    }
+                ))
+                    .toggleStyle(SwitchToggleStyle(tint: AppTheme.Accent.primary))
+                    .labelsHidden()
+            }
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background {
             AppMaterialCardBackground(isSelected: isEditing, cornerRadius: 16)
         }
-    }
-    .overlay {
-        if hasVisibleMetadata {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    AppMaterialCardBackground.border(for: isEditing),
-                    lineWidth: AppMaterialCardBackground.lineWidth(for: isEditing)
-                )
-        }
-    }
-    .opacity(config.isEnabled ? 1.0 : 0.70)
-    .onHover { hovering in
-        withAnimation(.easeInOut(duration: 0.12)) {
-            isHovering = hovering
-        }
-    }
+        .opacity(config.isEnabled ? 1.0 : 0.70)
     }
     
-    private var isSelected: Bool {
-        return isEditing
-    }
 }
 
 struct ModeAppIcon: View {
