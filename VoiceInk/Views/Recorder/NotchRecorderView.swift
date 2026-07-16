@@ -77,14 +77,16 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
 
     private var mainRowHeight: CGFloat { notchHeight + activeHeightBonus }
 
-    // HUD strip appears when: recording (active state) with the toggle on,
-    // OR whenever a status message is active (visible in .active/.transcribing/.enhancing).
-    // A status message wins even when the HUD toggle is off.
+    // HUD strip appears only while actively recording (finish-destination
+    // shortcuts are meaningful then), OR whenever a status message is active.
+    // A status message wins even when the HUD toggle is off. Matches
+    // MiniRecorderView: .active also covers .transcribing/.enhancing, so gate
+    // the hint on the raw recording state, not displayState.
     private var shouldShowHUD: Bool {
         let hasMsg = messageCenter.current != nil
         let inNonAssistantState = displayState != .assistant && displayState != .liveText
         return inNonAssistantState && (
-            (destinationHUDEnabled && displayState == .active)
+            (destinationHUDEnabled && stateProvider.recordingState == .recording)
             || hasMsg
         )
     }

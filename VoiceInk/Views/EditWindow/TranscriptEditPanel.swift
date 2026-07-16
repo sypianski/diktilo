@@ -37,8 +37,15 @@ final class TranscriptEditManager {
 
     var isVisible: Bool { pending != nil }
 
+    /// Whether an external editor app is installed to serve the Edit Window
+    /// output mode. When false, `present(text:)` falls back to the clipboard.
+    static var isExternalEditorInstalled: Bool {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: vimiletoBundleID) != nil
+    }
+
     private init() {
         registerDarwinObserver()
+        Self.sweepOrphans()
     }
 
     // MARK: Present
@@ -46,6 +53,14 @@ final class TranscriptEditManager {
     /// Hand `text` to Vimileto for editing. `saveToWorek` offers the ⌥↵ Worek
     /// action. `onDone` fires once the session resolves (any outcome).
     func present(text: String, onDone: (() -> Void)? = nil, saveToWorek: Bool = true) {
+        // A still-pending session means the previous edit never resolved
+        // (Vimileto crashed or was force-quit): drop its stranded IPC files
+        // before starting a new one so they don't accumulate.
+        if let stale = pending {
+            Self.cleanup(stale.id)
+            pending = nil
+        }
+
         let id = UUID().uuidString
         let dir = Self.ipcDir()
 
@@ -145,6 +160,27 @@ final class TranscriptEditManager {
         let dir = ipcDir()
         for ext in ["in", "opts", "out", "result"] {
             try? FileManager.default.removeItem(at: dir.appendingPathComponent("\(id).\(ext)"))
+        }
+    }
+
+    /// Remove IPC files left behind by sessions that never resolved (e.g.
+    /// Vimileto crashed after we wrote `.in`/`.opts` but before posting done).
+    /// Age-gated so an edit window open across an app relaunch is never touched.
+    private static func sweepOrphans(olderThan maxAge: TimeInterval = 2 * 60 * 60) {
+        let dir = ipcDir()
+        let fm = FileManager.default
+        guard let entries = try? fm.contentsOfDirectory(
+            at: dir,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return }
+
+        let cutoff = Date().addingTimeInterval(-maxAge)
+        for url in entries {
+            let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+            if let modified, modified < cutoff {
+                try? fm.removeItem(at: url)
+            }
         }
     }
 }

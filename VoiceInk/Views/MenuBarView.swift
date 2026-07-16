@@ -8,7 +8,6 @@ struct MenuBarView: View {
     @EnvironmentObject var whisperModelManager: WhisperModelManager
     @EnvironmentObject var recordingShortcutManager: RecordingShortcutManager
     @EnvironmentObject var menuBarManager: MenuBarManager
-    @EnvironmentObject var updaterViewModel: UpdaterViewModel
     @EnvironmentObject var enhancementService: AIEnhancementService
     @EnvironmentObject var aiService: AIService
     @ObservedObject private var modeManager = OutputProfileManager.shared
@@ -144,11 +143,6 @@ struct MenuBarView: View {
                 menuBarManager.openMainWindowAndNavigate(to: "Settings")
             }
             .keyboardShortcut(",", modifiers: .command)
-
-            Button("Check for Updates") {
-                updaterViewModel.checkForUpdates()
-            }
-            .disabled(!updaterViewModel.canCheckForUpdates)
 
             Button("Quit Diktilo") {
                 NSApplication.shared.terminate(nil)

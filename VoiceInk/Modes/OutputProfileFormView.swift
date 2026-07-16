@@ -515,6 +515,26 @@ struct OutputProfileFormView: View {
             if draft.outputMode == .saveTarget {
                 saveTargetControls
             }
+
+            if draft.outputMode == .editWindow {
+                editWindowNote
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var editWindowNote: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Opens the transcript in your external editor app before delivery; committing there copies the edited text to the clipboard.")
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
+
+            if !TranscriptEditManager.isExternalEditorInstalled {
+                Label("No editor app installed — the transcript falls back to the clipboard.",
+                      systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(size: 11))
+                    .foregroundColor(.orange)
+            }
         }
     }
 

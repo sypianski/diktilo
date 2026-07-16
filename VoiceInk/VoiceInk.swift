@@ -23,7 +23,6 @@ struct VoiceInkApp: App {
     @StateObject private var enhancementService: AIEnhancementService
     @StateObject private var activeWindowService = ActiveWindowService.shared
     @AppStorage("hasCompletedOnboardingV2") private var hasCompletedOnboardingV2 = false
-    @AppStorage("enableAnnouncements") private var enableAnnouncements = true
     @State private var showMenuBarIcon = true
     @State private var didShowAccessibilityReminder = false
 
@@ -280,10 +279,6 @@ struct VoiceInkApp: App {
                         .environmentObject(enhancementService)
                         .modelContainer(container)
                         .onAppear {
-                            if enableAnnouncements {
-                                AnnouncementsService.shared.start()
-                            }
-
                             showAccessibilityReminderIfNeeded()
 
                             // Run due audio-only cleanup and schedule future checks when transcript cleanup is not managing retention.
@@ -308,7 +303,6 @@ struct VoiceInkApp: App {
                             WindowManager.shared.configureWindow(window)
                         })
                         .onDisappear {
-                            AnnouncementsService.shared.stop()
                             whisperModelManager.unloadModel()
 
                             // Stop the automatic audio cleanup process
@@ -334,10 +328,6 @@ struct VoiceInkApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) { }
-
-            CommandGroup(after: .appInfo) {
-                CheckForUpdatesView(updaterViewModel: updaterViewModel)
-            }
         }
 
         MenuBarExtra(isInserted: $showMenuBarIcon) {
