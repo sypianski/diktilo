@@ -107,6 +107,8 @@ struct OutputProfileView: View {
                         GeometryReader { geometry in
                             ScrollView {
                                 VStack(spacing: 0) {
+                                    ModesGlobalSection()
+
                                     if modeManager.configurations.isEmpty {
                                         VStack(spacing: 24) {
                                             Spacer()

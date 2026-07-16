@@ -128,6 +128,7 @@ struct OutputProfileFormView: View {
                 cleanURL: modeManager.cleanURL
             )
             aiEnhancementSection
+            finishSection
             advancedSection
         }
         .formStyle(.grouped)
@@ -371,6 +372,106 @@ struct OutputProfileFormView: View {
 
     private func applyOutputRules() {
         draft.applyOutputRules(canRespond: canRespond)
+    }
+
+    private var finishSection: some View {
+        Section {
+            LabeledContent("Finish Shortcut") {
+                ShortcutRecorder(action: .profile(draft.id))
+                    .controlSize(.small)
+            }
+
+            HStack(alignment: .top, spacing: 4) {
+                Text("Press during recording to finish and deliver via")
+                    .foregroundColor(.secondary)
+                Text(draft.outputMode.displayName)
+                    .foregroundColor(.primary)
+                    .fontWeight(.medium)
+                Text(".")
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            .font(.system(size: 11))
+
+            if draft.outputMode.usesPasteOptions {
+                pasteOverridesGroup
+            }
+        } header: {
+            Text("Finish")
+        }
+    }
+
+    @ViewBuilder
+    private var pasteOverridesGroup: some View {
+        let customPasteBinding = Binding<Bool>(
+            get: {
+                draft.pasteMethodOverride != nil
+                    || draft.restoreClipboardOverride != nil
+                    || draft.clipboardRestoreDelayOverride != nil
+            },
+            set: { isOn in
+                if !isOn {
+                    draft.pasteMethodOverride = nil
+                    draft.restoreClipboardOverride = nil
+                    draft.clipboardRestoreDelayOverride = nil
+                } else {
+                    // Seed with current global values so switching on doesn't
+                    // silently change behavior.
+                    let globalPaste = UserDefaults.standard.string(forKey: PasteMethod.userDefaultsKey)
+                        ?? PasteMethod.standard.rawValue
+                    draft.pasteMethodOverride = globalPaste
+                    draft.restoreClipboardOverride = UserDefaults.standard.object(forKey: "restoreClipboardAfterPaste") as? Bool ?? true
+                    let globalDelay = UserDefaults.standard.object(forKey: "clipboardRestoreDelay") as? Double ?? 2.0
+                    draft.clipboardRestoreDelayOverride = globalDelay
+                }
+            }
+        )
+
+        Toggle(isOn: customPasteBinding) {
+            HStack(spacing: 4) {
+                Text("Custom paste settings")
+                InfoTip("Override the global paste method and clipboard-restore behavior for this mode only.")
+            }
+        }
+
+        if customPasteBinding.wrappedValue {
+            Picker(selection: Binding(
+                get: { draft.pasteMethodOverride ?? PasteMethod.standard.rawValue },
+                set: { draft.pasteMethodOverride = $0 }
+            )) {
+                ForEach(PasteMethod.allCases) { method in
+                    Text(method.displayName).tag(method.rawValue)
+                }
+            } label: {
+                Text("Paste Method")
+            }
+            .pickerStyle(.menu)
+
+            Toggle(isOn: Binding(
+                get: { draft.restoreClipboardOverride ?? true },
+                set: { draft.restoreClipboardOverride = $0 }
+            )) {
+                Text("Keep Clipboard Content")
+            }
+
+            if (draft.restoreClipboardOverride ?? true) {
+                Picker(selection: Binding(
+                    get: { draft.clipboardRestoreDelayOverride ?? 2.0 },
+                    set: { draft.clipboardRestoreDelayOverride = $0 }
+                )) {
+                    Text("250ms").tag(0.25)
+                    Text("500ms").tag(0.5)
+                    Text("1s").tag(1.0)
+                    Text("2s").tag(2.0)
+                    Text("3s").tag(3.0)
+                    Text("4s").tag(4.0)
+                    Text("5s").tag(5.0)
+                } label: {
+                    Text("Restore Delay")
+                }
+                .pickerStyle(.menu)
+            }
+        }
     }
 
     private var advancedSection: some View {

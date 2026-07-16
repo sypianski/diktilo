@@ -20,6 +20,10 @@ struct OutputProfileDraft {
     var customCommand: String
     var saveTargetID: UUID?
     var isDefault: Bool
+    // Per-mode paste overrides (nil = use global Settings value).
+    var pasteMethodOverride: String?
+    var restoreClipboardOverride: Bool?
+    var clipboardRestoreDelayOverride: Double?
 
     private var sourceConfig: OutputProfile?
 
@@ -47,6 +51,9 @@ struct OutputProfileDraft {
             customCommand = inheritedConfig?.customCommand?.command ?? ""
             saveTargetID = nil
             isDefault = false
+            pasteMethodOverride = nil
+            restoreClipboardOverride = nil
+            clipboardRestoreDelayOverride = nil
             sourceConfig = nil
 
         case .edit(let config):
@@ -70,6 +77,9 @@ struct OutputProfileDraft {
             customCommand = latestConfig.customCommand?.command ?? ""
             saveTargetID = latestConfig.saveTargetID
             isDefault = latestConfig.isDefault
+            pasteMethodOverride = latestConfig.pasteMethodOverride
+            restoreClipboardOverride = latestConfig.restoreClipboardOverride
+            clipboardRestoreDelayOverride = latestConfig.clipboardRestoreDelayOverride
             sourceConfig = latestConfig
         }
     }
@@ -114,6 +124,9 @@ struct OutputProfileDraft {
 
         if !outputMode.usesPasteOptions {
             autoSendKey = .none
+            pasteMethodOverride = nil
+            restoreClipboardOverride = nil
+            clipboardRestoreDelayOverride = nil
         }
 
         if outputMode == .respond {
@@ -126,6 +139,10 @@ struct OutputProfileDraft {
         let savedIsDefault = outputMode == .respond ? false : isDefault
         let savedCustomCommand = makeCustomCommand()
         let savedSaveTargetID = outputMode == .saveTarget ? saveTargetID : nil
+        // Paste overrides only meaningful when outputMode == .paste; otherwise strip.
+        let savedPasteMethod = outputMode.usesPasteOptions ? pasteMethodOverride : nil
+        let savedRestoreClipboard = outputMode.usesPasteOptions ? restoreClipboardOverride : nil
+        let savedClipboardRestoreDelay = outputMode.usesPasteOptions ? clipboardRestoreDelayOverride : nil
 
         switch mode {
         case .add:
@@ -148,7 +165,10 @@ struct OutputProfileDraft {
                 autoSendKey: savedAutoSendKey,
                 customCommand: savedCustomCommand,
                 saveTargetID: savedSaveTargetID,
-                isDefault: savedIsDefault
+                isDefault: savedIsDefault,
+                pasteMethodOverride: savedPasteMethod,
+                restoreClipboardOverride: savedRestoreClipboard,
+                clipboardRestoreDelayOverride: savedClipboardRestoreDelay
             )
 
         case .edit(let config):
@@ -171,6 +191,9 @@ struct OutputProfileDraft {
             updatedConfig.customCommand = savedCustomCommand
             updatedConfig.saveTargetID = savedSaveTargetID
             updatedConfig.isDefault = savedIsDefault
+            updatedConfig.pasteMethodOverride = savedPasteMethod
+            updatedConfig.restoreClipboardOverride = savedRestoreClipboard
+            updatedConfig.clipboardRestoreDelayOverride = savedClipboardRestoreDelay
             return updatedConfig
         }
     }
