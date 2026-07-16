@@ -115,9 +115,37 @@ struct ConfigurationRow: View {
     }
     
     private var hasVisibleMetadata: Bool {
-        config.isAIEnhancementEnabled ||
-        config.outputMode != .paste ||
-        config.autoSendKey.isEnabled
+        if config.isAIEnhancementEnabled,
+           config.selectedAIProvider != AIProvider.localCLI.rawValue,
+           let modelName = config.selectedAIModel,
+           !modelName.isEmpty {
+            return true
+        }
+        if config.isAIEnhancementEnabled {
+            return true
+        }
+        if config.outputMode == .paste && config.autoSendKey.isEnabled {
+            return true
+        }
+        return false
+    }
+
+    private var profileShortcut: Shortcut? {
+        ShortcutStore.shortcut(for: .profile(config.id))
+    }
+
+    @ViewBuilder
+    private func metadataPill(icon: String, text: String) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 10))
+            Text(text)
+                .font(.caption)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(Capsule().fill(AppTheme.Surface.control))
+        .overlay(Capsule().stroke(AppTheme.Border.control, lineWidth: 0.5))
     }
     
     private var appCount: Int { return config.allAppConfigs.count }
@@ -179,6 +207,21 @@ struct ConfigurationRow: View {
                             .font(.system(size: 15, weight: .semibold))
                             .lineLimit(1)
                             .truncationMode(.tail)
+
+                        HStack(spacing: 6) {
+                            metadataPill(
+                                icon: config.outputMode.iconName,
+                                text: config.outputMode.displayName
+                            )
+
+                            if let shortcut = profileShortcut {
+                                metadataPill(
+                                    icon: "command",
+                                    text: shortcut.displayString
+                                )
+                            }
+                        }
+                        .padding(.top, 2)
 
                         HStack(spacing: 12) {
                             if appCount > 0 {
@@ -242,70 +285,18 @@ struct ConfigurationRow: View {
                        config.selectedAIProvider != AIProvider.localCLI.rawValue,
                        let modelName = config.selectedAIModel,
                        !modelName.isEmpty {
-                        HStack(spacing: 4) {
-                            Image(systemName: "cpu")
-                                .font(.system(size: 10))
-                            Text(modelName.count > 20 ? String(modelName.prefix(18)) + "..." : modelName)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(AppTheme.Surface.control))
-                        .overlay(
-                            Capsule()
-                                .stroke(AppTheme.Border.control, lineWidth: 0.5)
-                        )
-                    }
-
-                    if config.outputMode != .paste {
-                        HStack(spacing: 4) {
-                            Image(systemName: config.outputMode.iconName)
-                                .font(.system(size: 10))
-                            Text(config.outputMode.displayName)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(AppTheme.Surface.control))
-                        .overlay(
-                            Capsule()
-                                .stroke(AppTheme.Border.control, lineWidth: 0.5)
+                        metadataPill(
+                            icon: "cpu",
+                            text: modelName.count > 20 ? String(modelName.prefix(18)) + "..." : modelName
                         )
                     }
 
                     if config.outputMode == .paste && config.autoSendKey.isEnabled {
-                        HStack(spacing: 4) {
-                            Image(systemName: "keyboard")
-                                .font(.system(size: 10))
-                            Text(config.autoSendKey.displayName)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(AppTheme.Surface.control))
-                        .overlay(
-                            Capsule()
-                                .stroke(AppTheme.Border.control, lineWidth: 0.5)
-                        )
+                        metadataPill(icon: "keyboard", text: config.autoSendKey.displayName)
                     }
+
                     if config.isAIEnhancementEnabled {
-                        HStack(spacing: 4) {
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 10))
-                            Text(selectedPrompt?.title ?? "AI")
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(AppTheme.Surface.control))
-                        .overlay(
-                            Capsule()
-                                .stroke(AppTheme.Border.control, lineWidth: 0.5)
-                        )
+                        metadataPill(icon: "sparkles", text: selectedPrompt?.title ?? "AI")
                     }
 
                     Spacer()
