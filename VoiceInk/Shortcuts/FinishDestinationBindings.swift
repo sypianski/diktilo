@@ -3,31 +3,25 @@ import Carbon.HIToolbox
 
 // MARK: - Shared finish-destination binding helpers
 //
-// Single source of truth for:
-//   1. The Option+C/V/E fallback shortcuts for the three fixed destinations.
-//   2. The `DestinationHUDItem` list consumed by `RecorderDestinationHUDView`.
-//
-// Both `RecorderPanelShortcutManager` (registration) and the HUD (display)
-// read from here so the two can never drift.
+// After the per-mode finish refactor:
+//   • The three fixed destinations (Copy / Paste / Edit Window) no longer own
+//     global shortcuts — LegacyFinishShortcutMigration reattached any user
+//     binding to a per-mode `.profile(id)` shortcut and cleared the legacy
+//     slot. `effectiveShortcut` is kept only so the migration can still read
+//     the pre-migration value.
+//   • Save-target finishers stay global (`.finishWithSaveTarget(id)`).
+//   • The recorder HUD lists both save-target finishers AND enabled modes with
+//     a `.profile(id)` shortcut.
 
 enum FinishDestinationBindings {
 
-    // MARK: - Fallbacks (same values that used to be private in the manager)
+    // MARK: - Effective shortcut for a legacy fixed destination
+    //
+    // Preserved for LegacyFinishShortcutMigration only. Returns:
+    //   • explicit user binding if set
+    //   • nil if the user cleared it (or the migration cleared it)
+    //   • no fallback anymore — the ⌃⌥C/V/E defaults are gone.
 
-    // Ctrl+Option so the letters don't collide with dead-key composition on the
-    // Polish Pro layout (⌥C/⌥E/⌥N type ć/ę/ń there).
-    static let fallbacks: [(ShortcutAction, Shortcut)] = [
-        (.finishWithCopy,       .key(keyCode: UInt16(kVK_ANSI_C), modifierFlags: [.control, .option])),
-        (.finishWithPaste,      .key(keyCode: UInt16(kVK_ANSI_V), modifierFlags: [.control, .option])),
-        (.finishWithEditWindow, .key(keyCode: UInt16(kVK_ANSI_E), modifierFlags: [.control, .option]))
-    ]
-
-    // MARK: - Effective shortcut for a fixed destination action
-
-    /// Returns the shortcut that will actually fire for `action`:
-    /// • explicit user binding if set
-    /// • fallback if not cleared
-    /// • nil if cleared (user deliberately unbound it)
     static func effectiveShortcut(for action: ShortcutAction) -> Shortcut? {
         if let stored = ShortcutStore.shortcut(for: action) {
             return stored
@@ -35,7 +29,14 @@ enum FinishDestinationBindings {
         if ShortcutStore.isShortcutCleared(for: action) {
             return nil
         }
-        return fallbacks.first(where: { $0.0 == action })?.1
+        // Legacy fallback kept in-line so we don't hold a table of dead cases.
+        // Only fires during the one-shot migration window, then never again.
+        switch action {
+        case .finishWithCopy:       return .key(keyCode: UInt16(kVK_ANSI_C), modifierFlags: [.control, .option])
+        case .finishWithPaste:      return .key(keyCode: UInt16(kVK_ANSI_V), modifierFlags: [.control, .option])
+        case .finishWithEditWindow: return .key(keyCode: UInt16(kVK_ANSI_E), modifierFlags: [.control, .option])
+        default:                    return nil
+        }
     }
 
     // MARK: - Default per-target bindings
@@ -66,30 +67,26 @@ enum FinishDestinationBindings {
 
     // MARK: - Build the list shown by the HUD
 
-    /// Returns items for fixed destinations (Copy / Paste / Edit) that have a
-    /// visible shortcut, followed by save targets that have an explicit binding.
+    /// Returns HUD chips for every visible finish shortcut:
+    ///   • enabled modes with a `.profile(id)` shortcut bound
+    ///   • save targets with an explicit binding
+    /// plus a fixed `⌘↩` chip for the panel-scoped finish.
     @MainActor
     static func hudItems() -> [HUDItem] {
         var items: [HUDItem] = []
 
-        // Fixed three
-        let fixedDefs: [(ShortcutAction, OutputMode, String)] = [
-            (.finishWithCopy,       .copy,       String(localized: "Copy")),
-            (.finishWithPaste,      .paste,      String(localized: "Paste")),
-            (.finishWithEditWindow, .editWindow, String(localized: "Edit"))
-        ]
-
-        for (action, mode, label) in fixedDefs {
-            guard let shortcut = effectiveShortcut(for: action) else { continue }
+        // Per-mode finish shortcuts.
+        for config in OutputProfileManager.shared.enabledConfigurations {
+            guard let shortcut = ShortcutStore.shortcut(for: .profile(config.id)) else { continue }
             items.append(HUDItem(
-                id: action.storageName,
-                icon: mode.iconName,
-                label: label,
+                id: "profile_\(config.id.uuidString)",
+                icon: hudIcon(for: config),
+                label: config.name,
                 shortcutDisplay: shortcut.displayString
             ))
         }
 
-        // Save targets — only those with an explicit user-set shortcut
+        // Save targets — only those with an explicit user-set shortcut.
         for target in SaveTargetManager.shared.targets {
             let action = ShortcutAction.finishWithSaveTarget(target.id)
             guard let shortcut = ShortcutStore.shortcut(for: action) else { continue }
@@ -111,5 +108,15 @@ enum FinishDestinationBindings {
         ))
 
         return items
+    }
+
+    /// SF Symbol name for a mode in the HUD. Mode icons can be emoji — the HUD
+    /// row renders SF Symbols only, so we fall back to the outputMode icon
+    /// (doc.on.clipboard etc.) for emoji-iconed modes.
+    private static func hudIcon(for config: OutputProfile) -> String {
+        switch config.icon.kind {
+        case .symbol: return config.icon.value
+        case .emoji:  return config.outputMode.iconName
+        }
     }
 }

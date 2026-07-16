@@ -238,19 +238,12 @@ class RecordingShortcutManager: ObservableObject {
             interruptibleRecordingActions.insert(.secondaryRecording)
         }
 
-        // One-shot "finish with …" destination shortcuts, registered GLOBALLY
-        // (not just when the recorder panel is visible). User-configured
-        // bindings win; otherwise the three fixed destinations fall back to
-        // ⌃⌥C / ⌃⌥V / ⌃⌥E. Save-target finishers have no default — only
-        // explicitly configured ones are registered. See handleGlobalShortcut
-        // for the idle-start / recording-arm-stop / transcribing-rearm routing.
-        for action in ShortcutAction.finishDestinationActions {
-            // effectiveShortcut returns the user binding, else the ⌃⌥ fallback,
-            // else nil when the user deliberately cleared it.
-            if let shortcut = FinishDestinationBindings.effectiveShortcut(for: action) {
-                shortcuts[action] = shortcut
-            }
-        }
+        // Legacy fixed-destination finishers (.finishWithCopy/Paste/EditWindow)
+        // are no longer registered here. Their role — arm delivery via a specific
+        // outputMode — moved to per-mode `.profile(id)` shortcuts owned by
+        // ProfileShortcutManager. LegacyFinishShortcutMigration reattaches any
+        // existing user binding to the appropriate shim mode on first launch,
+        // then clears the legacy slot. Save-target finishers stay global.
         for target in SaveTargetManager.shared.targets {
             let action = ShortcutAction.finishWithSaveTarget(target.id)
             if let shortcut = ShortcutStore.shortcut(for: action) {
@@ -330,24 +323,10 @@ class RecordingShortcutManager: ObservableObject {
             TranscriptEditManager.shared.present(text: "")
         case .openWorek:
             SakoClient.shared.openApp()
-        case .finishWithCopy:
-            await handleFinishDestinationShortcut(
-                outputMode: .copy,
-                startNotice: String(localized: "Recording → Copy"),
-                finishNotice: String(localized: "Finishing → Copy")
-            )
-        case .finishWithPaste:
-            await handleFinishDestinationShortcut(
-                outputMode: .paste,
-                startNotice: String(localized: "Recording → Paste"),
-                finishNotice: String(localized: "Finishing → Paste")
-            )
-        case .finishWithEditWindow:
-            await handleFinishDestinationShortcut(
-                outputMode: .editWindow,
-                startNotice: String(localized: "Recording → Edit Window"),
-                finishNotice: String(localized: "Finishing → Edit Window")
-            )
+        // .finishWithCopy/.finishWithPaste/.finishWithEditWindow: no longer
+        // registered in refreshShortcutMonitor, so unreachable here — they
+        // fall through the switch. Enum cases stay for backward-compat with
+        // LegacyFinishShortcutMigration; delete when the migration is retired.
         case .finishWithSaveTarget(let id):
             let name = SaveTargetManager.shared.target(withID: id)?.name
             let startNotice = name.map { String(format: String(localized: "Recording → %@"), $0) }
