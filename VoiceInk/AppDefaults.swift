@@ -41,6 +41,9 @@ enum AppDefaults {
             RecorderDisplaySettingsKeys.showLiveTranscript: true,
             "RecorderDestinationHUDEnabled": true,
 
+            // Dashboard
+            "dashboardRecentTranscriptCount": 5,
+
             // Cleanup
             CleanupSettingsKeys.isTranscriptionCleanupEnabled: false,
             CleanupSettingsKeys.transcriptionRetentionMinutes: 1440,

@@ -24,6 +24,7 @@ struct SettingsView: View {
     @AppStorage("restoreClipboardAfterPaste") private var restoreClipboardAfterPaste = true
     @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
     @AppStorage(ClipboardManager.autoCopyEnabledKey) private var autoCopyTranscription = true
+    @AppStorage("dashboardRecentTranscriptCount") private var dashboardRecentCount = 5
     @State private var showResetOnboardingAlert = false
     @State private var showLanguageRestartAlert = false
     @State private var isShowingSaveTargets = false
@@ -225,6 +226,19 @@ struct SettingsView: View {
                         InfoTip("Show a compact bar with finish-destination shortcuts (Copy, Paste, Edit Window, Save Targets) while recording.")
                     }
                 }
+
+                Picker(selection: $dashboardRecentCount) {
+                    Text("3").tag(3)
+                    Text("5").tag(5)
+                    Text("8").tag(8)
+                    Text("10").tag(10)
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Recent Transcripts on Dashboard")
+                        InfoTip("How many recent transcriptions the dashboard shows at the top.")
+                    }
+                }
+                .pickerStyle(.menu)
             }
 
             Section("General") {

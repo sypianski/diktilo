@@ -28,6 +28,7 @@ struct DashboardContent: View {
     @State private var isEditingDisplayName = false
     @State private var displayNameDraft = ""
     @AppStorage("dashboardDisplayName") private var dashboardDisplayName: String = ""
+    @AppStorage("dashboardRecentTranscriptCount") private var recentTranscriptCount: Int = 5
     @AppStorage(DashboardProductivityPeriod.modelPerformanceStorageKey) private var modelPerformanceFilterRaw: String = DashboardProductivityPeriod.lastSevenDays.modelPerformanceStorageValue
     @FocusState private var isNameFieldFocused: Bool
     @Query(Self.recentTranscriptionsDescriptor()) private var recentTranscriptionCandidates: [Transcription]
@@ -110,9 +111,28 @@ struct DashboardContent: View {
                 }
             }
 
+            nameEditorDismissArea {
+                greetingHeader
+            }
+
+            // Adaptive: a short how-to for newcomers, otherwise the stats entry.
+            if isNewUser {
+                nameEditorDismissArea {
+                    gettingStartedCard
+                }
+            } else {
+                nameEditorDismissArea {
+                    heroSection
+                }
+            }
+
+            // Prominent history section — the primary daily surface.
             if !recentDashboardTranscriptions.isEmpty {
                 nameEditorDismissArea {
-                    DashboardTranscriptCards(transcriptions: recentDashboardTranscriptions)
+                    DashboardTranscriptCards(
+                        transcriptions: recentDashboardTranscriptions,
+                        onViewAll: navigateToHistory
+                    )
                 }
             }
 
@@ -129,14 +149,103 @@ struct DashboardContent: View {
         .frame(width: availableWidth, alignment: .topLeading)
     }
 
+    /// A user with no completed sessions yet — show the getting-started guide
+    /// instead of stats. Kept false while stats are still loading so the guide
+    /// never flashes for a returning user.
+    private var isNewUser: Bool {
+        hasLoadedStatsSnapshot && statsSummary.totalCount == 0
+    }
+
     private var recentDashboardTranscriptions: [Transcription] {
-        Array(
+        let count = min(max(recentTranscriptCount, 1), 25)
+        return Array(
             recentTranscriptionCandidates
                 .filter { transcription in
                     isRecentDashboardTranscription(transcription)
                 }
-                .prefix(5)
+                .prefix(count)
         )
+    }
+
+    private func navigateToHistory() {
+        NotificationCenter.default.post(
+            name: .navigateToDestination,
+            object: nil,
+            userInfo: ["destination": ViewType.history.rawValue]
+        )
+    }
+
+    private var gettingStartedCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Getting started")
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .foregroundStyle(AppTheme.Text.primary)
+
+            VStack(alignment: .leading, spacing: 14) {
+                gettingStartedStep(
+                    icon: "keyboard",
+                    title: "Set a recording shortcut",
+                    detail: "Open Modes to choose the shortcut that starts and stops dictation."
+                )
+                gettingStartedStep(
+                    icon: "mic.fill",
+                    title: "Speak, then finish",
+                    detail: "Press the shortcut, dictate, and press it again. Diktilo transcribes in the background."
+                )
+                gettingStartedStep(
+                    icon: "doc.on.clipboard",
+                    title: "Pasted and copied",
+                    detail: "Your text is inserted at the cursor and kept on the clipboard for your clipboard history."
+                )
+            }
+
+            Button {
+                NotificationCenter.default.post(
+                    name: .navigateToDestination,
+                    object: nil,
+                    userInfo: ["destination": ViewType.modes.rawValue]
+                )
+            } label: {
+                footerActionLabel(
+                    icon: "slider.horizontal.3",
+                    title: "Open Modes",
+                    color: AppTheme.Accent.primary
+                )
+            }
+            .buttonStyle(.plain)
+            .fixedSize(horizontal: true, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(18)
+        .background(AppCardBackground(cornerRadius: 16))
+    }
+
+    private func gettingStartedStep(icon: String, title: LocalizedStringKey, detail: LocalizedStringKey) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(AppTheme.Accent.fill)
+                    .frame(width: 28, height: 28)
+
+                Image(systemName: icon)
+                    .font(.system(size: 13, weight: .semibold))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(AppTheme.Accent.primary)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppTheme.Text.primary)
+
+                Text(detail)
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.Text.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 0)
+        }
     }
 
     private func isRecentDashboardTranscription(_ transcription: Transcription) -> Bool {

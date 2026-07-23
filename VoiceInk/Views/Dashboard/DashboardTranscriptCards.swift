@@ -2,13 +2,33 @@ import SwiftUI
 
 struct DashboardTranscriptCards: View {
     let transcriptions: [Transcription]
+    /// When set, a "View All" affordance is shown next to the title (e.g. to
+    /// open the full History tab). Nil hides it.
+    var onViewAll: (() -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Recent Transcripts")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.Text.primary)
-                .lineLimit(1)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("Recent Transcripts")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppTheme.Text.primary)
+                    .lineLimit(1)
+
+                if let onViewAll {
+                    Spacer(minLength: 0)
+                    Button(action: onViewAll) {
+                        HStack(spacing: 4) {
+                            Text("View All")
+                            Image(systemName: "arrow.right")
+                        }
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AppTheme.Accent.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Open the full transcription history")
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 0) {
                 ForEach(Array(transcriptions.enumerated()), id: \.element.id) { index, transcription in
