@@ -731,34 +731,51 @@ struct DashboardContent: View {
         Formatters.formattedCompactHoursAndMinutes(allTimeSaved)
     }
 
-    private var formattedAllTimeWords: String {
-        let words = Formatters.formattedCompactNumber(statsSummary.totalWords)
-        let wordUnit = statsSummary.totalWords == 1 ? String(localized: "word") : String(localized: "words")
-        return String(localized: "\(words) \(wordUnit)")
+    private var isPolishLocale: Bool {
+        // Match how String(localized:) resolves elsewhere so the benchmark
+        // sentence never ends up in a different language than the rest of UI.
+        (Bundle.main.preferredLocalizations.first ?? "en").hasPrefix("pl")
     }
 
+    private var formattedAllTimeWords: String {
+        Formatters.spelledWordCount(statsSummary.totalWords)
+    }
+
+    // Built directly (not via String(localized:)) so Polish grammar stays
+    // correct: the title rides in quotes (nominative) while a generic noun
+    // carries the case — "do książki «Lalka»" — avoiding per-title declension.
     private var formattedProgressBenchmarkText: String {
+        let dictated = formattedAllTimeWords
         switch DashboardProgressBenchmark.equivalence(for: statsSummary.totalWords) {
         case .matched(let title):
-            return String(localized: "Dictated \(formattedAllTimeWords), equivalent to \(title).")
+            return isPolishLocale
+                ? "Podyktowano \(dictated) — tyle co «\(title)»."
+                : "Dictated \(dictated) — as much as \(title)."
         case .repeated(let title, let count):
-            return String(localized: "Dictated \(formattedAllTimeWords), equivalent to \(title) \(formattedBenchmarkMultiple(count)).")
+            let multiple = formattedBenchmarkMultiple(count)
+            return isPolishLocale
+                ? "Podyktowano \(dictated) — tyle co «\(title)», i to \(multiple)."
+                : "Dictated \(dictated) — as much as \(title) \(multiple)."
         case .remaining(let words, let title):
             guard words > 0, !title.isEmpty else {
-                return String(localized: "Dictated \(formattedAllTimeWords).")
+                return isPolishLocale
+                    ? "Podyktowano \(dictated)."
+                    : "Dictated \(dictated)."
             }
 
-            let remainingWords = Formatters.formattedNumber(words)
-            return String(localized: "Dictated \(formattedAllTimeWords), \(remainingWords) words from \(title).")
+            let remaining = Formatters.spelledWordCount(words)
+            return isPolishLocale
+                ? "Podyktowano \(dictated) — jeszcze \(remaining) do książki «\(title)»."
+                : "Dictated \(dictated) — \(remaining) to reach \(title)."
         }
     }
 
     private func formattedBenchmarkMultiple(_ count: Int) -> String {
-        if count == 2 {
-            return String(localized: "twice")
+        if isPolishLocale {
+            return count == 2 ? "dwukrotnie" : "\(Formatters.formattedNumber(count)) razy"
         }
 
-        return String(localized: "\(Formatters.formattedNumber(count)) times")
+        return count == 2 ? "twice" : "\(Formatters.formattedNumber(count)) times"
     }
 }
 

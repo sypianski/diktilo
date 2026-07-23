@@ -330,18 +330,20 @@ enum DashboardProgressBenchmark {
         }
     }
 
+    // Polski kanon lektur, rosnąco. Objętości przybliżone (szacunek na bazie
+    // liczby stron × ~250-300 słów/stronę) — gadżet, nie dane bibliograficzne.
     private static let repeatBenchmark = Milestone(
-        title: "Tolstoy's War and Peace",
-        wordCount: 700_000
+        title: "Trylogia",
+        wordCount: 650_000
     )
 
     private static let oneTimeMilestones = [
-        Milestone(title: "The Metamorphosis", wordCount: 21_180),
-        Milestone(title: "Animal Farm", wordCount: 29_966),
-        Milestone(title: "The Great Gatsby", wordCount: 47_094),
-        Milestone(title: "Homer's Iliad", wordCount: 114_715),
-        Milestone(title: "Homer's Odyssey", wordCount: 121_365),
-        Milestone(title: "Homer's Iliad and Odyssey", wordCount: 236_080)
+        Milestone(title: "Zemsta", wordCount: 18_000),
+        Milestone(title: "Ferdydurke", wordCount: 75_000),
+        Milestone(title: "Quo Vadis", wordCount: 150_000),
+        Milestone(title: "Nad Niemnem", wordCount: 210_000),
+        Milestone(title: "Lalka", wordCount: 340_000),
+        Milestone(title: "Chłopi", wordCount: 450_000)
     ]
 
     static func equivalence(for words: Int) -> Equivalence {

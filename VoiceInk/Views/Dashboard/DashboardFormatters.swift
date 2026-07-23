@@ -38,6 +38,53 @@ enum Formatters {
         value >= 1000 ? formattedCompactNumber(value) : "\(value)"
     }
 
+    /// Human word count for prose lines (dashboard benchmark). In Polish it
+    /// rounds to "21 tysięcy słów" with correct declension; elsewhere it uses
+    /// the compact "21K words" form. NOT for chart axes (those stay compact).
+    static func spelledWordCount(_ value: Int) -> String {
+        guard (Bundle.main.preferredLocalizations.first ?? "en").hasPrefix("pl") else {
+            return "\(formattedCompactNumber(value)) words"
+        }
+
+        if value >= 1_000_000 {
+            let millions = Int((Double(value) / 1_000_000).rounded())
+            return "\(millions) \(polishMilionForm(millions)) słów"
+        }
+
+        if value >= 1000 {
+            let thousands = Int((Double(value) / 1000).rounded())
+            if thousands >= 1000 {
+                return "1 milion słów"
+            }
+            return "\(thousands) \(polishTysiacForm(thousands)) słów"
+        }
+
+        return "\(value) \(polishSlowoForm(value))"
+    }
+
+    private static func isPolishSpecialTeens(_ n: Int) -> Bool {
+        let mod100 = n % 100
+        return mod100 >= 12 && mod100 <= 14
+    }
+
+    private static func polishTysiacForm(_ n: Int) -> String {
+        if n == 1 { return "tysiąc" }
+        let mod10 = n % 10
+        return (mod10 >= 2 && mod10 <= 4 && !isPolishSpecialTeens(n)) ? "tysiące" : "tysięcy"
+    }
+
+    private static func polishMilionForm(_ n: Int) -> String {
+        if n == 1 { return "milion" }
+        let mod10 = n % 10
+        return (mod10 >= 2 && mod10 <= 4 && !isPolishSpecialTeens(n)) ? "miliony" : "milionów"
+    }
+
+    private static func polishSlowoForm(_ n: Int) -> String {
+        if n == 1 { return "słowo" }
+        let mod10 = n % 10
+        return (mod10 >= 2 && mod10 <= 4 && !isPolishSpecialTeens(n)) ? "słowa" : "słów"
+    }
+
     static func formattedCompactHoursAndMinutes(_ interval: TimeInterval) -> String {
         let totalMinutes = max(0, Int((interval / 60).rounded()))
         let hours = totalMinutes / 60
