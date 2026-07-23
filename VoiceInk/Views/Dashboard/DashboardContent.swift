@@ -747,16 +747,16 @@ struct DashboardContent: View {
     private var formattedProgressBenchmarkText: String {
         let dictated = formattedAllTimeWords
         switch DashboardProgressBenchmark.equivalence(for: statsSummary.totalWords) {
-        case .matched(let title):
+        case .matched(let title, let author):
             return isPolishLocale
-                ? "Podyktowano \(dictated) — tyle co «\(title)»."
-                : "Dictated \(dictated) — as much as \(title)."
-        case .repeated(let title, let count):
+                ? "Podyktowano \(dictated) — tyle co «\(title)» \(author)."
+                : "Dictated \(dictated) — as much as \(title) by \(author)."
+        case .repeated(let title, let author, let count):
             let multiple = formattedBenchmarkMultiple(count)
             return isPolishLocale
-                ? "Podyktowano \(dictated) — tyle co «\(title)», i to \(multiple)."
-                : "Dictated \(dictated) — as much as \(title) \(multiple)."
-        case .remaining(let words, let title):
+                ? "Podyktowano \(dictated) — tyle co «\(title)» \(author), i to \(multiple)."
+                : "Dictated \(dictated) — as much as \(title) by \(author) \(multiple)."
+        case .remaining(let words, let title, let author):
             guard words > 0, !title.isEmpty else {
                 return isPolishLocale
                     ? "Podyktowano \(dictated)."
@@ -765,8 +765,8 @@ struct DashboardContent: View {
 
             let remaining = Formatters.spelledWordCount(words)
             return isPolishLocale
-                ? "Podyktowano \(dictated) — jeszcze \(remaining) do książki «\(title)»."
-                : "Dictated \(dictated) — \(remaining) to reach \(title)."
+                ? "Podyktowano \(dictated) — jeszcze \(remaining) do książki «\(title)» \(author)."
+                : "Dictated \(dictated) — \(remaining) to reach \(title) by \(author)."
         }
     }
 

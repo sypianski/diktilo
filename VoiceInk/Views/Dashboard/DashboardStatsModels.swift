@@ -316,13 +316,16 @@ enum DashboardTimeSaving {
 
 enum DashboardProgressBenchmark {
     enum Equivalence {
-        case matched(title: String)
-        case repeated(title: String, count: Int)
-        case remaining(words: Int, title: String)
+        case matched(title: String, author: String)
+        case repeated(title: String, author: String, count: Int)
+        case remaining(words: Int, title: String, author: String)
     }
 
     private struct Milestone {
         let title: LocalizedStringResource
+        // Nazwisko autora w dopełniaczu — dokładnie w formie, w jakiej stoi
+        // przy tytule: „«Lalka» Prusa", „«Nad Niemnem» Orzeszkowej".
+        let author: String
         let wordCount: Int
 
         var localizedTitle: String {
@@ -334,16 +337,17 @@ enum DashboardProgressBenchmark {
     // liczby stron × ~250-300 słów/stronę) — gadżet, nie dane bibliograficzne.
     private static let repeatBenchmark = Milestone(
         title: "Trylogia",
+        author: "Sienkiewicza",
         wordCount: 650_000
     )
 
     private static let oneTimeMilestones = [
-        Milestone(title: "Zemsta", wordCount: 18_000),
-        Milestone(title: "Ferdydurke", wordCount: 75_000),
-        Milestone(title: "Quo Vadis", wordCount: 150_000),
-        Milestone(title: "Nad Niemnem", wordCount: 210_000),
-        Milestone(title: "Lalka", wordCount: 340_000),
-        Milestone(title: "Chłopi", wordCount: 450_000)
+        Milestone(title: "Zemsta", author: "Fredry", wordCount: 18_000),
+        Milestone(title: "Ferdydurke", author: "Gombrowicza", wordCount: 75_000),
+        Milestone(title: "Quo Vadis", author: "Sienkiewicza", wordCount: 150_000),
+        Milestone(title: "Nad Niemnem", author: "Orzeszkowej", wordCount: 210_000),
+        Milestone(title: "Lalka", author: "Prusa", wordCount: 340_000),
+        Milestone(title: "Chłopi", author: "Reymonta", wordCount: 450_000)
     ]
 
     static func equivalence(for words: Int) -> Equivalence {
@@ -351,22 +355,22 @@ enum DashboardProgressBenchmark {
             let wholeMultiple = words / repeatBenchmark.wordCount
 
             if wholeMultiple >= 2 {
-                return .repeated(title: repeatBenchmark.localizedTitle, count: wholeMultiple)
+                return .repeated(title: repeatBenchmark.localizedTitle, author: repeatBenchmark.author, count: wholeMultiple)
             }
 
-            return .matched(title: repeatBenchmark.localizedTitle)
+            return .matched(title: repeatBenchmark.localizedTitle, author: repeatBenchmark.author)
         }
 
         if let milestone = oneTimeMilestones.last(where: { words >= $0.wordCount }) {
-            return .matched(title: milestone.localizedTitle)
+            return .matched(title: milestone.localizedTitle, author: milestone.author)
         }
 
         guard let firstMilestone = oneTimeMilestones.first else {
-            return .remaining(words: 0, title: "")
+            return .remaining(words: 0, title: "", author: "")
         }
 
         let remainingWords = firstMilestone.wordCount - words
-        return .remaining(words: remainingWords, title: firstMilestone.localizedTitle)
+        return .remaining(words: remainingWords, title: firstMilestone.localizedTitle, author: firstMilestone.author)
     }
 }
 
