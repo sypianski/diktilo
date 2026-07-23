@@ -93,7 +93,9 @@ final class TranscriptionDelivery {
         await actions.dismiss()
 
         guard let text = item.text else { return }
-        TranscriptEditManager.shared.present(text: deliverableText(from: text))
+        let editText = deliverableText(from: text)
+        ClipboardManager.autoCopyTranscription(editText)
+        TranscriptEditManager.shared.present(text: editText)
     }
 
     private func deliverResponse(_ item: Request, actions: Actions) async {
@@ -126,6 +128,7 @@ final class TranscriptionDelivery {
         }
 
         let commandText = deliverableText(from: text)
+        ClipboardManager.autoCopyTranscription(commandText)
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 

@@ -39,6 +39,29 @@ struct ClipboardManager {
         return setClipboard(text, transient: false)
     }
 
+    /// UserDefaults key for the "auto-copy every completed transcription"
+    /// preference. Default (true) is registered in `AppDefaults`.
+    static let autoCopyEnabledKey = "AutoCopyTranscriptionEnabled"
+
+    /// Whether every completed transcription is automatically placed on the
+    /// system clipboard — the use-case is landing transcripts in a clipboard
+    /// manager's history (e.g. Alfred). Defaults to true.
+    static var isAutoCopyEnabled: Bool {
+        UserDefaults.standard.bool(forKey: autoCopyEnabledKey)
+    }
+
+    /// Copies a completed transcription to the clipboard when auto-copy is
+    /// enabled. No-ops on empty text so it never wipes the user's clipboard,
+    /// and copies non-transiently so clipboard managers record the entry.
+    @discardableResult
+    static func autoCopyTranscription(_ text: String) -> Bool {
+        guard isAutoCopyEnabled,
+              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+        return copyToClipboard(text)
+    }
+
     static func getClipboardContent() -> String? {
         return NSPasteboard.general.string(forType: .string)
     }

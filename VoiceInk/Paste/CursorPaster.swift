@@ -57,6 +57,13 @@ class CursorPaster {
     }
 
     private static func effectiveShouldRestoreClipboard(profile: OutputProfile?) -> Bool {
+        // Auto-copy deliberately wins over clipboard restoration: when it is on,
+        // the transcription must stay on the clipboard (e.g. for Alfred history),
+        // so the previous contents are never restored. In paste mode this also
+        // means the transcription is left non-transiently, so managers record it.
+        if ClipboardManager.isAutoCopyEnabled {
+            return false
+        }
         if let override = profile?.restoreClipboardOverride {
             return override
         }

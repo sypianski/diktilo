@@ -23,6 +23,7 @@ enum AppDefaults {
             "restoreClipboardAfterPaste": true,
             "clipboardRestoreDelay": 2.0,
             "useAppleScriptPaste": false,
+            ClipboardManager.autoCopyEnabledKey: true,
 
             // Audio & Media
             "isSystemMuteEnabled": true,

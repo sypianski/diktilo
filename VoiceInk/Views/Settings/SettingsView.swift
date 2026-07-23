@@ -23,6 +23,7 @@ struct SettingsView: View {
     @AppStorage(PasteMethod.userDefaultsKey) private var pasteMethodRawValue = PasteMethod.standard.rawValue
     @AppStorage("restoreClipboardAfterPaste") private var restoreClipboardAfterPaste = true
     @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
+    @AppStorage(ClipboardManager.autoCopyEnabledKey) private var autoCopyTranscription = true
     @State private var showResetOnboardingAlert = false
     @State private var showLanguageRestartAlert = false
     @State private var isShowingSaveTargets = false
@@ -112,14 +113,28 @@ struct SettingsView: View {
                     PasteMethod.setCurrent(method)
                 }
 
+                Toggle(isOn: $autoCopyTranscription) {
+                    HStack(spacing: 4) {
+                        Text("Auto-copy Transcription")
+                        InfoTip("Copy every completed transcription to the clipboard, regardless of the mode's destination — so it lands in a clipboard manager's history (e.g. Alfred). While on, the previous clipboard content is never restored after pasting.")
+                    }
+                }
+
                 Toggle(isOn: $restoreClipboardAfterPaste) {
                     HStack(spacing: 4) {
                         Text("Keep Clipboard Content")
                         InfoTip("Diktilo temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay.")
                     }
                 }
+                .disabled(autoCopyTranscription)
 
-                if restoreClipboardAfterPaste {
+                if autoCopyTranscription {
+                    Text("Overridden while Auto-copy Transcription is on — the transcription stays on the clipboard.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                if restoreClipboardAfterPaste && !autoCopyTranscription {
                     Picker("Restore Delay", selection: $clipboardRestoreDelay) {
                         Text("250ms").tag(0.25)
                         Text("500ms").tag(0.5)
