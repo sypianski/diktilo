@@ -25999,6 +25999,127 @@
           }
         }
       }
+    },
+    "Getting started": {
+      "comment": "Section title for the newcomer getting-started guide on the dashboard.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pierwsze kroki"
+          }
+        }
+      }
+    },
+    "Set a recording shortcut": {
+      "comment": "Getting-started step title.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw skrót nagrywania"
+          }
+        }
+      }
+    },
+    "Open Modes to choose the shortcut that starts and stops dictation.": {
+      "comment": "Getting-started step detail.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz Tryby, aby wybrać skrót rozpoczynający i kończący dyktowanie."
+          }
+        }
+      }
+    },
+    "Speak, then finish": {
+      "comment": "Getting-started step title.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mów, a potem zakończ"
+          }
+        }
+      }
+    },
+    "Press the shortcut, dictate, and press it again. Diktilo transcribes in the background.": {
+      "comment": "Getting-started step detail.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij skrót, dyktuj i naciśnij go ponownie. Diktilo transkrybuje w tle."
+          }
+        }
+      }
+    },
+    "Pasted and copied": {
+      "comment": "Getting-started step title.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklejone i skopiowane"
+          }
+        }
+      }
+    },
+    "Your text is inserted at the cursor and kept on the clipboard for your clipboard history.": {
+      "comment": "Getting-started step detail.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekst zostaje wstawiony w miejscu kursora i zachowany w schowku, w historii schowka."
+          }
+        }
+      }
+    },
+    "Open Modes": {
+      "comment": "Button title that navigates to the Modes screen.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz Tryby"
+          }
+        }
+      }
+    },
+    "View All": {
+      "comment": "Button title that opens the full transcription history.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zobacz wszystkie"
+          }
+        }
+      }
+    },
+    "Open the full transcription history": {
+      "comment": "Tooltip for the View All button.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz pełną historię transkrypcji"
+          }
+        }
+      }
+    },
+    "Total": {
+      "comment": "Label for the total transcripts pill in the performance analysis panel.",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Łącznie"
+          }
+        }
+      }
     }
   },
   "version": "1.1"
