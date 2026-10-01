@@ -230,7 +230,7 @@ struct DashboardContent: View {
                 Image(systemName: icon)
                     .font(.system(size: 13, weight: .semibold))
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(AppTheme.Accent.primary)
+                    .foregroundStyle(AppTheme.Accent.text)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -791,7 +791,7 @@ private struct DashboardAccessibilityReminder: View {
                 Image(systemName: "hand.raised")
                     .font(.system(size: 15, weight: .medium))
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(AppTheme.Accent.primary)
+                    .foregroundStyle(AppTheme.Accent.text)
             }
             .frame(width: 34, height: 34)
 

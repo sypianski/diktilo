@@ -1,8 +1,41 @@
 import SwiftUI
 
 enum AppTheme {
+    /// Colours sampled from the app icon: amber tile, charcoal slot, paper tape.
+    /// Light appearance is the paper ("Taśma"); dark is the slot's charcoal.
+    /// The amber itself lives in the AccentColor asset so system controls pick it up.
+    enum Palette {
+        static let amber = Color(nsColor: NSColor(rgb: 0xFDAE2C))
+        /// Text on amber. White on amber is ~1.9:1, this is ~7.9:1.
+        static let onAmber = Color(nsColor: NSColor(rgb: 0x2B2724))
+        static let paper = dynamic(light: 0xFBF4E8, dark: 0x1E1B18)
+        static let sidebar = dynamic(light: 0xF3EBDD, dark: 0x25211D)
+        static let raised = dynamic(light: 0xFFFCF5, dark: 0x2A2622)
+        static let chip = dynamic(light: 0xEFE6D6, dark: 0x2D2925)
+        static let rule = dynamic(light: 0xD3C8B5, dark: 0x3A3531)
+        static let ink = dynamic(light: 0x33302C, dark: 0xF3ECE0)
+        /// Amber legible as text or a glyph: amber on paper is only ~1.7:1.
+        static let amberInk = dynamic(light: 0x9A5B00, dark: 0xFDAE2C)
+        static let inkSecondary = dynamic(light: 0x6F675D, dark: 0xB5AA9C)
+        /// Live waveform: ink on paper, amber on charcoal.
+        static let waveform = dynamic(light: 0x33302C, dark: 0xFDAE2C)
+
+        /// Dashed rule, echoing the perforation of the icon's paper tape.
+        static let perforation = StrokeStyle(lineWidth: 1.5, dash: [5, 4])
+
+        private static func dynamic(light: UInt32, dark: UInt32) -> Color {
+            Color(nsColor: NSColor(name: nil) { appearance in
+                appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+                    ? NSColor(rgb: dark)
+                    : NSColor(rgb: light)
+            })
+        }
+    }
+
     enum Accent {
         static let primary = Color.accentColor
+        /// Use for accent-coloured text and glyphs; `primary` is for fills.
+        static let text = Palette.amberInk
         static let fillSubtle = primary.opacity(0.10)
         static let fill = primary.opacity(0.14)
         static let fillStrong = primary.opacity(0.28)
@@ -14,20 +47,21 @@ enum AppTheme {
     }
 
     enum Surface {
-        static let card = Color.secondary.opacity(0.10)
-        static let materialCard = Color(nsColor: .controlBackgroundColor).opacity(0.50)
+        static let card = Palette.chip.opacity(0.70)
+        static let materialCard = Palette.raised
         static let subtle = Color.primary.opacity(0.06)
         static let controlActive = Color.secondary.opacity(0.14)
         static let control = Color(nsColor: .controlBackgroundColor)
-        static let window = Color(nsColor: .windowBackgroundColor)
-        static let sidePanelOverlay = Color(nsColor: .windowBackgroundColor).opacity(0.50)
+        static let window = Palette.paper
+        static let sidebar = Palette.sidebar
+        static let sidePanelOverlay = Palette.paper.opacity(0.50)
         static let clear = Color.clear
     }
 
     enum Border {
-        static let subtle = Color(nsColor: .separatorColor).opacity(0.28)
-        static let card = Color(nsColor: .separatorColor).opacity(0.35)
-        static let control = Color(nsColor: .separatorColor)
+        static let subtle = Palette.rule.opacity(0.60)
+        static let card = Palette.rule.opacity(0.85)
+        static let control = Palette.rule
         static let tint = Color.primary.opacity(0.12)
         static let sidePanelOuter = Color.white.opacity(0.12)
     }
@@ -78,11 +112,11 @@ enum AppTheme {
     }
 
     enum Text {
-        static let primary = Color(nsColor: .labelColor)
-        static let secondary = Color(nsColor: .secondaryLabelColor)
+        static let primary = Palette.ink
+        static let secondary = Palette.inkSecondary
         static let muted = secondary.opacity(0.70)
         static let disabled = Color(nsColor: .disabledControlTextColor)
-        static let onAccent = Color(nsColor: .alternateSelectedControlTextColor)
+        static let onAccent = Palette.onAmber
     }
 
     enum NativeText {
@@ -101,5 +135,16 @@ enum AppTheme {
         static let control: CGFloat = 14
         static let card: CGFloat = 12
         static let pill: CGFloat = 22
+    }
+}
+
+extension NSColor {
+    convenience init(rgb: UInt32) {
+        self.init(
+            srgbRed: CGFloat((rgb >> 16) & 0xFF) / 255,
+            green: CGFloat((rgb >> 8) & 0xFF) / 255,
+            blue: CGFloat(rgb & 0xFF) / 255,
+            alpha: 1
+        )
     }
 }

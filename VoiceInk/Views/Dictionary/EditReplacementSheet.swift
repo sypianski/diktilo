@@ -50,7 +50,7 @@ struct EditReplacementSheet: View {
             Spacer()
 
             Button("Save") { saveChanges() }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
                 .controlSize(.small)
                 .disabled(originalWord.isEmpty || replacementWord.isEmpty)
                 .keyboardShortcut(.return, modifiers: [])

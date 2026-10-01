@@ -30,7 +30,7 @@ struct InfoTip: View {
                                 .foregroundColor(.secondary)
                             + Text(" ")
                             + Text("Learn more")
-                                .foregroundColor(AppTheme.Accent.primary)
+                                .foregroundColor(AppTheme.Accent.text)
                         )
                             .font(.callout)
                     } else {

@@ -334,7 +334,7 @@ struct AudioTranscribeView: View {
             .overlay {
                 Text("Drop to add files")
                     .font(.subheadline.weight(.medium))
-                    .foregroundColor(AppTheme.Accent.primary)
+                    .foregroundColor(AppTheme.Accent.text)
             }
             .padding(16)
             .transition(.opacity)

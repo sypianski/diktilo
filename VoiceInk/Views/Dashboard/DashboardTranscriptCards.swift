@@ -10,7 +10,7 @@ struct DashboardTranscriptCards: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("Recent Transcripts")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(AppTheme.Text.primary)
                     .lineLimit(1)
 
@@ -22,7 +22,7 @@ struct DashboardTranscriptCards: View {
                             Image(systemName: "arrow.right")
                         }
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AppTheme.Accent.primary)
+                        .foregroundStyle(AppTheme.Text.primary)
                     }
                     .buttonStyle(.plain)
                     .help("Open the full transcription history")
@@ -35,8 +35,7 @@ struct DashboardTranscriptCards: View {
                     DashboardTranscriptCardRow(transcription: transcription)
 
                     if index < transcriptions.count - 1 {
-                        Divider()
-                            .padding(.horizontal, 8)
+                        PerforationRule()
                     }
                 }
             }
@@ -46,8 +45,8 @@ struct DashboardTranscriptCards: View {
 }
 
 private struct DashboardTranscriptCardRow: View {
-    private static let iconFrameSize: CGFloat = 30
-    private static let rowSpacing: CGFloat = 12
+    private static let metaColumnWidth: CGFloat = 96
+    private static let rowSpacing: CGFloat = 16
     private static let copyButtonSize: CGFloat = 28
     private static let copyButtonTopInset: CGFloat = 12
     private static let copyButtonTrailingInset: CGFloat = 6
@@ -77,6 +76,14 @@ private struct DashboardTranscriptCardRow: View {
         transcription.timestamp.formatted(.relative(presentation: .named))
     }
 
+    private static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
+        formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
+
     private var modeIcon: ModeIcon {
         guard let iconValue = transcription.modeEmoji?.trimmingCharacters(in: .whitespacesAndNewlines),
               !iconValue.isEmpty else {
@@ -94,8 +101,8 @@ private struct DashboardTranscriptCardRow: View {
         ZStack(alignment: .topTrailing) {
             rowContent
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 8)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 4)
                 .contentShape(Rectangle())
                 .onTapGesture {
                     isExpanded.toggle()
@@ -122,29 +129,33 @@ private struct DashboardTranscriptCardRow: View {
 
     private var rowContent: some View {
         HStack(alignment: .top, spacing: Self.rowSpacing) {
-            ModeIconView(
-                icon: modeIcon,
-                size: modeIcon.kind == .emoji ? 16 : 14,
-                color: AppTheme.Text.secondary.opacity(0.82)
-            )
-            .frame(width: Self.iconFrameSize, height: Self.iconFrameSize)
-            .padding(.top, 3)
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(transcription.timestamp.formatted(date: .omitted, time: .shortened))
+                        .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(AppTheme.Text.primary)
 
-            VStack(alignment: .leading, spacing: 5) {
-                Text(metadataText)
-                    .font(.system(size: 12, weight: .semibold))
+                    ModeIconView(
+                        icon: modeIcon,
+                        size: modeIcon.kind == .emoji ? 12 : 11,
+                        color: AppTheme.Text.secondary
+                    )
+                }
+
+                Text(Self.dayFormatter.string(from: transcription.timestamp))
+                    .font(.system(size: 11, design: .monospaced))
                     .foregroundStyle(AppTheme.Text.secondary)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                Text(isExpanded ? copyText : previewText)
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(AppTheme.Text.primary)
-                    .lineLimit(isExpanded ? nil : 2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .layoutPriority(1)
+            .lineLimit(1)
+            .frame(width: Self.metaColumnWidth, alignment: .leading)
+
+            Text(isExpanded ? copyText : previewText)
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(AppTheme.Text.primary)
+                .lineSpacing(2)
+                .lineLimit(isExpanded ? nil : 2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .layoutPriority(1)
         }
     }
 

@@ -30,13 +30,13 @@ struct AppSidebar: View {
     }
 
     private var sidebarBackground: some View {
-        VisualEffectView(material: .sidebar, blendingMode: .behindWindow)
+        AppTheme.Surface.sidebar
             .ignoresSafeArea(.container, edges: .top)
     }
 
     private var sidebarDivider: some View {
         Rectangle()
-            .fill(AppTheme.Border.control.opacity(0.55))
+            .fill(AppTheme.Border.control)
             .frame(width: 1)
             .ignoresSafeArea(.container, edges: .top)
     }
@@ -93,40 +93,14 @@ extension ViewType {
         switch self {
         case .dashboard: return "gauge.medium"
         case .transcribeAudio: return "waveform.path"
-        case .history: return "doc.text.fill"
+        case .history: return "doc.text"
         case .models: return "cpu"
-        case .modes: return "sparkles.square.fill.on.square"
-        case .audio: return "mic.fill"
-        case .dictionary: return "text.book.closed.fill"
-        case .settings: return "gearshape.fill"
+        case .modes: return "sparkles"
+        case .audio: return "mic"
+        case .dictionary: return "text.book.closed"
+        case .settings: return "gearshape"
         }
     }
-
-    var sidebarIconStyle: SidebarIconStyle {
-        switch self {
-        case .dashboard:
-            return .init(background: AppTheme.Sidebar.dashboard)
-        case .modes:
-            return .init(background: AppTheme.Sidebar.modes)
-        case .models:
-            return .init(background: AppTheme.Sidebar.models)
-        case .audio:
-            return .init(background: AppTheme.Sidebar.fallback)
-        case .dictionary:
-            return .init(background: AppTheme.Sidebar.dictionary)
-        case .history:
-            return .init(background: AppTheme.Sidebar.audio)
-        case .transcribeAudio:
-            return .init(background: AppTheme.Sidebar.transcribeAudio)
-        case .settings:
-            return .init(background: AppTheme.Sidebar.fallback)
-        }
-    }
-}
-
-struct SidebarIconStyle {
-    let background: Color
-    var foreground: Color = .white
 }
 
 struct SidebarItemButton: View {
@@ -136,11 +110,10 @@ struct SidebarItemButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 9) {
-                SidebarIconTile(
-                    systemName: viewType.icon,
-                    style: viewType.sidebarIconStyle
-                )
+            HStack(spacing: 11) {
+                Image(systemName: viewType.icon)
+                    .font(.system(size: 14, weight: .regular))
+                    .frame(width: 20)
 
                 Text(viewType.title)
                     .font(.system(size: 13.5, weight: isSelected ? .semibold : .medium))
@@ -148,73 +121,17 @@ struct SidebarItemButton: View {
 
                 Spacer(minLength: 0)
             }
-            .foregroundStyle(isSelected ? selectedForegroundColor : Color.primary)
-            .padding(.leading, 8)
-            .padding(.trailing, 10)
-            .frame(height: 38)
+            .foregroundStyle(isSelected ? AppTheme.Palette.onAmber : AppTheme.Text.primary)
+            .padding(.horizontal, 11)
+            .frame(height: 36)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(rowBackground)
-            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .background(Capsule().fill(isSelected ? AppTheme.Palette.amber : .clear))
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .help(viewType.title)
         .accessibilityLabel(viewType.title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .animation(.easeInOut(duration: 0.12), value: isSelected)
-    }
-
-    private var rowBackground: some View {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .fill(rowBackgroundColor)
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(rowBorderColor, lineWidth: 1)
-            }
-    }
-
-    private var rowBackgroundColor: Color {
-        if isSelected {
-            return Color(nsColor: .selectedContentBackgroundColor)
-        }
-
-        return .clear
-    }
-
-    private var rowBorderColor: Color {
-        isSelected ? selectedForegroundColor.opacity(0.18) : .clear
-    }
-
-    private var selectedForegroundColor: Color {
-        Color(nsColor: .alternateSelectedControlTextColor)
-    }
-}
-
-struct SidebarIconTile: View {
-    let systemName: String
-    let style: SidebarIconStyle
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(style.background)
-                .overlay(alignment: .top) {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(Color.white.opacity(0.18))
-                        .frame(height: 11)
-                        .blendMode(.screen)
-                }
-                .overlay {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.24), lineWidth: 0.5)
-                }
-                .shadow(color: Color.black.opacity(0.18), radius: 1.2, y: 1)
-
-            Image(systemName: systemName)
-                .font(.system(size: 14.5, weight: .semibold))
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(style.foreground)
-                .shadow(color: Color.black.opacity(0.16), radius: 0.5, y: 0.5)
-        }
-        .frame(width: 24, height: 24)
     }
 }

@@ -16,7 +16,6 @@ enum ViewType: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "ContentView")
-    private static let detailBackgroundTintOpacity = 0.50
     @State private var selectedView: ViewType = .dashboard
     @AppStorage(AppTour.hasSeenKey) private var hasSeenTour = false
     @State private var isTourPresented = false
@@ -64,16 +63,8 @@ struct ContentView: View {
     }
 
     private var detailBackground: some View {
-        ZStack {
-            VisualEffectView(
-                material: .sidebar,
-                blendingMode: .behindWindow
-            )
-
-            AppTheme.Surface.window
-                .opacity(Self.detailBackgroundTintOpacity)
-        }
-        .ignoresSafeArea(.container, edges: .top)
+        AppTheme.Surface.window
+            .ignoresSafeArea(.container, edges: .top)
     }
     
     @ViewBuilder

@@ -77,3 +77,21 @@ struct MetricTintBackground: View {
             .shadow(color: Color.black.opacity(0.05), radius: 5, y: 3)
     }
 }
+
+/// Dashed horizontal rule: the perforation of the icon's paper tape.
+struct PerforationRule: View {
+    var body: some View {
+        Line()
+            .stroke(AppTheme.Palette.rule, style: AppTheme.Palette.perforation)
+            .frame(height: 1.5)
+    }
+
+    private struct Line: Shape {
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+                path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+                path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+            }
+        }
+    }
+}

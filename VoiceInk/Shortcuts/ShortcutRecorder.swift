@@ -185,7 +185,7 @@ private struct ShortcutKeyCap: View {
     }
 
     private var borderColor: Color {
-        isRecording ? AppTheme.Accent.foreground : foregroundColor.opacity(0.28)
+        isRecording ? AppTheme.Accent.text : foregroundColor.opacity(0.28)
     }
 }
 

@@ -81,7 +81,7 @@ struct DashboardPeakHoursCard: View {
         VStack(spacing: 8) {
             Image(systemName: "lock.fill")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(AppTheme.Accent.primary)
+                .foregroundStyle(AppTheme.Accent.text)
                 .frame(width: 34, height: 34)
                 .background(AppTheme.Accent.fill)
                 .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))

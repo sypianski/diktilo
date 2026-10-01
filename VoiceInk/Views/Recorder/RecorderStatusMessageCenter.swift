@@ -64,6 +64,9 @@ enum RecorderHUDMetrics {
 /// (the divider above and the panel's bottom edge).
 struct RecorderStatusMessageView: View {
     let message: RecorderStatusMessageCenter.Message
+    @Environment(\.recorderSurface) private var surface
+
+    private var palette: RecorderPalette { RecorderPalette(surface) }
 
     var body: some View {
         HStack(spacing: 6) {
@@ -73,14 +76,14 @@ struct RecorderStatusMessageView: View {
 
             Text(message.text)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.white.opacity(0.92))
+                .foregroundColor(palette.text(notch: 0.92))
                 .lineLimit(1)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 4)
         .background(
             Capsule()
-                .fill(Color.white.opacity(0.10))
+                .fill(palette.fill(notch: 0.10))
                 .overlay(
                     Capsule()
                         .strokeBorder(strokeColor, lineWidth: 0.5)
@@ -91,7 +94,7 @@ struct RecorderStatusMessageView: View {
 
     private var iconColor: Color {
         switch message.kind {
-        case .info:    return .secondary
+        case .info:    return surface == .panel ? AppTheme.Palette.inkSecondary : .secondary
         case .success: return Color.green
         case .warning: return Color.orange
         }
@@ -99,7 +102,7 @@ struct RecorderStatusMessageView: View {
 
     private var strokeColor: Color {
         switch message.kind {
-        case .info:    return Color.white.opacity(0.18)
+        case .info:    return palette.border(notch: 0.18)
         case .success: return Color.green.opacity(0.45)
         case .warning: return Color.orange.opacity(0.5)
         }

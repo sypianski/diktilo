@@ -113,7 +113,7 @@ struct AppTourView: View {
             Button(isLast ? "Start Dictating" : "Next") {
                 isLast ? onClose() : advance()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.amberProminent)
             .keyboardShortcut(.defaultAction)
         }
         .controlSize(.large)
@@ -247,7 +247,7 @@ private struct AppTourCaption: View {
                 ? String(localized: "at the top of the screen, by the notch")
                 : String(localized: "at the bottom of the screen")
             return String(
-                format: String(localized: "While you record, this bar appears %@. The red button finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place."),
+                format: String(localized: "While you record, this bar appears %@. The round button on the left finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place."),
                 place,
                 TourFacts.cancelPhrase
             )
@@ -301,6 +301,8 @@ private struct RecordStage: View {
 /// same button, visualizer and HUD chips the real panel uses.
 private struct RecorderBarStage: View {
     @ObservedObject private var modeManager = OutputProfileManager.shared
+    @Environment(\.colorScheme) private var colorScheme
+    private let surface: RecorderSurface = TourFacts.isNotchRecorder ? .notch : .panel
 
     var body: some View {
         VStack(spacing: 0) {
@@ -311,7 +313,7 @@ private struct RecorderBarStage: View {
                 Spacer(minLength: 0)
                 AudioVisualizer(
                     audioMeter: AudioMeter(averagePower: 0.55, peakPower: 0.7),
-                    color: .white,
+                    color: RecorderPalette(surface).waveform,
                     isActive: true
                 )
                 Spacer(minLength: 0)
@@ -326,7 +328,11 @@ private struct RecorderBarStage: View {
             }
             .frame(height: 40)
 
-            Divider().background(Color.white.opacity(0.10))
+            if surface == .panel {
+                PerforationRule()
+            } else {
+                Divider().background(Color.white.opacity(0.10))
+            }
 
             HStack(spacing: 6) {
                 ForEach(FinishDestinationBindings.hudItems().prefix(3)) { item in
@@ -338,9 +344,14 @@ private struct RecorderBarStage: View {
             .frame(height: RecorderHUDMetrics.bandHeight)
         }
         .frame(width: 340)
-        .background(Color.black.opacity(0.82))
+        .environment(\.recorderSurface, surface)
+        .background(surface == .panel ? AppTheme.Palette.paper : Color.black.opacity(0.82))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .environment(\.colorScheme, .dark)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(surface == .panel ? AppTheme.Palette.rule : .clear, lineWidth: 1)
+        )
+        .environment(\.colorScheme, surface == .notch ? .dark : colorScheme)
         .scaleEffect(1.35)
         .accessibilityElement()
         .accessibilityLabel(Text("Recording bar"))

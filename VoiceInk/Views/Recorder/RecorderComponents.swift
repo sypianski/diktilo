@@ -1,5 +1,71 @@
 import SwiftUI
 
+// MARK: - Surface
+
+/// Where the shared recorder controls are drawn. The notch panel stays
+/// white-on-black so it blends into the hardware notch; the floating mini
+/// panel uses the app palette (paper in light mode, charcoal in dark).
+enum RecorderSurface {
+    case notch
+    case panel
+}
+
+private struct RecorderSurfaceKey: EnvironmentKey {
+    static let defaultValue: RecorderSurface = .notch
+}
+
+extension EnvironmentValues {
+    var recorderSurface: RecorderSurface {
+        get { self[RecorderSurfaceKey.self] }
+        set { self[RecorderSurfaceKey.self] = newValue }
+    }
+}
+
+/// Colour roles for the recorder controls. Each role takes the white opacity
+/// the notch has always used, so the notch look stays exactly as it was.
+struct RecorderPalette {
+    let surface: RecorderSurface
+
+    init(_ surface: RecorderSurface) {
+        self.surface = surface
+    }
+
+    private var isPanel: Bool { surface == .panel }
+
+    func text(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.ink : .white.opacity(opacity)
+    }
+
+    func secondaryText(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.inkSecondary : .white.opacity(opacity)
+    }
+
+    func disabledText(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.inkSecondary.opacity(0.5) : .white.opacity(opacity)
+    }
+
+    func fill(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.chip : .white.opacity(opacity)
+    }
+
+    func subtleFill(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.chip.opacity(0.55) : .white.opacity(opacity)
+    }
+
+    func border(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.rule : .white.opacity(opacity)
+    }
+
+    func accent(notch opacity: Double) -> Color {
+        isPanel ? AppTheme.Palette.amber : .white.opacity(opacity)
+    }
+
+    var onAccent: Color { isPanel ? AppTheme.Palette.onAmber : .black }
+    var waveform: Color { isPanel ? AppTheme.Palette.waveform : .white }
+    /// Backdrop behind icon-only controls; the notch draws none.
+    var controlFill: Color { isPanel ? AppTheme.Palette.chip : .clear }
+}
+
 // MARK: - Icon Toggle Button
 
 struct RecorderToggleButton: View {
@@ -7,6 +73,7 @@ struct RecorderToggleButton: View {
     let icon: String
     let disabled: Bool
     let action: () -> Void
+    @Environment(\.recorderSurface) private var surface
 
     init(isEnabled: Bool, icon: String, disabled: Bool = false, action: @escaping () -> Void) {
         self.isEnabled = isEnabled
@@ -28,10 +95,17 @@ struct RecorderToggleButton: View {
                     Image(systemName: icon).font(.system(size: 13))
                 }
             }
-            .foregroundColor(disabled ? .white.opacity(0.3) : (isEnabled ? .white : .white.opacity(0.6)))
+            .foregroundColor(glyphColor)
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(disabled)
+    }
+
+    private var palette: RecorderPalette { RecorderPalette(surface) }
+
+    private var glyphColor: Color {
+        if disabled { return palette.disabledText(notch: 0.3) }
+        return isEnabled ? palette.text(notch: 1) : palette.secondaryText(notch: 0.6)
     }
 }
 
@@ -40,6 +114,7 @@ struct RecorderToggleButton: View {
 struct RecorderRecordButton: View {
     let recordingState: RecordingState
     let action: () -> Void
+    @Environment(\.recorderSurface) private var surface
 
     private var visualState: VisualState {
         switch recordingState {
@@ -77,7 +152,7 @@ struct RecorderRecordButton: View {
                 .fill(colors.surface)
                 .overlay(
                     Circle()
-                        .strokeBorder(colors.border, lineWidth: 0.6)
+                        .strokeBorder(colors.border, lineWidth: colors.borderWidth)
                 )
 
             stateMark
@@ -88,6 +163,10 @@ struct RecorderRecordButton: View {
     }
 
     private var colors: StateColors {
+        surface == .panel ? panelColors : notchColors
+    }
+
+    private var notchColors: StateColors {
         switch visualState {
         case .ready:
             return StateColors(
@@ -107,6 +186,27 @@ struct RecorderRecordButton: View {
                 surface: Color.white.opacity(0.13),
                 border: Color.white.opacity(0.18),
                 mark: Color.white.opacity(0.86)
+            )
+        }
+    }
+
+    // Amber marks the live recording, like the icon's tile; idle and
+    // processing sit back on the paper.
+    private var panelColors: StateColors {
+        switch visualState {
+        case .ready, .processing:
+            return StateColors(
+                surface: AppTheme.Palette.chip,
+                border: AppTheme.Palette.rule,
+                mark: AppTheme.Palette.ink,
+                borderWidth: 1
+            )
+        case .recording:
+            return StateColors(
+                surface: AppTheme.Palette.amber,
+                border: AppTheme.Palette.ink,
+                mark: AppTheme.Palette.onAmber,
+                borderWidth: 1.5
             )
         }
     }
@@ -150,6 +250,7 @@ struct RecorderRecordButton: View {
         let surface: Color
         let border: Color
         let mark: Color
+        var borderWidth: CGFloat = 0.6
     }
 }
 
@@ -157,20 +258,23 @@ struct RecorderRecordButton: View {
 
 struct RecorderCloseButton: View {
     let action: () -> Void
+    @Environment(\.recorderSurface) private var surface
+
+    private var palette: RecorderPalette { RecorderPalette(surface) }
 
     var body: some View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.13))
+                    .fill(palette.fill(notch: 0.13))
                     .overlay(
                         Circle()
-                            .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.6)
+                            .strokeBorder(palette.border(notch: 0.18), lineWidth: 0.6)
                     )
 
                 Image(systemName: "xmark")
                     .font(.system(size: 9, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.86))
+                    .foregroundColor(palette.text(notch: 0.86))
             }
             .frame(width: 21, height: 21)
             .contentShape(Circle())
@@ -254,6 +358,7 @@ struct RecorderModeButton: View {
     @State private var isHoveringButton: Bool = false
     @State private var isHoveringPopover: Bool = false
     @State private var dismissWorkItem: DispatchWorkItem?
+    @Environment(\.recorderSurface) private var surface
 
     init(buttonSize: CGFloat = 28, padding: EdgeInsets = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7)) {
         self.buttonSize = buttonSize
@@ -269,6 +374,11 @@ struct RecorderModeButton: View {
             isPopoverPresented.toggle()
         }
         .frame(width: buttonSize)
+        .background(
+            Circle()
+                .fill(RecorderPalette(surface).controlFill)
+                .frame(width: buttonSize, height: buttonSize)
+        )
         .padding(padding)
         .onHover {
             isHoveringButton = $0
@@ -308,6 +418,7 @@ private struct TranscriptHeightKey: PreferenceKey {
 
 struct LiveTranscriptView: View {
     let text: String
+    @Environment(\.recorderSurface) private var surface
 
     // Grow with the spoken text (panel is bottom-anchored, so height grows
     // upward) up to a cap, then scroll. Keeps early lines visible instead of
@@ -321,7 +432,7 @@ struct LiveTranscriptView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 Text(text)
                     .font(.system(size: 13))
-                    .foregroundColor(.white.opacity(0.85))
+                    .foregroundColor(RecorderPalette(surface).text(notch: 0.85))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
@@ -364,6 +475,7 @@ struct RecorderStatusDisplay: View {
     let currentState: RecordingState
     let audioMeter: AudioMeter
     let menuBarHeight: CGFloat?
+    @Environment(\.recorderSurface) private var surface
 
     init(currentState: RecordingState, audioMeter: AudioMeter, menuBarHeight: CGFloat? = nil) {
         self.currentState = currentState
@@ -372,17 +484,18 @@ struct RecorderStatusDisplay: View {
     }
 
     var body: some View {
+        let palette = RecorderPalette(surface)
         Group {
             if currentState == .enhancing {
-                ProcessingStatusDisplay(mode: .enhancing, color: .white).transition(.opacity)
+                ProcessingStatusDisplay(mode: .enhancing, color: palette.text(notch: 1)).transition(.opacity)
             } else if currentState == .transcribing {
-                ProcessingStatusDisplay(mode: .transcribing, color: .white).transition(.opacity)
+                ProcessingStatusDisplay(mode: .transcribing, color: palette.text(notch: 1)).transition(.opacity)
             } else if currentState == .recording {
-                AudioVisualizer(audioMeter: audioMeter, color: .white, isActive: true)
+                AudioVisualizer(audioMeter: audioMeter, color: palette.waveform, isActive: true)
                     .scaleEffect(y: menuBarHeight != nil ? min(1.0, (menuBarHeight! - 8) / 25) : 1.0, anchor: .center)
                     .transition(.opacity)
             } else {
-                StaticVisualizer(color: .white)
+                StaticVisualizer(color: palette.waveform)
                     .scaleEffect(y: menuBarHeight != nil ? min(1.0, (menuBarHeight! - 8) / 25) : 1.0, anchor: .center)
                     .transition(.opacity)
             }
@@ -400,9 +513,12 @@ struct AssistantPanelView: View {
 
     @State private var draftMessage = ""
     @FocusState private var isFollowUpFieldFocused: Bool
+    @Environment(\.recorderSurface) private var surface
 
     private let horizontalPadding: CGFloat = 20
-    private let followUpTextColor = Color.white.opacity(0.9)
+
+    private var palette: RecorderPalette { RecorderPalette(surface) }
+    private var followUpTextColor: Color { palette.text(notch: 0.9) }
 
     private var statusText: String? {
         switch session.phase {
@@ -448,7 +564,7 @@ struct AssistantPanelView: View {
                     if let statusText {
                         Text(statusText)
                             .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.62))
+                            .foregroundColor(palette.secondaryText(notch: 0.62))
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -496,15 +612,15 @@ struct AssistantPanelView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(Color.white.opacity(0.10))
+            .background(palette.fill(notch: 0.10))
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
             Button(action: sendDraftMessage) {
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundColor(canSendDraft ? .black : .white.opacity(0.35))
+                    .foregroundColor(canSendDraft ? palette.onAccent : palette.disabledText(notch: 0.35))
                     .frame(width: 24, height: 24)
-                    .background(canSendDraft ? Color.white.opacity(0.88) : Color.white.opacity(0.10))
+                    .background(canSendDraft ? palette.accent(notch: 0.88) : palette.fill(notch: 0.10))
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -553,12 +669,14 @@ struct AssistantPanelView: View {
 
 private struct AssistantMessageBubble: View {
     let message: AssistantDisplayMessage
+    @Environment(\.recorderSurface) private var surface
 
     private var isUser: Bool {
         message.role == .user
     }
 
     var body: some View {
+        let palette = RecorderPalette(surface)
         HStack {
             if isUser {
                 Spacer(minLength: 36)
@@ -567,12 +685,12 @@ private struct AssistantMessageBubble: View {
             MarkdownContentView(
                 message.content,
                 fontSize: 12,
-                foregroundColor: .white.opacity(isUser ? 0.92 : 0.86),
+                foregroundColor: palette.text(notch: isUser ? 0.92 : 0.86),
                 alignment: .leading
             )
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(isUser ? Color.white.opacity(0.16) : Color.white.opacity(0.08))
+                .background(isUser ? palette.fill(notch: 0.16) : palette.subtleFill(notch: 0.08))
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .overlay(alignment: .bottomTrailing) {
                     if !isUser {

@@ -83,7 +83,7 @@ struct AudioFileRow: View {
 
             Text(LocalizedStringKey(phase.rawValue))
                 .font(.caption)
-                .foregroundColor(AppTheme.Accent.primary)
+                .foregroundColor(AppTheme.Accent.text)
         }
     }
 

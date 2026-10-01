@@ -836,7 +836,7 @@ private struct CustomModelEditorFooter: View {
             Spacer()
 
             Button(primaryTitle, action: onPrimary)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
                 .disabled(isPrimaryDisabled)
         }
         .padding(20)

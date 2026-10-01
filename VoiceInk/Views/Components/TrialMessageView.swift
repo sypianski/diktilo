@@ -48,7 +48,7 @@ struct TrialMessageView: View {
                     Text("Buy License")
                         .font(.system(size: 13, weight: .medium))
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
             }
         }
         .padding()

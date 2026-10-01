@@ -1,16 +1,4 @@
 import SwiftUI
-import AppKit
-
-private struct VisualEffectBlur: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let v = NSVisualEffectView()
-        v.material = .hudWindow
-        v.blendingMode = .behindWindow
-        v.state = .active
-        return v
-    }
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
-}
 
 struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     @ObservedObject var stateProvider: S
@@ -31,6 +19,8 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private let assistantWidth: CGFloat = 520
     private let compactCornerRadius: CGFloat = 20
     private let expandedCornerRadius: CGFloat = 14
+    // Room under the bar so its shadow isn't cut by the bottom of the host window.
+    private let shadowClearance: CGFloat = 10
 
     // true when live transcript is streaming in during recording
     private var hasLiveTranscript: Bool {
@@ -99,7 +89,7 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         VStack(spacing: 0) {
             if hasLiveTranscript {
                 LiveTranscriptView(text: stateProvider.partialTranscript)
-                Divider().background(Color.white.opacity(0.15))
+                PerforationRule()
             }
         }
     }
@@ -126,24 +116,26 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                     liveFollowUpText: liveAssistantFollowUpText,
                     onSend: onAssistantFollowUp
                 )
-                Divider().background(Color.white.opacity(0.15))
+                PerforationRule()
             } else {
                 transcriptSection
             }
             controlBar
             if shouldShowHUD {
-                Divider().background(Color.white.opacity(0.10))
+                PerforationRule()
                 RecorderDestinationHUDView()
             }
         }
+        .environment(\.recorderSurface, .panel)
         .frame(width: currentWidth)
-        .background(
-            ZStack {
-                VisualEffectBlur()
-                Color.black.opacity(0.72)
-            }
-        )
+        .background(AppTheme.Palette.paper)
         .clipShape(RoundedRectangle(cornerRadius: currentCornerRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: currentCornerRadius, style: .continuous)
+                .strokeBorder(AppTheme.Palette.rule, lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.18), radius: 6, y: 2)
+        .padding(.bottom, shadowClearance)
         .animation(.easeInOut(duration: 0.3), value: hasLiveTranscript)
         .animation(.easeInOut(duration: 0.3), value: hasAssistantResponse)
         .animation(.easeInOut(duration: 0.3), value: shouldShowHUD)

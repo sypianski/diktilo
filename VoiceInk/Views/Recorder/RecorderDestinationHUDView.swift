@@ -7,7 +7,8 @@ import SwiftUI
 // user does not have to memorise the bindings.
 //
 // Design constraints:
-//   • Matches the dark translucent aesthetic of the recorder panels.
+//   • Follows the recorder surface: white-on-black in the notch, paper
+//     palette in the mini panel (see RecorderPalette).
 //   • Chip = small SF-symbol icon + shortcut string in a muted capsule.
 //   • Max 6 items; if fewer → centred row; if more → horizontal scroll.
 //   • Visibility gated by @AppStorage "RecorderDestinationHUDEnabled".
@@ -79,20 +80,22 @@ struct RecorderDestinationHUDView: View {
 
 struct DestinationChip: View {
     let item: FinishDestinationBindings.HUDItem
+    @Environment(\.recorderSurface) private var surface
 
     var body: some View {
+        let palette = RecorderPalette(surface)
         HStack(spacing: 4) {
             Image(systemName: item.icon)
                 .font(.system(size: 9, weight: .regular))
-                .foregroundColor(.white.opacity(0.55))
+                .foregroundColor(palette.text(notch: 0.55))
 
             Text(item.shortcutDisplay)
                 .font(.system(size: 10, weight: .medium, design: .monospaced))
-                .foregroundColor(.white.opacity(0.70))
+                .foregroundColor(palette.secondaryText(notch: 0.70))
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 3)
-        .background(Color.white.opacity(0.10))
+        .background(palette.fill(notch: 0.10))
         .clipShape(Capsule())
         .help("\(item.label): \(item.shortcutDisplay)")
     }

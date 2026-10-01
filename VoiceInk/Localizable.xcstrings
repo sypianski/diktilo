@@ -2608,16 +2608,6 @@
         }
       }
     },
-    "While you record, this bar appears %@. The red button finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Podczas nagrywania ten pasek pojawia się %@. Czerwony przycisk kończy nagranie, %@. Skróty pod spodem kończą nagranie i wysyłają tekst w konkretne miejsce."
-          }
-        }
-      }
-    },
     "You don't have a recording shortcut yet. Set one in Settings to start recording from any app.": {
       "localizations": {
         "pl": {
@@ -27701,6 +27691,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dotyczy zwrotów, w których Diktilo zwraca się do Ciebie, np. „zaoszczędziłeś / zaoszczędziłaś / zaoszczędziłoś”."
+          }
+        }
+      }
+    },
+    "While you record, this bar appears %@. The round button on the left finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas nagrywania ten pasek pojawia się %@. Okrągły przycisk po lewej kończy nagranie, %@. Skróty pod spodem kończą nagranie i wysyłają tekst w konkretne miejsce."
           }
         }
       }

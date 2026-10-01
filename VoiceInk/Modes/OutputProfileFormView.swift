@@ -614,7 +614,7 @@ struct OutputProfileFormView: View {
                     Text("Save Changes")
                         .frame(minWidth: 100)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
                 .disabled(!draft.canSave)
                 .keyboardShortcut(.return, modifiers: .command)
             }

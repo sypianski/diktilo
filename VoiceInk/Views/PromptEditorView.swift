@@ -219,7 +219,7 @@ struct PromptEditorView: View {
                 Text(saveButtonTitle)
                     .frame(minWidth: 108)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.amberProminent)
             .disabled(isSaveDisabled)
             .keyboardShortcut(.return, modifiers: .command)
             .help("Save this prompt and select it.")

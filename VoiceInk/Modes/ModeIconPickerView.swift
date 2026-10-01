@@ -136,7 +136,7 @@ struct ModeIconPickerView: View {
                 Button("Add") {
                     attemptAddCustomEmoji()
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
                 .disabled(newEmojiText.isEmpty || !newEmojiText.isValidEmoji || emojiManager.allEmojis.contains(newEmojiText))
 
                 Button("Cancel") {

@@ -103,7 +103,7 @@ struct FillerWordsSettingsSection: View {
                 Button("Add") {
                     addWord()
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
                 .disabled(newWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }

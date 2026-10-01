@@ -81,7 +81,7 @@ struct SaveTargetsSettingsView: View {
                 Button("Add Save Target") {
                     isAddingNew = true
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.amberProminent)
 
                 Button("Add Notaro") {
                     addNotaroPreset()
@@ -123,7 +123,7 @@ private struct SaveTargetRow: View {
         HStack(spacing: 12) {
             Image(systemName: target.icon)
                 .font(.system(size: 16))
-                .foregroundColor(.accentColor)
+                .foregroundColor(AppTheme.Accent.text)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
