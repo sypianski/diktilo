@@ -1178,6 +1178,56 @@
         }
       }
     },
+    "Add a target to save transcripts to a file, URL scheme, shell command, or Sako.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj cel, żeby zapisywać transkrypcje do pliku, przez schemat URL, poleceniem powłoki albo do Sako."
+          }
+        }
+      }
+    },
+    "Add Notaro": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj Notaro"
+          }
+        }
+      }
+    },
+    "Add Save Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj cel zapisu"
+          }
+        }
+      }
+    },
+    "Append to existing file": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopisuj do istniejącego pliku"
+          }
+        }
+      }
+    },
+    "Assign a unique keyboard shortcut to instantly activate this mode and start recording.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przypisz osobny skrót, który od razu włącza ten tryb i zaczyna nagrywanie."
+          }
+        }
+      }
+    },
     "at the bottom of the screen": {
       "localizations": {
         "pl": {
@@ -1198,6 +1248,36 @@
         }
       }
     },
+    "Bind Fn / 🌐 key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przypisz klawisz Fn / 🌐"
+          }
+        }
+      }
+    },
+    "Command is empty.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polecenie jest puste."
+          }
+        }
+      }
+    },
+    "Copied — sent to %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skopiowano — wysłano: %@"
+          }
+        }
+      }
+    },
     "Copy to Clipboard": {
       "localizations": {
         "pl": {
@@ -1208,12 +1288,92 @@
         }
       }
     },
+    "Could not create directory: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się utworzyć katalogu: %@"
+          }
+        }
+      }
+    },
+    "Could not open URL: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się otworzyć URL: %@"
+          }
+        }
+      }
+    },
+    "Custom paste settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własne ustawienia wklejania"
+          }
+        }
+      }
+    },
+    "Custom Target…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własny cel…"
+          }
+        }
+      }
+    },
+    "Default profile is used when no specific app or website matches are found.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb domyślny działa, gdy żadna aplikacja ani strona nie pasuje do innego trybu."
+          }
+        }
+      }
+    },
+    "Diktilo automatically switches to this mode based on the app or website you're using, or when you say a trigger word during recording.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo samo przełącza się na ten tryb zależnie od aplikacji lub strony, w której jesteś, albo gdy podczas nagrywania powiesz słowo-wyzwalacz."
+          }
+        }
+      }
+    },
     "Diktilo Tour": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Przewodnik po Diktilo"
+          }
+        }
+      }
+    },
+    "Directory": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Katalog"
+          }
+        }
+      }
+    },
+    "Edit Save Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edytuj cel zapisu"
           }
         }
       }
@@ -1268,12 +1428,152 @@
         }
       }
     },
+    "Failed to send text to Sako.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się wysłać tekstu do Sako."
+          }
+        }
+      }
+    },
+    "Failed to write file: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się zapisać pliku: %@"
+          }
+        }
+      }
+    },
+    "File": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plik"
+          }
+        }
+      }
+    },
+    "Filename Template": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szablon nazwy pliku"
+          }
+        }
+      }
+    },
     "Finish": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Zakończ"
+          }
+        }
+      }
+    },
+    "Finish Recording": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ nagrywanie"
+          }
+        }
+      }
+    },
+    "Finish Shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót kończący"
+          }
+        }
+      }
+    },
+    "Finish shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót kończący"
+          }
+        }
+      }
+    },
+    "Finish → %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ → %@"
+          }
+        }
+      }
+    },
+    "Finish → Copy": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ → kopiuj"
+          }
+        }
+      }
+    },
+    "Finish → Edit Window": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ → okno edycji"
+          }
+        }
+      }
+    },
+    "Finish → Paste": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ → wklej"
+          }
+        }
+      }
+    },
+    "Finish → Save Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ → cel zapisu"
+          }
+        }
+      }
+    },
+    "Finishing → %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kończę → %@"
+          }
+        }
+      }
+    },
+    "Finishing → Save Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kończę → cel zapisu"
           }
         }
       }
@@ -1308,6 +1608,56 @@
         }
       }
     },
+    "Icon": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ikona"
+          }
+        }
+      }
+    },
+    "If enabled, your instructions are combined with a general-purpose template to improve transcription quality.\n\nDisable for full control over the AI's system prompt (for advanced users).": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączone: twoje instrukcje są łączone z ogólnym szablonem, który poprawia jakość transkrypcji.\n\nWyłącz, jeśli chcesz w pełni kontrolować prompt systemowy AI (dla zaawansowanych)."
+          }
+        }
+      }
+    },
+    "Invalid URL scheme template: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieprawidłowy szablon URL: %@"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa"
+          }
+        }
+      }
+    },
+    "No editor app installed — the transcript falls back to the clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak zainstalowanego edytora — transkrypcja trafi do schowka."
+          }
+        }
+      }
+    },
     "No modes yet — you'll find the starter modes on the Modes screen.": {
       "localizations": {
         "pl": {
@@ -1318,12 +1668,112 @@
         }
       }
     },
+    "No Save Targets": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak celów zapisu"
+          }
+        }
+      }
+    },
+    "No targets configured — add one in Settings → Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak celów zapisu — dodaj je w Ustawienia → Cele zapisu."
+          }
+        }
+      }
+    },
+    "No transcription text was available.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak tekstu transkrypcji."
+          }
+        }
+      }
+    },
+    "No transcription text — nothing to save.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak tekstu — nie ma czego zapisać."
+          }
+        }
+      }
+    },
+    "Open target app": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz aplikację docelową"
+          }
+        }
+      }
+    },
+    "Opens the transcript in your external editor app before delivery; committing there copies the edited text to the clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera transkrypcję w zewnętrznym edytorze przed wysłaniem; zatwierdzenie tam kopiuje poprawiony tekst do schowka."
+          }
+        }
+      }
+    },
+    "Override the global paste method and clipboard-restore behavior for this mode only.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zastąp globalną metodę wklejania i przywracanie schowka tylko w tym trybie."
+          }
+        }
+      }
+    },
+    "Plain Text (.txt)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwykły tekst (.txt)"
+          }
+        }
+      }
+    },
     "Press %@ in any app, speak, then press it again.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Naciśnij %@ w dowolnej aplikacji, mów, a potem naciśnij jeszcze raz."
+          }
+        }
+      }
+    },
+    "Press during recording to finish and deliver via": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij podczas nagrywania, żeby zakończyć i wysłać przez:"
+          }
+        }
+      }
+    },
+    "Profile name": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa trybu"
           }
         }
       }
@@ -1358,6 +1808,66 @@
         }
       }
     },
+    "Recording → %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagrywanie → %@"
+          }
+        }
+      }
+    },
+    "Recording → Save Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagrywanie → cel zapisu"
+          }
+        }
+      }
+    },
+    "Save failed (%@) — copied to clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapis nie powiódł się (%@) — skopiowano do schowka."
+          }
+        }
+      }
+    },
+    "Save Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cel zapisu"
+          }
+        }
+      }
+    },
+    "Save target is not configured.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cel zapisu nie jest skonfigurowany."
+          }
+        }
+      }
+    },
+    "Save target not configured — copied to clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cel zapisu nieskonfigurowany — skopiowano do schowka."
+          }
+        }
+      }
+    },
     "Save Targets": {
       "localizations": {
         "pl": {
@@ -1378,12 +1888,102 @@
         }
       }
     },
+    "Save to Target mode requires a configured save target. Add one in Settings → Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb „Zapis do celu” wymaga skonfigurowanego celu zapisu. Dodaj go w Ustawienia → Cele zapisu."
+          }
+        }
+      }
+    },
+    "Saved to %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisano: %@"
+          }
+        }
+      }
+    },
+    "Send failed — copied to clipboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysyłka nie powiodła się — skopiowano do schowka"
+          }
+        }
+      }
+    },
+    "Sending to %@… (copied)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysyłam: %@… (skopiowano)"
+          }
+        }
+      }
+    },
+    "Sent to Sako.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysłano do Sako."
+          }
+        }
+      }
+    },
     "Set Shortcut in Settings": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Ustaw skrót w Ustawieniach"
+          }
+        }
+      }
+    },
+    "SF Symbol name": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa symbolu SF"
+          }
+        }
+      }
+    },
+    "Shell Command": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polecenie powłoki"
+          }
+        }
+      }
+    },
+    "Shell command executed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polecenie wykonane."
+          }
+        }
+      }
+    },
+    "Shell command failed: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polecenie nie powiodło się: %@"
           }
         }
       }
@@ -1428,12 +2028,32 @@
         }
       }
     },
+    "Strategy": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sposób"
+          }
+        }
+      }
+    },
     "Tap %@ to start and tap again to finish, or hold it while you speak.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Stuknij %@, żeby zacząć, i stuknij znowu, żeby skończyć — albo trzymaj, dopóki mówisz."
+          }
+        }
+      }
+    },
+    "Text will be sent to your Sako inbox via the CLI or JSONL fallback.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekst trafi do skrzynki Sako przez CLI (albo zapasowo przez plik JSONL)."
           }
         }
       }
@@ -1498,12 +2118,112 @@
         }
       }
     },
+    "The transcript is sent on stdin and exposed as VOICEINK_TRANSCRIPT.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja trafia na stdin i do zmiennej VOICEINK_TRANSCRIPT."
+          }
+        }
+      }
+    },
     "Today, 10:42": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Dziś, 10:42"
+          }
+        }
+      }
+    },
+    "Tokens: {date} {time} {datetime} {slug}": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmienne: {date} {time} {datetime} {slug}"
+          }
+        }
+      }
+    },
+    "Type": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ"
+          }
+        }
+      }
+    },
+    "URL Scheme": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schemat URL"
+          }
+        }
+      }
+    },
+    "URL Template": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szablon URL"
+          }
+        }
+      }
+    },
+    "Use captured on-screen text as context for this profile.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użyj tekstu odczytanego z ekranu jako kontekstu dla tego trybu."
+          }
+        }
+      }
+    },
+    "Use clipboard text as context for this profile.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użyj tekstu ze schowka jako kontekstu dla tego trybu."
+          }
+        }
+      }
+    },
+    "Use selected text from the active app as context for this profile.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użyj zaznaczonego tekstu z aktywnej aplikacji jako kontekstu dla tego trybu."
+          }
+        }
+      }
+    },
+    "Use {{text}} or {text} as a placeholder for the transcript.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W miejsce transkrypcji wstaw {{text}} albo {text}."
+          }
+        }
+      }
+    },
+    "When off, the text is delivered silently in the background.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone: tekst trafia na miejsce po cichu, w tle."
           }
         }
       }

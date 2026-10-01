@@ -326,10 +326,22 @@ enum DashboardProgressBenchmark {
         // Nazwisko autora w dopełniaczu — dokładnie w formie, w jakiej stoi
         // przy tytule: „«Lalka» Prusa", „«Nad Niemnem» Orzeszkowej".
         let author: String
+        // English UI: published English title and the author's surname in
+        // the nominative ("The Doll by Prus").
+        let englishTitle: String
+        let englishAuthor: String
         let wordCount: Int
 
+        private static var isPolish: Bool {
+            (Bundle.main.preferredLocalizations.first ?? "en").hasPrefix("pl")
+        }
+
         var localizedTitle: String {
-            String(localized: title)
+            Self.isPolish ? String(localized: title) : englishTitle
+        }
+
+        var localizedAuthor: String {
+            Self.isPolish ? author : englishAuthor
         }
     }
 
@@ -338,16 +350,18 @@ enum DashboardProgressBenchmark {
     private static let repeatBenchmark = Milestone(
         title: "Trylogia",
         author: "Sienkiewicza",
+        englishTitle: "The Trilogy",
+        englishAuthor: "Sienkiewicz",
         wordCount: 650_000
     )
 
     private static let oneTimeMilestones = [
-        Milestone(title: "Zemsta", author: "Fredry", wordCount: 18_000),
-        Milestone(title: "Ferdydurke", author: "Gombrowicza", wordCount: 75_000),
-        Milestone(title: "Quo Vadis", author: "Sienkiewicza", wordCount: 150_000),
-        Milestone(title: "Nad Niemnem", author: "Orzeszkowej", wordCount: 210_000),
-        Milestone(title: "Lalka", author: "Prusa", wordCount: 340_000),
-        Milestone(title: "Chłopi", author: "Reymonta", wordCount: 450_000)
+        Milestone(title: "Zemsta", author: "Fredry", englishTitle: "Revenge", englishAuthor: "Fredro", wordCount: 18_000),
+        Milestone(title: "Ferdydurke", author: "Gombrowicza", englishTitle: "Ferdydurke", englishAuthor: "Gombrowicz", wordCount: 75_000),
+        Milestone(title: "Quo Vadis", author: "Sienkiewicza", englishTitle: "Quo Vadis", englishAuthor: "Sienkiewicz", wordCount: 150_000),
+        Milestone(title: "Nad Niemnem", author: "Orzeszkowej", englishTitle: "On the Niemen", englishAuthor: "Orzeszkowa", wordCount: 210_000),
+        Milestone(title: "Lalka", author: "Prusa", englishTitle: "The Doll", englishAuthor: "Prus", wordCount: 340_000),
+        Milestone(title: "Chłopi", author: "Reymonta", englishTitle: "The Peasants", englishAuthor: "Reymont", wordCount: 450_000)
     ]
 
     static func equivalence(for words: Int) -> Equivalence {
@@ -355,14 +369,14 @@ enum DashboardProgressBenchmark {
             let wholeMultiple = words / repeatBenchmark.wordCount
 
             if wholeMultiple >= 2 {
-                return .repeated(title: repeatBenchmark.localizedTitle, author: repeatBenchmark.author, count: wholeMultiple)
+                return .repeated(title: repeatBenchmark.localizedTitle, author: repeatBenchmark.localizedAuthor, count: wholeMultiple)
             }
 
-            return .matched(title: repeatBenchmark.localizedTitle, author: repeatBenchmark.author)
+            return .matched(title: repeatBenchmark.localizedTitle, author: repeatBenchmark.localizedAuthor)
         }
 
         if let milestone = oneTimeMilestones.last(where: { words >= $0.wordCount }) {
-            return .matched(title: milestone.localizedTitle, author: milestone.author)
+            return .matched(title: milestone.localizedTitle, author: milestone.localizedAuthor)
         }
 
         guard let firstMilestone = oneTimeMilestones.first else {
@@ -370,7 +384,7 @@ enum DashboardProgressBenchmark {
         }
 
         let remainingWords = firstMilestone.wordCount - words
-        return .remaining(words: remainingWords, title: firstMilestone.localizedTitle, author: firstMilestone.author)
+        return .remaining(words: remainingWords, title: firstMilestone.localizedTitle, author: firstMilestone.localizedAuthor)
     }
 }
 
