@@ -32,6 +32,8 @@ playground.xcworkspace
 .build/
 build/
 .local-build/
+.dist-build/
+dist/
 
 # CocoaPods
 #
