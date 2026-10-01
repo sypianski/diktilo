@@ -74,9 +74,12 @@ final class OnboardingCoordinator: ObservableObject {
         self.hasRequestedScreenRecording = defaults.bool(forKey: OnboardingStorageKeys.requestedScreenRecording)
         self.experienceStepIndex = defaults.integer(forKey: OnboardingStorageKeys.experienceIndex)
         self.storedOnboardingAIProvider = defaults.string(forKey: OnboardingStorageKeys.aiProvider) ?? AIProvider.groq.rawValue
+        // On Macs where local models are a poor fit (Intel), start on Cloud.
         self.storedTranscriptionSetupKind = defaults.string(
             forKey: OnboardingStorageKeys.transcriptionSetupKind
-        ) ?? OnboardingTranscriptionSetupKind.local.rawValue
+        ) ?? (ModelAdvisor.currentRecommendation().suggestsCloud
+            ? OnboardingTranscriptionSetupKind.cloud
+            : OnboardingTranscriptionSetupKind.local).rawValue
         self.storedOnboardingTranscriptionProvider = defaults.string(
             forKey: OnboardingStorageKeys.transcriptionProvider
         ) ?? ""
@@ -353,10 +356,13 @@ final class OnboardingCoordinator: ObservableObject {
         return onboardingProviderOptions.first ?? .groq
     }
 
+    /// The local model this step downloads: the advisor's pick when it is a
+    /// Parakeet model (the only kind onboarding can download), else Parakeet V3.
     var requiredTranscriptionModel: FluidAudioModel? {
-        TranscriptionModelRegistry.models
-            .compactMap { $0 as? FluidAudioModel }
-            .first { $0.name == "parakeet-tdt-0.6b-v3" }
+        let fluidAudioModels = TranscriptionModelRegistry.models.compactMap { $0 as? FluidAudioModel }
+        let advisedName = ModelAdvisor.currentRecommendation().modelName
+        return fluidAudioModels.first { $0.name == advisedName }
+            ?? fluidAudioModels.first { $0.name == "parakeet-tdt-0.6b-v3" }
     }
 
     func selectedOnboardingTranscriptionProviderKeyBinding() -> Binding<String> {

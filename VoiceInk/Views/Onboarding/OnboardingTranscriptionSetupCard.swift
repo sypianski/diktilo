@@ -42,7 +42,11 @@ struct OnboardingTranscriptionSetupCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            setupSwitcher
+            VStack(alignment: .leading, spacing: 8) {
+                setupSwitcher
+                setupKindCaption
+                LocalOrKeyDisclosure()
+            }
 
             switch setupKind {
             case .local:
@@ -105,8 +109,48 @@ struct OnboardingTranscriptionSetupCard: View {
         .buttonStyle(.plain)
     }
 
+    /// The gist of the choice in one line; the disclosure below has the rest.
+    private var setupKindCaption: some View {
+        Text(setupKindCaptionText)
+            .font(.system(size: 12))
+            .foregroundStyle(AppTheme.Text.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var setupKindCaptionText: LocalizedStringKey {
+        switch setupKind {
+        case .local:
+            return "Runs on your Mac: recordings never leave the computer and it works offline."
+        case .cloud:
+            return "Recordings go to the provider you pick, with your own API key: you create an account there, paste the key here and pay for use, often with a free allowance."
+        }
+    }
+
+    private var advice: ModelRecommendation {
+        ModelAdvisor.currentRecommendation()
+    }
+
+    /// The advised model when onboarding can't download it itself (Whisper):
+    /// say so, rather than silently set up a model that misses the language.
+    @ViewBuilder
+    private var adviceNote: some View {
+        if let localModel, advice.modelName != localModel.name, !advice.suggestsCloud {
+            Text(String(
+                format: String(localized: "For your language, %@ fits better. Download it in AI Models after setup, or pick Cloud now."),
+                ModelAdvisor.displayName(forModelNamed: advice.modelName)
+            ))
+            .font(.system(size: 12))
+            .foregroundStyle(AppTheme.Text.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
     @ViewBuilder
     private var localSetup: some View {
+        ModelAdvisorSummary(recommendation: advice)
+
+        adviceNote
+
         if let localModel {
             TranscriptionModelDownloadCard(
                 model: localModel,

@@ -93,6 +93,13 @@ struct ModelManagementView: View {
 
                     TranscriptionSettingsSection()
 
+                    ModelAdvisorCard(onShowCloudProviders: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            selectedFilter = .cloud
+                        }
+                        activePanel = nil
+                    })
+
                     availableModelsSection
                 }
                 .padding(.horizontal, 24)

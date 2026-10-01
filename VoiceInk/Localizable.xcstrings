@@ -10434,7 +10434,13 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "English"
+            "value": "Angielski"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Englisch"
           }
         }
       }
@@ -28505,6 +28511,886 @@
           "stringUnit": {
             "state": "translated",
             "value": "设置录音快捷键"
+          }
+        }
+      }
+    },
+    "Apple Speech is built into macOS, so there is nothing to download.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Speech jest wbudowany w macOS, więc nie trzeba niczego pobierać."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Speech ist in macOS integriert, du musst nichts herunterladen."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Speech 内置于 macOS，无需下载。"
+          }
+        }
+      }
+    },
+    "Local models are slow on Intel Macs, so a small one is the safe choice. A cloud model with an API key will be faster and more accurate.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na Macu z procesorem Intel modele lokalne działają wolno, więc bezpieczniej wybrać mały. Model w chmurze z kluczem API będzie szybszy i dokładniejszy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf Intel-Macs laufen lokale Modelle langsam, daher ist ein kleines die sichere Wahl. Ein Cloud-Modell mit API-Schlüssel ist schneller und genauer."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地模型在 Intel Mac 上运行较慢，选小模型更稳妥。使用 API 密钥的云端模型会更快、更准确。"
+          }
+        }
+      }
+    },
+    "Made for English: fast, accurate and the smallest download.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stworzony dla angielskiego: szybki, dokładny i najmniejszy do pobrania."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Englisch gemacht: schnell, genau und der kleinste Download."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "专为英语打造：快速、准确，下载体积最小。"
+          }
+        }
+      }
+    },
+    "Parakeet V3, if you also dictate in other European languages.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet V3, jeśli dyktujesz też w innych językach europejskich."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet V3, wenn du auch in anderen europäischen Sprachen diktierst."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果你也用其他欧洲语言听写，可选 Parakeet V3。"
+          }
+        }
+      }
+    },
+    "Fast and accurate in your language, light on memory, and it can transcribe live.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybki i dokładny w Twoim języku, oszczędny dla pamięci i potrafi transkrybować na żywo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schnell und genau in deiner Sprache, sparsam beim Arbeitsspeicher und kann live transkribieren."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在你的语言中快速准确，占用内存少，并支持实时转写。"
+          }
+        }
+      }
+    },
+    "Parakeet doesn't cover your language. Whisper Large v3 Turbo does, with high accuracy at a moderate size.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet nie obsługuje Twojego języka. Whisper Large v3 Turbo tak, z wysoką dokładnością przy umiarkowanym rozmiarze."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet unterstützt deine Sprache nicht. Whisper Large v3 Turbo schon – sehr genau bei moderater Größe."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet 不支持你的语言，Whisper Large v3 Turbo 支持，准确率高且体积适中。"
+          }
+        }
+      }
+    },
+    "Parakeet doesn't cover your language, and this Mac has little memory for a large model. Whisper Base handles it at a small size.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet nie obsługuje Twojego języka, a ten Mac ma za mało pamięci na duży model. Whisper Base poradzi sobie przy niewielkim rozmiarze."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet unterstützt deine Sprache nicht, und dieser Mac hat wenig Speicher für ein großes Modell. Whisper Base schafft es bei kleiner Größe."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet 不支持你的语言，而这台 Mac 内存不足以运行大模型。Whisper Base 体积小，也能胜任。"
+          }
+        }
+      }
+    },
+    "%@ · %lld GB RAM · macOS %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$lld GB RAM · macOS %3$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$lld GB RAM · macOS %3$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$lld GB 内存 · macOS %3$@"
+          }
+        }
+      }
+    },
+    "Local model": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model lokalny"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokales Modell"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地模型"
+          }
+        }
+      }
+    },
+    "Local model (Ollama)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model lokalny (Ollama)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokales Modell (Ollama)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地模型（Ollama）"
+          }
+        }
+      }
+    },
+    "Runs on your Mac. Your recordings never leave the computer and it works offline. You download it once; its speed depends on your Mac.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa na Twoim Macu. Nagrania nie wychodzą poza komputer, a transkrypcja działa bez internetu. Pobierasz go raz; szybkość zależy od komputera."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Läuft auf deinem Mac. Deine Aufnahmen verlassen den Computer nie, und es funktioniert offline. Du lädst es einmal herunter; die Geschwindigkeit hängt von deinem Mac ab."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在你的 Mac 上运行。录音不会离开电脑，离线也能用。只需下载一次，速度取决于你的 Mac。"
+          }
+        }
+      }
+    },
+    "AI rewrites your text on your Mac. Nothing leaves the computer and it works offline, but you need Ollama installed and a fairly powerful Mac.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI przeredagowuje tekst na Twoim Macu. Nic nie wychodzi poza komputer i działa bez internetu, ale potrzebujesz zainstalowanej Ollamy i dość mocnego Maca."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die KI überarbeitet deinen Text auf deinem Mac. Nichts verlässt den Computer, und es funktioniert offline – du brauchst aber Ollama und einen recht leistungsfähigen Mac."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 在你的 Mac 上改写文本。内容不会离开电脑，离线也能用，但需要安装 Ollama，并且 Mac 性能要较强。"
+          }
+        }
+      }
+    },
+    "The recording goes to an outside provider (e.g. Groq, OpenAI, ElevenLabs), which sends back the text. The key is your personal ID with that provider: you create an account, copy the key and paste it into Diktilo. You pay the provider for use, often with a free allowance. Needs internet; recordings go to the provider's servers.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagranie trafia do zewnętrznego dostawcy (np. Groq, OpenAI, ElevenLabs), który odsyła tekst. Klucz to Twój osobisty identyfikator u dostawcy: zakładasz konto, kopiujesz klucz i wklejasz go w Diktilo. Za użycie płacisz dostawcy, często z darmowym limitem. Potrzebny jest internet, a nagrania trafiają na serwery dostawcy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Aufnahme geht an einen externen Anbieter (z. B. Groq, OpenAI, ElevenLabs), der den Text zurückschickt. Der Schlüssel ist deine persönliche Kennung bei diesem Anbieter: Du legst ein Konto an, kopierst den Schlüssel und fügst ihn in Diktilo ein. Du bezahlst den Anbieter nach Nutzung, oft mit Freikontingent. Internet nötig; Aufnahmen landen auf den Servern des Anbieters."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音会发送给外部服务商（如 Groq、OpenAI、ElevenLabs），由其返回文本。密钥是你在该服务商处的个人凭证：注册账户、复制密钥并粘贴到 Diktilo。按使用量向服务商付费，通常有免费额度。需要联网，录音会上传到服务商的服务器。"
+          }
+        }
+      }
+    },
+    "The text (not the recording) goes to a provider such as Groq or OpenAI, which sends back the rewritten version. You create an account there, copy the key and paste it into Diktilo. You pay for use, often with a free allowance.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do dostawcy, np. Groq albo OpenAI, trafia tekst (nie nagranie), a on odsyła przeredagowaną wersję. Zakładasz tam konto, kopiujesz klucz i wklejasz go w Diktilo. Płacisz za użycie, często z darmowym limitem."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Text (nicht die Aufnahme) geht an einen Anbieter wie Groq oder OpenAI, der die überarbeitete Fassung zurückschickt. Du legst dort ein Konto an, kopierst den Schlüssel und fügst ihn in Diktilo ein. Du zahlst nach Nutzung, oft mit Freikontingent."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文本（而非录音）会发送给 Groq 或 OpenAI 等服务商，由其返回改写后的版本。你在那里注册账户、复制密钥并粘贴到 Diktilo。按使用量付费，通常有免费额度。"
+          }
+        }
+      }
+    },
+    "Own server: a custom model can point to a server of your own (e.g. speaches), and recordings go only there.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własny serwer: model własny może wskazywać Twój serwer (np. speaches) — wtedy nagrania trafiają tylko tam."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigener Server: Ein eigenes Modell kann auf deinen Server zeigen (z. B. speaches), dann gehen Aufnahmen nur dorthin."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自有服务器：自定义模型可以指向你自己的服务器（如 speaches），录音只会发送到那里。"
+          }
+        }
+      }
+    },
+    "The same choice applies to AI enhancement: locally through Ollama or with a provider's key.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten sam wybór dotyczy ulepszania AI: lokalnie przez Ollamę albo kluczem dostawcy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieselbe Wahl gilt für die KI-Verbesserung: lokal über Ollama oder mit dem Schlüssel eines Anbieters."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 优化也有同样的选择：通过 Ollama 本地运行，或使用服务商的密钥。"
+          }
+        }
+      }
+    },
+    "Local or with an API key?": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokalnie czy przez klucz API?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokal oder mit API-Schlüssel?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地还是使用 API 密钥？"
+          }
+        }
+      }
+    },
+    "Model for This Mac": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dobór modelu do tego Maca"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modell für diesen Mac"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "适合这台 Mac 的模型"
+          }
+        }
+      }
+    },
+    "Dictation language: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Język dyktowania: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktiersprache: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听写语言：%@"
+          }
+        }
+      }
+    },
+    "Recommended: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zalecany: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfohlen: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推荐：%@"
+          }
+        }
+      }
+    },
+    "Alternative: %@. %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternatywa: %1$@. %2$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternative: %1$@. %2$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备选：%1$@。%2$@"
+          }
+        }
+      }
+    },
+    "Set Up a Cloud Model": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skonfiguruj model w chmurze"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cloud-Modell einrichten"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置云端模型"
+          }
+        }
+      }
+    },
+    "You're using the recommended model": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używasz zalecanego modelu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du nutzt das empfohlene Modell"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你正在使用推荐的模型"
+          }
+        }
+      }
+    },
+    "Downloading…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobieranie…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird heruntergeladen…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在下载…"
+          }
+        }
+      }
+    },
+    "Use This Model": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używaj tego modelu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Modell verwenden"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用此模型"
+          }
+        }
+      }
+    },
+    "Download and Use": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobierz i używaj"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden und verwenden"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载并使用"
+          }
+        }
+      }
+    },
+    "Recommended for this Mac: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zalecany dla tego Maca: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfohlen für diesen Mac: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推荐给这台 Mac：%@"
+          }
+        }
+      }
+    },
+    "Runs on your Mac: recordings never leave the computer and it works offline.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa na Twoim Macu: nagrania nie wychodzą poza komputer, a transkrypcja działa bez internetu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Läuft auf deinem Mac: Aufnahmen verlassen den Computer nie, und es funktioniert offline."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在你的 Mac 上运行：录音不会离开电脑，离线也能用。"
+          }
+        }
+      }
+    },
+    "Recordings go to the provider you pick, with your own API key: you create an account there, paste the key here and pay for use, often with a free allowance.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagrania trafiają do wybranego dostawcy, z Twoim własnym kluczem API: zakładasz u niego konto, wklejasz klucz tutaj i płacisz za użycie, często z darmowym limitem."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahmen gehen an den gewählten Anbieter, mit deinem eigenen API-Schlüssel: Du legst dort ein Konto an, fügst den Schlüssel hier ein und zahlst nach Nutzung, oft mit Freikontingent."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音会使用你自己的 API 密钥发送给所选服务商：在那里注册账户，把密钥粘贴到这里，按使用量付费，通常有免费额度。"
+          }
+        }
+      }
+    },
+    "For your language, %@ fits better. Download it in AI Models after setup, or pick Cloud now.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do Twojego języka lepiej pasuje %@. Pobierz go w Modelach AI po zakończeniu konfiguracji albo wybierz teraz Chmurę."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für deine Sprache passt %@ besser. Lade es nach der Einrichtung unter KI-Modelle herunter oder wähle jetzt Cloud."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对于你的语言，%@ 更合适。可在设置完成后到“AI 模型”中下载，或现在选择云端。"
+          }
+        }
+      }
+    },
+    "Fast English transcription that runs locally on Mac.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybka transkrypcja po angielsku, działająca lokalnie na Macu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schnelle englische Transkription, lokal auf dem Mac."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Mac 本地运行的快速英语转写。"
+          }
+        }
+      }
+    },
+    "Open AI Models": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz Modele AI"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KI-Modelle öffnen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 AI 模型"
+          }
+        }
+      }
+    },
+    "Local model or API key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model lokalny czy klucz API"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokales Modell oder API-Schlüssel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地模型还是 API 密钥"
+          }
+        }
+      }
+    },
+    "Diktilo transcribes with a local model or through an outside provider. A local model keeps your recordings on this Mac and works offline. With an API key, recordings go to the provider (e.g. Groq), which sends back the text: you create an account there, paste the key into AI Models and pay for use, often with a free allowance.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo transkrybuje modelem lokalnym albo przez zewnętrznego dostawcę. Model lokalny zatrzymuje nagrania na tym Macu i działa bez internetu. Z kluczem API nagrania trafiają do dostawcy (np. Groq), który odsyła tekst: zakładasz u niego konto, wklejasz klucz w Modelach AI i płacisz za użycie, często z darmowym limitem."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo transkribiert mit einem lokalen Modell oder über einen externen Anbieter. Ein lokales Modell behält deine Aufnahmen auf diesem Mac und funktioniert offline. Mit einem API-Schlüssel gehen Aufnahmen an den Anbieter (z. B. Groq), der den Text zurückschickt: Du legst dort ein Konto an, fügst den Schlüssel unter KI-Modelle ein und zahlst nach Nutzung, oft mit Freikontingent."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo 可以用本地模型转写，也可以通过外部服务商转写。本地模型让录音留在这台 Mac 上，离线也能用。使用 API 密钥时，录音会发送给服务商（如 Groq）并返回文本：在那里注册账户，把密钥粘贴到“AI 模型”中，按使用量付费，通常有免费额度。"
+          }
+        }
+      }
+    },
+    "On this Mac": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na tym Macu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem Mac"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在这台 Mac 上"
+          }
+        }
+      }
+    },
+    "With an API key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z kluczem API"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit API-Schlüssel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用 API 密钥"
+          }
+        }
+      }
+    },
+    "Recordings stay on the computer": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagrania zostają na komputerze"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahmen bleiben auf dem Computer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音留在电脑上"
+          }
+        }
+      }
+    },
+    "Works offline": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa bez internetu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funktioniert offline"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "离线可用"
+          }
+        }
+      }
+    },
+    "Sent to the provider": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysyłane do dostawcy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geht an den Anbieter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送给服务商"
+          }
+        }
+      }
+    },
+    "Paid per use": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Płatne za użycie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezahlung nach Nutzung"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按使用量付费"
           }
         }
       }

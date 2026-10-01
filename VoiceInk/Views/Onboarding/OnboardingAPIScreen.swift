@@ -20,12 +20,16 @@ struct OnboardingAPIScreen: View {
             stage: .api,
             contentMaxWidth: contentMaxWidth
         ) {
-            AIProviderVerificationCard(
-                aiService: aiService,
-                providerOptions: providerOptions,
-                selectedProvider: $selectedProvider,
-                onVerificationChanged: onVerificationChanged
-            )
+            VStack(alignment: .leading, spacing: 12) {
+                LocalOrKeyDisclosure(subject: .enhancement)
+
+                AIProviderVerificationCard(
+                    aiService: aiService,
+                    providerOptions: providerOptions,
+                    selectedProvider: $selectedProvider,
+                    onVerificationChanged: onVerificationChanged
+                )
+            }
         } bottomBar: {
             OnboardingBottomBar(
                 leadingTitle: "Back",
