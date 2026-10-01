@@ -13,6 +13,7 @@ struct OutputProfileFormView: View {
 
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var modeWarmupStore: OutputProfileFormWarmupStore
+    @AppStorage(ClipboardManager.autoCopyEnabledKey) private var autoCopyTranscription = true
     @FocusState private var isNameFieldFocused: Bool
 
     @State private var isShowingIconPicker = false
@@ -129,9 +130,6 @@ struct OutputProfileFormView: View {
             )
             outputSection
             aiEnhancementSection
-            if draft.outputMode != .respond {
-                advancedSection
-            }
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
@@ -362,6 +360,12 @@ struct OutputProfileFormView: View {
         }
     }
 
+    /// Read from the live list, not the draft: the main-shortcut block may
+    /// have moved the main shortcut to another mode while this editor is open.
+    private var isMainShortcutMode: Bool {
+        modeManager.getConfiguration(with: draft.id)?.isDefault ?? false
+    }
+
     private var outputChoices: [OutputMode] {
         OutputMode.choices(canRespond: canRespond)
     }
@@ -478,14 +482,21 @@ struct OutputProfileFormView: View {
             }
             .pickerStyle(.menu)
 
+            // "Copy Every Transcription" leaves the text on the clipboard and
+            // beats this override at paste time — show that instead of letting
+            // the toggle silently do nothing.
             Toggle(isOn: Binding(
                 get: { draft.restoreClipboardOverride ?? true },
                 set: { draft.restoreClipboardOverride = $0 }
             )) {
                 Text("Keep Clipboard Content")
+                if autoCopyTranscription {
+                    Text("Off while “Copy Every Transcription to Clipboard” is on under Pasting and Clipboard.")
+                }
             }
+            .disabled(autoCopyTranscription)
 
-            if (draft.restoreClipboardOverride ?? true) {
+            if (draft.restoreClipboardOverride ?? true) && !autoCopyTranscription {
                 Picker(selection: Binding(
                     get: { draft.clipboardRestoreDelayOverride ?? 2.0 },
                     set: { draft.clipboardRestoreDelayOverride = $0 }
@@ -501,17 +512,6 @@ struct OutputProfileFormView: View {
                     Text("Restore Delay")
                 }
                 .pickerStyle(.menu)
-            }
-        }
-    }
-
-    private var advancedSection: some View {
-        Section("Advanced") {
-            Toggle(isOn: $draft.isDefault) {
-                HStack(spacing: 6) {
-                    Text("Set as default")
-                    InfoTip("Default profile is used when no specific app or website matches are found.")
-                }
             }
         }
     }
@@ -537,7 +537,7 @@ struct OutputProfileFormView: View {
         let targets = SaveTargetManager.shared.targets
         if targets.isEmpty {
             LabeledContent("Save Target") {
-                Text("No targets configured — add one in Settings → Save Targets.")
+                Text("No targets configured — add one in Modes → Save Targets.")
                     .foregroundColor(.secondary)
                     .italic()
             }
@@ -599,6 +599,8 @@ struct OutputProfileFormView: View {
                         isShowingDeleteConfirmation = true
                     }
                     .buttonStyle(.bordered)
+                    .disabled(isMainShortcutMode)
+                    .help(isMainShortcutMode ? LocalizedStringKey("The main shortcut uses this mode. Choose another mode under Main Shortcut to delete this one.") : LocalizedStringKey("Delete Mode"))
                 } else {
                     Button("Cancel") { onDismiss() }
                         .keyboardShortcut(.escape, modifiers: [])

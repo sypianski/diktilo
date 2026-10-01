@@ -82,6 +82,7 @@ struct AppTourView: View {
     private var footer: some View {
         HStack(spacing: 12) {
             Button("Skip Tour", action: onClose)
+                .focusEffectDisabled()
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
                 .keyboardShortcut(.cancelAction)
@@ -135,7 +136,7 @@ struct AppTourView: View {
         NotificationCenter.default.post(
             name: .navigateToDestination,
             object: nil,
-            userInfo: ["destination": ViewType.settings.rawValue]
+            userInfo: ["destination": ViewType.modes.rawValue]
         )
         onClose()
     }
@@ -208,7 +209,7 @@ private struct AppTourCaption: View {
                 .lineSpacing(2)
 
             if step == .record && TourFacts.primaryShortcut == nil {
-                Button("Set Shortcut in Settings", action: onOpenSettings)
+                Button("Set Shortcut in Modes", action: onOpenSettings)
                     .controlSize(.small)
                     .padding(.top, 2)
             }
@@ -221,7 +222,7 @@ private struct AppTourCaption: View {
         case .recorderBar: return "The recording bar"
         case .modes: return "Modes"
         case .history: return "History and clipboard"
-        case .settings: return "Settings"
+        case .settings: return "Where to change things"
         }
     }
 
@@ -229,7 +230,7 @@ private struct AppTourCaption: View {
         switch step {
         case .record:
             guard let shortcut = TourFacts.primaryShortcut else {
-                return String(localized: "You don't have a recording shortcut yet. Set one in Settings to start recording from any app.")
+                return String(localized: "You don't have a recording shortcut yet. Set one in Modes to start recording from any app.")
             }
             let keys = shortcut.displayString
             let how: String
@@ -258,7 +259,7 @@ private struct AppTourCaption: View {
                 ? String(localized: "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
                 : String(localized: "Every transcription is saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
         case .settings:
-            return String(localized: "The recording shortcut, the bar's style and the app language are in Settings. To see this tour again, choose Help → Diktilo Tour.")
+            return String(localized: "The recording shortcut and modes are in Modes, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.")
         }
     }
 }
@@ -364,7 +365,7 @@ private struct ModesStage: View {
         let modes = TourFacts.modes
         VStack(spacing: 8) {
             if modes.isEmpty {
-                Text("No modes yet — you'll find the starter modes on the Modes screen.")
+                Text("No modes yet — add one on the Modes screen.")
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(modes) { mode in
@@ -448,13 +449,13 @@ private struct HistoryStage: View {
     }
 }
 
-/// The real sidebar rows with Settings selected, plus where the tour lives.
+/// The real sidebar rows where things are changed, plus where the tour lives.
 private struct SettingsStage: View {
     var body: some View {
         HStack(alignment: .top, spacing: 24) {
             VStack(spacing: 3) {
-                ForEach([ViewType.dashboard, .modes, .history, .settings]) { item in
-                    SidebarItemButton(viewType: item, isSelected: item == .settings, action: {})
+                ForEach([ViewType.modes, .audio, .settings]) { item in
+                    SidebarItemButton(viewType: item, isSelected: item == .modes, action: {})
                         .allowsHitTesting(false)
                 }
             }

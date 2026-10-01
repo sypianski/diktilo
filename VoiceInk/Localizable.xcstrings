@@ -1475,6 +1475,18 @@
             "state": "translated",
             "value": "Okno edycji"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeitungsfenster"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑窗口"
+          }
         }
       }
     },
@@ -21118,7 +21130,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pokaż ikonę w Doku"
+            "value": "Pokaż ikonę w Docku"
           }
         }
       }
@@ -24807,7 +24819,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Słownik"
+            "value": "Słownictwo"
           }
         }
       }
@@ -24829,7 +24841,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Słownik jest używany wyłącznie z ulepszaniem AI, aby zachować ważne nazwy, terminy techniczne i unikalne pisownie w końcowym wyniku."
+            "value": "Słownictwo jest używane wyłącznie z ulepszaniem AI, aby zachować ważne nazwy, terminy techniczne i unikalne pisownie w końcowym wyniku."
           }
         }
       }
@@ -25202,7 +25214,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zastępowania słów działają po transkrypcji. Słownik jest używany z ulepszaniem AI, aby lepiej rozumieć nazwy, terminy techniczne i unikalne pisownie w transkrypcie."
+            "value": "Zastępowania słów działają po transkrypcji. Słownictwo jest używane z ulepszaniem AI, aby lepiej rozumieć nazwy, terminy techniczne i unikalne pisownie w transkrypcie."
           }
         }
       }
@@ -27701,6 +27713,798 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podczas nagrywania ten pasek pojawia się %@. Okrągły przycisk po lewej kończy nagranie, %@. Skróty pod spodem kończą nagranie i wysyłają tekst w konkretne miejsce."
+          }
+        }
+      }
+    },
+    "Transcribe File": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datei transkribieren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrybuj plik"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "转写文件"
+          }
+        }
+      }
+    },
+    "Personal Dictionary": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Persönliches Wörterbuch"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Słownik osobisty"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人词典"
+          }
+        }
+      }
+    },
+    "Recording": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagrywanie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahme"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音"
+          }
+        }
+      }
+    },
+    "App": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikacja"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用"
+          }
+        }
+      }
+    },
+    "Set Shortcut in Modes": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw skrót w Trybach"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurzbefehl in Modi festlegen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在模式中设置快捷键"
+          }
+        }
+      }
+    },
+    "Where to change things": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdzie co zmienić"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wo du was änderst"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在哪里更改设置"
+          }
+        }
+      }
+    },
+    "You don't have a recording shortcut yet. Set one in Modes to start recording from any app.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie masz jeszcze skrótu nagrywania. Ustaw go w Trybach, żeby nagrywać z dowolnej aplikacji."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast noch keinen Aufnahme-Kurzbefehl. Lege einen unter Modi fest, um in jeder App aufzunehmen."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你还没有录音快捷键。请在“模式”中设置，以便在任何应用中录音。"
+          }
+        }
+      }
+    },
+    "The recording shortcut and modes are in Modes, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania i tryby są w Trybach, mikrofon i wygląd paska w Nagrywaniu, a język i wygląd aplikacji w Aplikacji. Przewodnik otworzysz ponownie z menu Pomoc → Przewodnik po Diktilo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahme-Kurzbefehl und Modi findest du unter Modi, Mikrofon und Leiste unter Aufnahme, Sprache und Erscheinungsbild unter App. Die Tour öffnest du erneut über Hilfe → Diktilo-Tour."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音快捷键和模式在“模式”中，麦克风和录音条外观在“录音”中，语言和外观在“应用”中。要再次查看导览，请选择“帮助 → Diktilo 导览”。"
+          }
+        }
+      }
+    },
+    "Used by every mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wspólne dla wszystkich trybów."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gilt für alle Modi."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有模式共用。"
+          }
+        }
+      }
+    },
+    "English only": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tylko angielski"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Englisch"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅英语"
+          }
+        }
+      }
+    },
+    "Download a model below first": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najpierw pobierz model poniżej"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lade zuerst unten ein Modell herunter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先在下方下载模型"
+          }
+        }
+      }
+    },
+    "Only downloaded local models, cloud providers with an API key and your custom models are listed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na liście są tylko pobrane modele lokalne, dostawcy chmurowi z kluczem API i Twoje własne modele."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgeführt sind nur heruntergeladene lokale Modelle, Cloud-Anbieter mit API-Schlüssel und deine eigenen Modelle."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅列出已下载的本地模型、已配置 API 密钥的云服务商以及你的自定义模型。"
+          }
+        }
+      }
+    },
+    "This model can't transcribe live; it transcribes the whole recording at the end.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten model nie transkrybuje na żywo — przepisuje całe nagranie na końcu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Modell transkribiert nicht live, sondern die ganze Aufnahme am Ende."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此模型无法实时转写，会在录音结束后转写整段内容。"
+          }
+        }
+      }
+    },
+    "This model only works live.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten model działa tylko na żywo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Modell funktioniert nur live."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此模型仅支持实时转写。"
+          }
+        }
+      }
+    },
+    "Realtime Streaming (OpenAI Realtime API / speaches)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streaming na żywo (OpenAI Realtime API / speaches)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Echtzeit-Streaming (OpenAI Realtime API / speaches)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实时流式传输（OpenAI Realtime API / speaches）"
+          }
+        }
+      }
+    },
+    "Main Shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót główny"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haupt-Tastenkürzel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主快捷键"
+          }
+        }
+      }
+    },
+    "Uses Mode": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używa trybu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwendet Modus"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用模式"
+          }
+        }
+      }
+    },
+    "When no app or website trigger matches.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdy żaden wyzwalacz aplikacji ani strony nie pasuje."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn kein App- oder Website-Auslöser passt."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当没有应用或网站触发器匹配时。"
+          }
+        }
+      }
+    },
+    "Last used mode": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostatnio używany tryb"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt verwendeter Modus"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次使用的模式"
+          }
+        }
+      }
+    },
+    "More Recording Shortcuts": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Więcej skrótów nagrywania"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weitere Aufnahme-Tastenkürzel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更多录音快捷键"
+          }
+        }
+      }
+    },
+    "Mode Order": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kolejność trybów"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reihenfolge der Modi"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模式顺序"
+          }
+        }
+      }
+    },
+    "Add Mode": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj tryb"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modus hinzufügen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加模式"
+          }
+        }
+      }
+    },
+    "Add a mode to choose what happens with the text: paste it, copy it, save it or rewrite it with AI.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj tryb, żeby wybrać, co stanie się z tekstem: wklejenie, skopiowanie, zapis albo przeredagowanie przez AI."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge einen Modus hinzu, um festzulegen, was mit dem Text passiert: einfügen, kopieren, speichern oder mit KI umschreiben."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加模式以选择如何处理文本：粘贴、复制、保存或用 AI 改写。"
+          }
+        }
+      }
+    },
+    "A mode decides where the text goes and whether AI rewrites it. Finish a recording with a mode's shortcut, or let an app or website trigger pick the mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb decyduje, dokąd trafia tekst i czy AI go przeredaguje. Zakończ nagranie skrótem trybu albo pozwól, by tryb wybrał wyzwalacz aplikacji lub strony."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Modus legt fest, wohin der Text geht und ob KI ihn umschreibt. Beende eine Aufnahme mit dem Kürzel eines Modus oder lass einen App- oder Website-Auslöser den Modus wählen."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模式决定文本的去向以及是否由 AI 改写。用模式的快捷键结束录音，或让应用或网站触发器选择模式。"
+          }
+        }
+      }
+    },
+    "The main shortcut runs this mode when no app or website trigger matches.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót główny uruchamia ten tryb, gdy żaden wyzwalacz aplikacji ani strony nie pasuje."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Haupt-Tastenkürzel verwendet diesen Modus, wenn kein App- oder Website-Auslöser passt."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当没有应用或网站触发器匹配时，主快捷键使用此模式。"
+          }
+        }
+      }
+    },
+    "The main shortcut uses this mode. Choose another mode under Main Shortcut to delete this one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót główny używa tego trybu. Żeby go usunąć, najpierw wybierz inny tryb w bloku Skrót główny."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Haupt-Tastenkürzel verwendet diesen Modus. Wähle unter „Haupt-Tastenkürzel“ zuerst einen anderen Modus, um diesen zu löschen."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主快捷键正在使用此模式。请先在“主快捷键”中选择其他模式，再删除此模式。"
+          }
+        }
+      }
+    },
+    "Delete Mode": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń tryb"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modus löschen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除模式"
+          }
+        }
+      }
+    },
+    "Turn this mode off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłącz ten tryb"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diesen Modus ausschalten"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭此模式"
+          }
+        }
+      }
+    },
+    "Turn this mode on": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz ten tryb"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diesen Modus einschalten"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开启此模式"
+          }
+        }
+      }
+    },
+    "Pasting and Clipboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklejanie i schowek"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einfügen und Zwischenablage"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粘贴与剪贴板"
+          }
+        }
+      }
+    },
+    "Off while “Copy Every Transcription to Clipboard” is on under Pasting and Clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone, gdy w sekcji Wklejanie i schowek jest włączone „Kopiuj każdą transkrypcję do schowka”."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus, solange unter „Einfügen und Zwischenablage“ „Jede Transkription in die Zwischenablage kopieren“ aktiv ist."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当“粘贴与剪贴板”中开启“将每次转写复制到剪贴板”时不可用。"
+          }
+        }
+      }
+    },
+    "No targets configured — add one in Modes → Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak celów zapisu — dodaj je w Tryby → Cele zapisu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ziele eingerichtet — füge eines unter Modi → Speicherziele hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未配置目标 — 请在“模式 → 保存目标”中添加。"
+          }
+        }
+      }
+    },
+    "Save to Target mode requires a configured save target. Add one in Modes → Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb „Zapis do celu” wymaga skonfigurowanego celu zapisu. Dodaj go w Tryby → Cele zapisu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Modus „In Ziel speichern“ benötigt ein eingerichtetes Speicherziel. Füge eines unter Modi → Speicherziele hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“保存到目标”模式需要已配置的保存目标。请在“模式 → 保存目标”中添加。"
+          }
+        }
+      }
+    },
+    "Delete Save Target?": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunąć cel zapisu?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speicherziel löschen?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "要删除保存目标吗？"
+          }
+        }
+      }
+    },
+    "No modes yet — add one on the Modes screen.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeszcze brak trybów — dodaj tryb na ekranie Tryby."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Modi – füge auf dem Bildschirm Modi einen hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有模式——请在“模式”页面添加。"
+          }
+        }
+      }
+    },
+    "Set Recording Shortcut": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahme-Kurzbefehl festlegen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw skrót nagrywania"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置录音快捷键"
           }
         }
       }

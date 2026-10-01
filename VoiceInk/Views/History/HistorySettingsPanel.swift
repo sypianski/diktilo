@@ -3,6 +3,7 @@ import SwiftUI
 
 struct HistorySettingsPanel: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var recordingShortcutManager: RecordingShortcutManager
 
     let onClose: () -> Void
 
@@ -23,6 +24,19 @@ struct HistorySettingsPanel: View {
             AppPanelHeader(title: "History Settings", onClose: onClose)
 
             Form {
+                Section {
+                    ForEach(ShortcutAction.historyActions, id: \.storageName) { action in
+                        LabeledContent(action.displayName) {
+                            ShortcutRecorder(action: action) {
+                                recordingShortcutManager.updateShortcutStatus()
+                            }
+                            .controlSize(.small)
+                        }
+                    }
+                } header: {
+                    Text("Shortcuts")
+                }
+
                 Section {
                     Toggle("Auto-delete Transcript History", isOn: $isTranscriptionCleanupEnabled)
 

@@ -53,7 +53,7 @@ struct DictionarySettingsView: View {
     }
 
     private var headerSection: some View {
-        AppScreenHeader(title: "Dictionary", infoMessage: dictionaryInfoMessage) {
+        AppScreenHeader(title: "Personal Dictionary", infoMessage: dictionaryInfoMessage) {
             settingsButton
         }
     }

@@ -101,7 +101,21 @@ struct OutputProfileEditorView: View {
     }
 
     private func saveConfiguration() {
-        let config = draft.makeConfig(mode: mode)
+        var config = draft.makeConfig(mode: mode)
+
+        // Which mode the main shortcut runs is chosen only in the "Main
+        // Shortcut" block, so take it from the live list rather than the
+        // draft. The very first mode takes the main shortcut, so it is never
+        // left without one; a Respond mode can't (it delivers no text).
+        let isMainShortcutMode: Bool
+        switch mode {
+        case .add:
+            isMainShortcutMode = !modeManager.hasDefaultConfiguration()
+        case .edit:
+            isMainShortcutMode = modeManager.getConfiguration(with: config.id)?.isDefault ?? false
+        }
+        config.isDefault = isMainShortcutMode && config.outputMode != .respond
+
         let validator = OutputProfileValidator(modeManager: modeManager)
         validationErrors = validator.validateForSave(config: config, mode: mode)
 

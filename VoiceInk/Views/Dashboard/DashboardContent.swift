@@ -203,7 +203,7 @@ struct DashboardContent: View {
                 NotificationCenter.default.post(
                     name: .navigateToDestination,
                     object: nil,
-                    userInfo: ["destination": ViewType.settings.rawValue]
+                    userInfo: ["destination": ViewType.modes.rawValue]
                 )
             } label: {
                 footerActionLabel(

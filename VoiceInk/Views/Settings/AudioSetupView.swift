@@ -5,6 +5,9 @@ struct AudioSetupView: View {
     @ObservedObject private var audioDeviceManager = AudioDeviceManager.shared
     @ObservedObject private var mediaController = MediaController.shared
     @ObservedObject private var playbackController = PlaybackController.shared
+    @EnvironmentObject private var recorderUIManager: RecorderUIManager
+    @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
+    @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @State private var microphoneSourceBeforePriorityOrder: MicrophoneSourceSelection = .systemDefault
     @State private var refreshIconRotation = 0.0
 
@@ -22,6 +25,31 @@ struct AudioSetupView: View {
                 } header: {
                     Text("Priority Order")
                 }
+            }
+
+            Section {
+                Picker("Panel Style", selection: $recorderUIManager.recorderPanelStyle) {
+                    ForEach(RecorderPanelStyle.allCases) { style in
+                        Text(style.displayName).tag(style)
+                    }
+                }
+                .pickerStyle(.menu)
+
+                Toggle(isOn: $showLiveTranscript) {
+                    HStack(spacing: 4) {
+                        Text("Live Text Display")
+                        InfoTip("Shows live text while recording with realtime models.")
+                    }
+                }
+
+                Toggle(isOn: $destinationHUDEnabled) {
+                    HStack(spacing: 4) {
+                        Text("Shortcut Hints While Recording")
+                        InfoTip("Show the finish shortcuts of your modes and save targets under the recording bar.")
+                    }
+                }
+            } header: {
+                Text("Recording Panel")
             }
 
             Section {

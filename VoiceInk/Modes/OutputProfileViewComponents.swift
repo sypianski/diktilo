@@ -1,83 +1,16 @@
 import SwiftUI
 
-struct VoiceInkButton: View {
-    let title: LocalizedStringKey
-    let action: () -> Void
-    var isDisabled: Bool = false
-    
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isDisabled ? AppTheme.Accent.disabled : AppTheme.Accent.primary)
-                )
-        }
-        .buttonStyle(.plain)
-        .disabled(isDisabled)
-    }
-}
-
-struct ModeEmptyStateView: View {
-    let action: () -> Void
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "bolt.circle.fill")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            
-            Text("No Modes")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            Text("Add customized modes for different contexts")
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-            
-            VoiceInkButton(
-                title: "Add New Mode",
-                action: action
-            )
-            .frame(maxWidth: 250)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-struct OutputProfilesGrid: View {
-    @ObservedObject var modeManager: OutputProfileManager
-    let onEditConfig: (OutputProfile) -> Void
-
-    var body: some View {
-        LazyVStack(spacing: 12) {
-            ForEach($modeManager.configurations) { $config in
-                ConfigurationRow(
-                    config: $config,
-                    isEditing: false,
-                    modeManager: modeManager,
-                    onEditConfig: onEditConfig
-                )
-            }
-        }
-    }
-}
-
-struct DefaultModeIndicator: View {
+/// Marks the mode the main shortcut runs (the stored `isDefault` flag).
+struct MainShortcutModeIndicator: View {
     var body: some View {
         HStack(spacing: 5) {
-            Image(systemName: "checkmark.seal.fill")
+            Image(systemName: "keyboard")
                 .font(.system(size: 11, weight: .semibold))
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.primary)
+                .foregroundStyle(AppTheme.Palette.onAmber)
 
-            Text("Default")
+            Text("Main Shortcut")
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppTheme.Palette.onAmber)
                 .lineLimit(1)
         }
         .padding(.leading, 7)
@@ -85,14 +18,10 @@ struct DefaultModeIndicator: View {
         .frame(height: 24)
         .background {
             Capsule()
-                .fill(AppTheme.Surface.card)
-        }
-        .overlay {
-            Capsule()
-                .strokeBorder(AppTheme.Border.control, lineWidth: 0.5)
+                .fill(AppTheme.Palette.amber)
         }
         .contentShape(Capsule())
-        .help("Default mode is used when no app or website matches")
+        .help("The main shortcut runs this mode when no app or website trigger matches.")
     }
 }
 
@@ -101,6 +30,7 @@ struct ConfigurationRow: View {
     let isEditing: Bool
     let modeManager: OutputProfileManager
     let onEditConfig: (OutputProfile) -> Void
+    let onDelete: (OutputProfile) -> Void
     private var profileShortcut: Shortcut? {
         ShortcutStore.shortcut(for: .profile(config.id))
     }
@@ -152,7 +82,7 @@ struct ConfigurationRow: View {
                 Spacer()
 
                 if config.isDefault {
-                    DefaultModeIndicator()
+                    MainShortcutModeIndicator()
                 }
             }
             .contentShape(Rectangle())
@@ -173,15 +103,26 @@ struct ConfigurationRow: View {
                 ))
                     .toggleStyle(SwitchToggleStyle(tint: AppTheme.Accent.primary))
                     .labelsHidden()
+                    .help(config.isEnabled ? LocalizedStringKey("Turn this mode off") : LocalizedStringKey("Turn this mode on"))
             }
+
+            // The main shortcut's mode can't go: it would leave the shortcut
+            // without a mode. Pick another one in "Main Shortcut" first.
+            Button {
+                onDelete(config)
+            } label: {
+                Image(systemName: "trash")
+                    .font(.system(size: 13))
+                    .frame(width: 24, height: 24)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.borderless)
+            .disabled(config.isDefault)
+            .help(config.isDefault ? LocalizedStringKey("The main shortcut uses this mode. Choose another mode under Main Shortcut to delete this one.") : LocalizedStringKey("Delete Mode"))
+            .accessibilityLabel(Text("Delete Mode"))
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 14)
+        .padding(.vertical, 4)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .background {
-            AppMaterialCardBackground(isSelected: isEditing, cornerRadius: 16)
-        }
         .opacity(config.isEnabled ? 1.0 : 0.70)
     }
     

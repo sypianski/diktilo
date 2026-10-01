@@ -143,6 +143,10 @@ struct OnboardingExperienceStep: Identifiable {
     }
 }
 
+/// One practice step: dictate with the main recording shortcut into the
+/// default "Paste" mode. Per-mode shortcuts only finish a recording, so steps
+/// that taught "press the mode's shortcut to start" were removed with the AI
+/// starter modes they demonstrated.
 enum OnboardingExperienceCatalog {
     static let steps: [OnboardingExperienceStep] = [
         OnboardingExperienceStep(
@@ -160,82 +164,6 @@ enum OnboardingExperienceCatalog {
             sampleLabel: "Sample text",
             sampleText: "Please send the calendar invite before lunch.",
             fieldPlaceholder: "Your dictated text will appear here."
-        ),
-        OnboardingExperienceStep(
-            kind: .enhance,
-            starterModeKind: .enhance,
-            defaultModeKind: .enhance,
-            shortcutBehavior: .primaryRecording(
-                skipsIntroWhenConfigured: true,
-                clearsOnIntro: false
-            ),
-            systemImage: "sparkles",
-            title: "Try Enhancement",
-            subtitle: String(localized: "Combines transcription with an LLM to create a polished version."),
-            sampleLabel: "Sample text",
-            sampleText: "Um, tell the team we will meet on Thursday. Actually, no, Friday morning works better.",
-            fieldPlaceholder: "Your enhanced message will appear here."
-        ),
-        OnboardingExperienceStep(
-            kind: .email,
-            starterModeKind: .email,
-            defaultModeKind: .email,
-            shortcutBehavior: .primaryRecording(
-                skipsIntroWhenConfigured: true,
-                clearsOnIntro: false
-            ),
-            showsContextAwarenessAfterCompletion: true,
-            systemImage: "envelope.fill",
-            title: "Write an Email",
-            subtitle: "Turn your spoken note into a clean email draft with Diktilo.",
-            sampleLabel: "Sample text",
-            sampleText: "Hi Morgan, um, I wanted to follow up on the proposal we discussed yesterday. I talked to Julie about it, and, like, like, she said you can call her at 555-0194 if you need the latest numbers. Thanks, Alex.",
-            fieldPlaceholder: "Your formatted email will appear here."
-        ),
-        OnboardingExperienceStep(
-            kind: .rewrite,
-            starterModeKind: .rewrite,
-            defaultModeKind: .clean,
-            shortcutBehavior: .starterMode(clearsOnIntro: true),
-            systemImage: "quote.bubble.fill",
-            title: "Try Rewrite",
-            subtitle: "Select the text on the screen, tell Diktilo the changes you want, and Diktilo will rewrite the text for you.",
-            sampleLabel: "Sample text",
-            sampleText: "Make it a checklist and add appropriate emoji for each item at the end.",
-            fieldPlaceholder: "Text to rewrite will appear here.",
-            initialFieldText: "For tomorrow's client update, I need to review the proposal, confirm the budget numbers, email the latest draft to the client, book the meeting room, prepare a short agenda, and share final notes with the team before the afternoon check-in.",
-            configuredInstruction: "Select all text, press your shortcut, read the sample text aloud, then press it again."
-        ),
-        OnboardingExperienceStep(
-            kind: .rewriteFormat,
-            starterModeKind: .rewrite,
-            defaultModeKind: .clean,
-            shortcutBehavior: .starterMode(clearsOnIntro: false),
-            systemImage: "quote.bubble.fill",
-            title: "Try Rewrite",
-            subtitle: "Select the text on the screen, tell Diktilo the changes you want, and Diktilo will rewrite the text for you.",
-            sampleLabel: "Sample text",
-            sampleText: "Translate this into English.",
-            fieldPlaceholder: "Text to rewrite will appear here.",
-            initialFieldText: "म अहिले नेपालीमा बोलिरहेको छु, र म यो उपकरणलाई यसलाई अंग्रेजीमा अनुवाद गर्न भन्नेछु।",
-            shortcutIntroTitle: "Let's try it once again.",
-            showsShortcutControl: false,
-            configuredInstruction: "Select all text, press your shortcut, read the sample text aloud, then press it again."
-        ),
-        OnboardingExperienceStep(
-            kind: .respond,
-            starterModeKind: .assistant,
-            defaultModeKind: .clean,
-            shortcutBehavior: .starterMode(clearsOnIntro: true),
-            layout: .respond,
-            requiresTextChangeForCompletion: false,
-            systemImage: "text.bubble.fill",
-            title: "Ask a Quick Question",
-            subtitle: "Ask quick questions and Diktilo will serve you the answers.",
-            sampleLabel: "Sample question",
-            sampleText: "What is the capital city of the USA?",
-            fieldPlaceholder: "",
-            configuredInstruction: "Press your shortcut, ask the question, then press it again."
         )
     ]
 }

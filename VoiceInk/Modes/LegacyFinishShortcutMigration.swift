@@ -15,29 +15,50 @@ import Foundation
 /// mode's own enhancement. A future global-AI-toggle + per-mode-AI-toggle pass
 /// will revisit this.
 ///
+/// The Ctrl+Option fallback only counts on an install that ran those old
+/// versions (onboarding completed). On a fresh install it is nobody's choice:
+/// only explicitly stored bindings migrate, and `DefaultModeSeeder` provides
+/// the starting modes instead.
+///
 /// Runs once. Guarded by a UserDefaults flag; the migration reads persistent
 /// state from `OutputProfileManager.shared` and `ShortcutStore` and does not
 /// depend on SwiftUI or the recording engine, so it is safe to call from app
 /// init before the rest of the shortcut machinery spins up.
 enum LegacyFinishShortcutMigration {
     private static let migrationKey = "legacyFinishShortcutMigrationV1_done"
+    private static let completedOnboardingKey = "hasCompletedOnboardingV2"
 
     static func runIfNeeded() {
         guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
 
         let manager = OutputProfileManager.shared
+        let isExistingInstall = UserDefaults.standard.bool(forKey: completedOnboardingKey)
 
         let mappings: [(action: ShortcutAction, outputMode: OutputMode, name: String, symbol: String)] = [
-            (.finishWithCopy,       .copy,       "Copy",        "doc.on.doc"),
-            (.finishWithPaste,      .paste,      "Paste",       "doc.on.clipboard"),
-            (.finishWithEditWindow, .editWindow, "Edit Window", "square.and.pencil")
+            (.finishWithCopy,       .copy,       String(localized: "Copy"),        "doc.on.doc"),
+            (.finishWithPaste,      .paste,      String(localized: "Paste"),       "doc.on.clipboard"),
+            (.finishWithEditWindow, .editWindow, String(localized: "Edit Window"), "square.and.pencil")
         ]
 
         for mapping in mappings {
-            // `effectiveShortcut` folds explicit binding + Ctrl+Option fallback.
-            // We treat both the same way: whatever the user currently reaches
-            // for keeps working after the migration, just in a per-mode slot.
-            guard let shortcut = FinishDestinationBindings.effectiveShortcut(for: mapping.action) else {
+            // On an existing install `effectiveShortcut` folds explicit binding
+            // + Ctrl+Option fallback: whatever the user reaches for keeps
+            // working, just in a per-mode slot.
+            let legacyShortcut = isExistingInstall
+                ? FinishDestinationBindings.effectiveShortcut(for: mapping.action)
+                : ShortcutStore.shortcut(for: mapping.action)
+            guard let shortcut = legacyShortcut else {
+                ShortcutStore.setShortcut(nil, for: mapping.action)
+                continue
+            }
+
+            // A mode that already finishes this way (e.g. the seeded "Copy")
+            // covers it; a shim would only duplicate it.
+            let isAlreadyCovered = manager.configurations.contains {
+                $0.outputMode == mapping.outputMode && ShortcutStore.shortcut(for: .profile($0.id)) == shortcut
+            }
+            guard !isAlreadyCovered else {
+                ShortcutStore.setShortcut(nil, for: mapping.action)
                 continue
             }
 

@@ -124,6 +124,14 @@ enum ShortcutAction: Hashable {
         .quickAddToDictionary
     ]
 
+    /// Utility shortcuts that act on the transcript history; edited in History's settings panel.
+    static let historyActions: [Self] = [
+        .pasteLastTranscription,
+        .pasteLastEnhancement,
+        .retryLastTranscription,
+        .openHistoryWindow
+    ]
+
     static let recorderPanelStoredActions: [Self] = [
         .cancelRecorder
     ]

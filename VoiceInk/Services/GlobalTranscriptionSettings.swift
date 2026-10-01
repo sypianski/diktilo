@@ -12,7 +12,6 @@ enum GlobalTranscriptionSettings {
         static let language = "SelectedLanguage"
         static let isRealtimeEnabled = "IsRealtimeTranscriptionEnabled"
         static let isTextFormattingEnabled = "IsTextFormattingEnabled"
-        static let isAIEnhancementEnabled = "IsAIEnhancementEnabled"
     }
 
     static let defaultLanguage = "pl"
@@ -42,21 +41,5 @@ enum GlobalTranscriptionSettings {
     static var isTextFormattingEnabled: Bool {
         get { UserDefaults.standard.bool(forKey: Keys.isTextFormattingEnabled) }
         set { UserDefaults.standard.set(newValue, forKey: Keys.isTextFormattingEnabled) }
-    }
-
-    /// Global master switch for AI enhancement. When OFF, no mode enhances,
-    /// regardless of the per-mode `isAIEnhancementEnabled` toggle. When ON,
-    /// per-mode `isAIEnhancementEnabled` still gates individual modes.
-    ///
-    /// Defaults to ON so existing users' modes with enhancement configured keep
-    /// working after upgrade.
-    static var isAIEnhancementEnabled: Bool {
-        get {
-            if UserDefaults.standard.object(forKey: Keys.isAIEnhancementEnabled) == nil {
-                return true
-            }
-            return UserDefaults.standard.bool(forKey: Keys.isAIEnhancementEnabled)
-        }
-        set { UserDefaults.standard.set(newValue, forKey: Keys.isAIEnhancementEnabled) }
     }
 }

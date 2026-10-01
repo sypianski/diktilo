@@ -310,6 +310,7 @@ final class OnboardingFlowController {
         OnboardingStorageKeys.onboardingKeys.forEach {
             coordinator.defaults.removeObject(forKey: $0)
         }
+        DefaultModeSeeder.seedIfEmpty()
         activateCleanTranscriptionMode()
         onComplete()
     }
@@ -318,6 +319,7 @@ final class OnboardingFlowController {
         OnboardingStorageKeys.onboardingKeys.forEach {
             coordinator.defaults.removeObject(forKey: $0)
         }
+        DefaultModeSeeder.seedIfEmpty()
         onComplete()
     }
 

@@ -21,6 +21,8 @@ enum OnboardingV2Migration {
             defaults.removeObject(forKey: $0)
         }
         defaults.set(true, forKey: preparedKey)
+        // Before LegacyFinishShortcutMigration, so it sees the seeded "Copy".
+        DefaultModeSeeder.seedIfEmpty()
     }
 
     private static func clearModeStorage(defaults: UserDefaults) {

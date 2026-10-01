@@ -91,6 +91,8 @@ struct ModelManagementView: View {
                         intelMacWarningBanner
                     }
 
+                    TranscriptionSettingsSection()
+
                     availableModelsSection
                 }
                 .padding(.horizontal, 24)
@@ -118,7 +120,7 @@ struct ModelManagementView: View {
     }
 
     private var headerSection: some View {
-        AppScreenHeader(title: "Model Catalog") {
+        AppScreenHeader(title: "AI Models") {
             settingsButton
         }
     }

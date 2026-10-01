@@ -14,7 +14,7 @@ struct OutputProfileSettingsPanelView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
-                Text("Modes Settings")
+                Text("Mode Order")
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -149,7 +149,7 @@ private struct ModeReorderRow: View {
 
             HStack(spacing: 6) {
                 if config.isDefault {
-                    DefaultModeIndicator()
+                    MainShortcutModeIndicator()
                 }
 
                 if !config.isEnabled {

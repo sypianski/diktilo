@@ -4,6 +4,7 @@ import SwiftUI
 enum LanguageDisplayMode {
     case full // For settings page with descriptions
     case menuItem // For menu bar with compact layout
+    case inline // Control only, for a labelled row (AI Models → Transcription)
 }
 
 struct LanguageSelectionView: View {
@@ -12,6 +13,16 @@ struct LanguageSelectionView: View {
     // Add display mode parameter with full as the default
     var displayMode: LanguageDisplayMode = .full
     @ObservedObject var whisperPrompt: WhisperPrompt
+
+    init(
+        transcriptionModelManager: TranscriptionModelManager,
+        displayMode: LanguageDisplayMode = .full,
+        whisperPrompt: WhisperPrompt
+    ) {
+        self.transcriptionModelManager = transcriptionModelManager
+        self.displayMode = displayMode
+        self.whisperPrompt = whisperPrompt
+    }
 
     private func updateLanguage(_ language: String) {
         guard selectedLanguage != language else { return }
@@ -85,6 +96,8 @@ struct LanguageSelectionView: View {
                 fullView
             case .menuItem:
                 menuItemView
+            case .inline:
+                inlineView
             }
         }
         .onAppear {
@@ -179,6 +192,48 @@ struct LanguageSelectionView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppTheme.Surface.control)
         .cornerRadius(10)
+    }
+
+    private var sortedLanguagesForCurrentModel: [(key: String, value: String)] {
+        availableLanguagesForCurrentModel().sorted(by: {
+            if $0.key == "auto" { return true }
+            if $1.key == "auto" { return false }
+            return $0.value < $1.value
+        })
+    }
+
+    // Just the control; the caller supplies the "Language" label.
+    @ViewBuilder
+    private var inlineView: some View {
+        if transcriptionModelManager.currentTranscriptionModel == nil {
+            Text("No model selected")
+                .foregroundStyle(AppTheme.Text.secondary)
+        } else if languageSelectionDisabled() {
+            Text("Autodetected")
+                .foregroundStyle(AppTheme.Text.secondary)
+        } else if isMultilingualModel() {
+            HStack(spacing: 8) {
+                if isNativeAppleModelSelected() {
+                    nativeAppleAssetControl
+                }
+
+                Picker("Language", selection: selectedLanguageBinding) {
+                    ForEach(sortedLanguagesForCurrentModel, id: \.key) { key, value in
+                        Text(value).tag(key)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .fixedSize()
+            }
+        } else {
+            Text("English only")
+                .foregroundStyle(AppTheme.Text.secondary)
+                .onAppear {
+                    // English-only models transcribe English regardless.
+                    updateLanguage("en")
+                }
+        }
     }
 
     // New compact view for menu bar

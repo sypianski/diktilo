@@ -10,14 +10,10 @@ enum StarterModeFactory {
         modelName: String?,
         transcriptionModelName: String = defaultTranscriptionModelName,
         isRealtimeTranscriptionEnabled: Bool = true,
-        selectedLanguage: String = "auto",
-        installedApps: [InstalledAppInfo]? = nil
+        selectedLanguage: String = "auto"
     ) {
         let manager = OutputProfileManager.shared
         let requestedKinds = Set(kinds)
-        let availableInstalledApps = requestedKinds.contains(.email)
-            ? (installedApps ?? InstalledApps.load())
-            : []
 
         // Transcription is global now - seed it once from the onboarding choice.
         GlobalTranscriptionSettings.modelName = transcriptionModelName
@@ -31,8 +27,7 @@ enum StarterModeFactory {
                 makeConfig(
                     from: $0,
                     provider: provider,
-                    modelName: modelName,
-                    installedApps: availableInstalledApps
+                    modelName: modelName
                 )
             }
 
@@ -57,6 +52,16 @@ enum StarterModeFactory {
         }
     }
 
+    /// The default "Paste" mode, built without seeding the global transcription
+    /// settings the way `install` does during onboarding.
+    static func makeDefaultMode() -> OutputProfile? {
+        guard let template = StarterModeCatalog.templates.first(where: { $0.kind == .clean }) else {
+            return nil
+        }
+
+        return makeConfig(from: template, provider: nil, modelName: nil)
+    }
+
     static func isInstalled(kind: StarterModeKind) -> Bool {
         guard let template = StarterModeCatalog.templates.first(where: { $0.kind == kind }) else {
             return false
@@ -67,48 +72,23 @@ enum StarterModeFactory {
 
     private static func makeConfig(
         from template: StarterModeTemplate,
-        provider: AIProvider,
-        modelName: String?,
-        installedApps: [InstalledAppInfo]
+        provider: AIProvider?,
+        modelName: String?
     ) -> OutputProfile {
         OutputProfile(
             id: template.id,
             name: template.name,
             icon: template.icon,
-            appConfigs: nil,
-            urlConfigs: nil,
-            triggerGroups: triggerGroups(for: template.kind, installedApps: installedApps),
             isAIEnhancementEnabled: template.usesAIEnhancement,
             selectedPrompt: template.promptId?.uuidString,
-            useClipboardContext: template.kind == .email,
             useSelectedTextContext: template.useSelectedTextContext,
             useScreenCapture: template.useScreenCapture,
-            selectedAIProvider: template.usesAIEnhancement ? provider.rawValue : nil,
-            selectedAIModel: template.usesAIEnhancement ? (modelName ?? provider.defaultModel) : nil,
+            selectedAIProvider: template.usesAIEnhancement ? provider?.rawValue : nil,
+            selectedAIModel: template.usesAIEnhancement ? (modelName ?? provider?.defaultModel) : nil,
             outputMode: template.outputMode,
             autoSendKey: .none,
             isEnabled: true,
             isDefault: template.isDefault
         )
     }
-
-    private static func triggerGroups(
-        for kind: StarterModeKind,
-        installedApps: [InstalledAppInfo]
-    ) -> [ModeTriggerGroup]? {
-        guard kind == .email,
-              let emailTemplate = TriggerTemplateCatalog.templates.first(where: { $0.id == "email" }) else {
-            return nil
-        }
-
-        let group = emailTemplate.availableGroup(
-            installedApps: installedApps,
-            existingAppBundleIds: [],
-            existingWebsites: [],
-            cleanURL: OutputProfileManager.shared.cleanURL
-        )
-
-        return group.isEmpty ? nil : [group]
-    }
-
 }

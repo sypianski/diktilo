@@ -60,9 +60,15 @@ extension ViewType {
     var title: LocalizedStringKey {
         switch self {
         case .transcribeAudio:
-            return "Transcribe"
+            return "Transcribe File"
+        case .dictionary:
+            return "Personal Dictionary"
         case .modes:
             return "Modes"
+        case .audio:
+            return "Recording"
+        case .settings:
+            return "App"
         default:
             return LocalizedStringKey(rawValue)
         }
@@ -98,7 +104,7 @@ extension ViewType {
         case .modes: return "sparkles"
         case .audio: return "mic"
         case .dictionary: return "text.book.closed"
-        case .settings: return "gearshape"
+        case .settings: return "macwindow"
         }
     }
 }
@@ -129,7 +135,9 @@ struct SidebarItemButton: View {
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .help(viewType.title)
+        // The amber pill already marks the selection; a focus ring on top of
+        // it reads as a second, stray selection.
+        .focusEffectDisabled()
         .accessibilityLabel(viewType.title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .animation(.easeInOut(duration: 0.12), value: isSelected)

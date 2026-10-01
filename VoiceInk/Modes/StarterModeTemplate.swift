@@ -2,10 +2,6 @@ import Foundation
 
 enum StarterModeKind: String, CaseIterable, Identifiable {
     case clean
-    case enhance
-    case email
-    case rewrite
-    case assistant
 
     var id: String { rawValue }
 }
@@ -43,13 +39,17 @@ struct StarterModeTemplate: Identifiable {
     }
 }
 
+/// Onboarding installs a single mode: "Paste", the default mode the main
+/// recording shortcut runs. A fresh install gets it (plus "Copy") even without
+/// onboarding — see `DefaultModeSeeder`, which uses the same id so the two
+/// never duplicate.
 enum StarterModeCatalog {
     static let templates: [StarterModeTemplate] = [
         StarterModeTemplate(
             kind: .clean,
             id: UUID(uuidString: "10000000-0000-0000-0000-000000000001")!,
-            name: "Dictation",
-            icon: .symbol("mic.fill"),
+            name: String(localized: "Paste"),
+            icon: .symbol("doc.on.clipboard"),
             description: String(localized: "Fast transcription with no AI enhancement."),
             guidance: String(localized: "Use this when you want the quickest possible voice-to-text result. It records with your configured transcription model and pastes the transcript as-is."),
             promptId: nil,
@@ -58,62 +58,6 @@ enum StarterModeCatalog {
             useSelectedTextContext: false,
             useScreenCapture: false,
             isDefault: true
-        ),
-        StarterModeTemplate(
-            kind: .enhance,
-            id: UUID(uuidString: "10000000-0000-0000-0000-000000000002")!,
-            name: "Enhancement",
-            icon: .symbol("sparkles"),
-            description: "Clean up dictated text while preserving your meaning.",
-            guidance: "Use this for everyday writing when you want grammar, flow, and light formatting improved before the result is pasted.",
-            promptId: PromptTemplates.defaultPromptId,
-            outputMode: .paste,
-            usesAIEnhancement: true,
-            useSelectedTextContext: true,
-            useScreenCapture: true,
-            isDefault: false
-        ),
-        StarterModeTemplate(
-            kind: .email,
-            id: UUID(uuidString: "10000000-0000-0000-0000-000000000003")!,
-            name: "Email",
-            icon: .symbol("envelope.fill"),
-            description: "Turn a rough thought into a clean email.",
-            guidance: "Use this after selecting relevant text or opening the related window. Diktilo uses that context to shape a clear email draft.",
-            promptId: PromptTemplates.emailPromptId,
-            outputMode: .paste,
-            usesAIEnhancement: true,
-            useSelectedTextContext: true,
-            useScreenCapture: true,
-            isDefault: false
-        ),
-        StarterModeTemplate(
-            kind: .rewrite,
-            id: UUID(uuidString: "10000000-0000-0000-0000-000000000004")!,
-            name: "Rewrite",
-            icon: .symbol("quote.bubble.fill"),
-            description: "Rewrite selected or dictated text with better clarity.",
-            guidance: "Use this when you have text selected and want a stronger version. The selected text is available as context for the rewrite.",
-            promptId: PromptTemplates.rewritePromptId,
-            outputMode: .paste,
-            usesAIEnhancement: true,
-            useSelectedTextContext: true,
-            useScreenCapture: false,
-            isDefault: false
-        ),
-        StarterModeTemplate(
-            kind: .assistant,
-            id: UUID(uuidString: "10000000-0000-0000-0000-000000000005")!,
-            name: "Assistant",
-            icon: .symbol("bubble.left.and.bubble.right.fill"),
-            description: "Ask a question and keep the answer in the recorder.",
-            guidance: "Use this for answers, summaries, and follow-ups. Instead of pasting, Diktilo keeps the conversation inside the recorder.",
-            promptId: PromptTemplates.assistantPromptId,
-            outputMode: .respond,
-            usesAIEnhancement: true,
-            useSelectedTextContext: false,
-            useScreenCapture: false,
-            isDefault: false
         )
     ]
 
