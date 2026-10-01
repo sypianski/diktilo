@@ -11,7 +11,7 @@ struct OutputProfileQuickSwitchTip: View {
                     .foregroundColor(AppTheme.Text.primary)
                     .lineLimit(1)
 
-                Text("During recording, press Option + 1-9 to switch modes quickly.")
+                Text("During recording, press Option + 1–0 to switch modes quickly.")
                     .font(.system(size: 12))
                     .foregroundColor(AppTheme.Text.secondary)
                     .fixedSize(horizontal: false, vertical: true)

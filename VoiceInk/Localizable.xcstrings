@@ -1258,6 +1258,36 @@
         }
       }
     },
+    "Break large blocks of transcribed text into paragraphs. Applies to every mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzieli długie bloki tekstu na akapity. Dotyczy wszystkich trybów."
+          }
+        }
+      }
+    },
+    "Change in Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień w Ustawieniach"
+          }
+        }
+      }
+    },
+    "Change…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień…"
+          }
+        }
+      }
+    },
     "Command is empty.": {
       "localizations": {
         "pl": {
@@ -1274,6 +1304,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skopiowano — wysłano: %@"
+          }
+        }
+      }
+    },
+    "Copy every completed transcription to the clipboard, regardless of the mode's destination — so it lands in a clipboard manager's history (e.g. Alfred). While on, the previous clipboard content is never restored after pasting.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każda gotowa transkrypcja trafia do schowka, niezależnie od wyjścia trybu — dzięki temu ląduje w historii menedżera schowka (np. Alfreda). Gdy włączone, poprzednia zawartość schowka nie jest przywracana po wklejeniu."
+          }
+        }
+      }
+    },
+    "Copy Every Transcription to Clipboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiuj każdą transkrypcję do schowka"
           }
         }
       }
@@ -1338,12 +1388,42 @@
         }
       }
     },
+    "Default uses simulated Cmd+V key events. AppleScript can help when custom keyboard layouts do not paste correctly. Individual modes can override this.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Domyślnie wysyła symulowane ⌘V. AppleScript pomaga, gdy niestandardowy układ klawiatury źle wkleja. Tryby mogą to nadpisać."
+          }
+        }
+      }
+    },
+    "Default: press Esc twice.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Domyślnie: naciśnij Esc dwa razy."
+          }
+        }
+      }
+    },
     "Diktilo automatically switches to this mode based on the app or website you're using, or when you say a trigger word during recording.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Diktilo samo przełącza się na ten tryb zależnie od aplikacji lub strony, w której jesteś, albo gdy podczas nagrywania powiesz słowo-wyzwalacz."
+          }
+        }
+      }
+    },
+    "Diktilo temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo na chwilę używa schowka do wklejania. Gdy włączone, po wybranym opóźnieniu przywraca poprzednią zawartość schowka."
           }
         }
       }
@@ -1364,6 +1444,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Katalog"
+          }
+        }
+      }
+    },
+    "During recording, press Option + 1–0 to switch modes quickly.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas nagrywania ⌥1–⌥0 szybko przełącza tryby."
           }
         }
       }
@@ -1464,6 +1554,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Szablon nazwy pliku"
+          }
+        }
+      }
+    },
+    "Files, URL schemes, shell commands or Notaro — each can have its own finish shortcut.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pliki, schematy URL, polecenia powłoki albo Notaro — każdy cel może mieć własny skrót kończący."
           }
         }
       }
@@ -1578,6 +1678,16 @@
         }
       }
     },
+    "Format": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format"
+          }
+        }
+      }
+    },
     "Help": {
       "localizations": {
         "pl": {
@@ -1608,6 +1718,26 @@
         }
       }
     },
+    "Hold while you speak, release to finish.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trzymaj, gdy mówisz; puść, żeby zakończyć."
+          }
+        }
+      }
+    },
+    "How many recent transcriptions the dashboard shows at the top.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ile ostatnich transkrypcji Dashboard pokazuje na górze."
+          }
+        }
+      }
+    },
     "Icon": {
       "localizations": {
         "pl": {
@@ -1634,6 +1764,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nieprawidłowy szablon URL: %@"
+          }
+        }
+      }
+    },
+    "Keep Clipboard Content is off while every transcription is copied — the transcription stays on the clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Zachowaj zawartość schowka” jest wyłączone, gdy każda transkrypcja trafia do schowka — transkrypcja zostaje w schowku."
+          }
+        }
+      }
+    },
+    "Live Transcription (Streaming)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja na żywo (streaming)"
+          }
+        }
+      }
+    },
+    "Manage…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zarządzaj…"
+          }
+        }
+      }
+    },
+    "Master switch. Off = no mode enhances, regardless of per-mode setting. On = per-mode toggle decides. Useful for temporarily disabling all LLM calls without touching individual modes.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłącznik główny. Wyłączony — żaden tryb nie używa AI, niezależnie od swojego ustawienia. Włączony — decyduje przełącznik w trybie. Przydaje się, żeby na chwilę wyłączyć wszystkie zapytania do LLM bez ruszania trybów."
+          }
+        }
+      }
+    },
+    "Model and Language": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model i język"
           }
         }
       }
@@ -1678,6 +1858,16 @@
         }
       }
     },
+    "No save targets yet": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak celów zapisu"
+          }
+        }
+      }
+    },
     "No targets configured — add one in Settings → Save Targets.": {
       "localizations": {
         "pl": {
@@ -1704,6 +1894,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Brak tekstu — nie ma czego zapisać."
+          }
+        }
+      }
+    },
+    "Onboarding": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wprowadzenie"
           }
         }
       }
@@ -1738,6 +1938,16 @@
         }
       }
     },
+    "Panel Style": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wygląd panelu"
+          }
+        }
+      }
+    },
     "Plain Text (.txt)": {
       "localizations": {
         "pl": {
@@ -1768,6 +1978,26 @@
         }
       }
     },
+    "Press it while recording to finish in this mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij go podczas nagrywania, żeby zakończyć w tym trybie."
+          }
+        }
+      }
+    },
+    "Press to start, press again to finish.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij, żeby zacząć; naciśnij ponownie, żeby zakończyć."
+          }
+        }
+      }
+    },
     "Profile name": {
       "localizations": {
         "pl": {
@@ -1784,6 +2014,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tryby"
+          }
+        }
+      }
+    },
+    "Recent Transcripts on Dashboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostatnie transkrypcje na Dashboardzie"
           }
         }
       }
@@ -1808,6 +2048,36 @@
         }
       }
     },
+    "Recording Panel": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Panel nagrywania"
+          }
+        }
+      }
+    },
+    "Recording Shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania"
+          }
+        }
+      }
+    },
+    "Recording shortcut:": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania:"
+          }
+        }
+      }
+    },
     "Recording → %@": {
       "localizations": {
         "pl": {
@@ -1824,6 +2094,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nagrywanie → cel zapisu"
+          }
+        }
+      }
+    },
+    "Remove second shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń drugi skrót"
           }
         }
       }
@@ -1883,7 +2163,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zapis do celu"
+            "value": "Zapisz do celu"
           }
         }
       }
@@ -1904,6 +2184,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zapisano: %@"
+          }
+        }
+      }
+    },
+    "Second Shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drugi skrót"
           }
         }
       }
@@ -1988,6 +2278,26 @@
         }
       }
     },
+    "Shortcut Hints While Recording": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podpowiedzi skrótów podczas nagrywania"
+          }
+        }
+      }
+    },
+    "Show the finish shortcuts of your modes and save targets under the recording bar.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokazuje pod paskiem nagrywania skróty kończące Twoich trybów i celów zapisu."
+          }
+        }
+      }
+    },
     "Show Tour": {
       "localizations": {
         "pl": {
@@ -2004,6 +2314,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pomiń przewodnik"
+          }
+        }
+      }
+    },
+    "Split Into Paragraphs": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziel na akapity"
+          }
+        }
+      }
+    },
+    "Start and Stop Recording": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpocznij i zakończ nagrywanie"
           }
         }
       }
@@ -2038,12 +2368,32 @@
         }
       }
     },
+    "Stream audio to the transcription server while you speak. Falls back to batch transcription automatically when unavailable. Applies to every mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysyła dźwięk do serwera transkrypcji, gdy mówisz. Gdy streaming nie działa, automatycznie przechodzi na transkrypcję całego nagrania. Dotyczy wszystkich trybów."
+          }
+        }
+      }
+    },
     "Tap %@ to start and tap again to finish, or hold it while you speak.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Stuknij %@, żeby zacząć, i stuknij znowu, żeby skończyć — albo trzymaj, dopóki mówisz."
+          }
+        }
+      }
+    },
+    "Tap to start and stop, or hold while you speak.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij, żeby zacząć i zakończyć, albo trzymaj, gdy mówisz."
           }
         }
       }
@@ -2218,12 +2568,42 @@
         }
       }
     },
+    "Utility Shortcuts": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty pomocnicze"
+          }
+        }
+      }
+    },
     "When off, the text is delivered silently in the background.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Wyłączone: tekst trafia na miejsce po cichu, w tle."
+          }
+        }
+      }
+    },
+    "Where the Text Goes": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokąd trafia tekst"
+          }
+        }
+      }
+    },
+    "While recording: ⌥1–⌥0 switches the mode, ⌘↩ finishes in the current mode, and a mode's finish shortcut finishes in that mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas nagrywania: ⌥1–⌥0 przełącza tryb, ⌘↩ kończy w bieżącym trybie, a skrót kończący trybu kończy w tym trybie."
           }
         }
       }
@@ -12297,7 +12677,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hybrid"
+            "value": "Hybrydowy"
           }
         }
       }
@@ -17780,7 +18160,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Push to Talk"
+            "value": "Trzymaj i mów"
           }
         }
       }
@@ -22878,7 +23258,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Przełącz"
+            "value": "Przełącznik"
           }
         }
       }

@@ -185,7 +185,7 @@ struct DashboardContent: View {
                 gettingStartedStep(
                     icon: "keyboard",
                     title: "Set a recording shortcut",
-                    detail: "Open Modes to choose the shortcut that starts and stops dictation."
+                    detail: "Open Settings to choose the shortcut that starts and stops dictation."
                 )
                 gettingStartedStep(
                     icon: "mic.fill",
@@ -203,12 +203,12 @@ struct DashboardContent: View {
                 NotificationCenter.default.post(
                     name: .navigateToDestination,
                     object: nil,
-                    userInfo: ["destination": ViewType.modes.rawValue]
+                    userInfo: ["destination": ViewType.settings.rawValue]
                 )
             } label: {
                 footerActionLabel(
-                    icon: "slider.horizontal.3",
-                    title: "Open Modes",
+                    icon: "keyboard",
+                    title: "Set Recording Shortcut",
                     color: AppTheme.Accent.primary
                 )
             }

@@ -25,72 +25,34 @@ struct SettingsView: View {
     @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
     @AppStorage(ClipboardManager.autoCopyEnabledKey) private var autoCopyTranscription = true
     @AppStorage("dashboardRecentTranscriptCount") private var dashboardRecentCount = 5
+    @AppStorage("AppendTrailingSpace") private var appendTrailingSpace = true
+    @ObservedObject private var saveTargetManager = SaveTargetManager.shared
     @State private var showResetOnboardingAlert = false
     @State private var showLanguageRestartAlert = false
     @State private var isShowingSaveTargets = false
-    @State private var isMiddleClickExpanded = false
+    @State private var isAdvancedExpanded = false
 
+    // Order follows how often each setting is needed: the recording shortcut
+    // first, set-once housekeeping last behind "Advanced".
     var body: some View {
+        VStack(spacing: 0) {
+            AppScreenHeader(title: "Settings") { EmptyView() }
+            settingsForm
+        }
+    }
+
+    private var settingsForm: some View {
         Form {
-            Section {
-                HStack(spacing: 8) {
-                    Image(systemName: "arrow.up.forward.square")
-                        .foregroundColor(.accentColor)
-                    Text("Start and cancel recording shortcuts are configured on the Modes screen.")
-                        .foregroundColor(.secondary)
-                    Spacer()
-                    Button("Open Modes") {
-                        NotificationCenter.default.post(
-                            name: .navigateToDestination,
-                            object: nil,
-                            userInfo: ["destination": ViewType.modes.rawValue]
-                        )
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.small)
-                }
-            }
+            RecordingShortcutsSection()
 
-            Section("Additional Shortcuts") {
-                LabeledContent("Paste Last Transcription (Original)") {
-                    ShortcutRecorder(action: .pasteLastTranscription) {
-                        recordingShortcutManager.updateShortcutStatus()
+            Section("Save Targets") {
+                LabeledContent {
+                    Button("Manage…") {
+                        isShowingSaveTargets = true
                     }
-                    .controlSize(.small)
-                }
-
-                LabeledContent("Paste Last Transcription (Enhanced)") {
-                    ShortcutRecorder(action: .pasteLastEnhancement) {
-                        recordingShortcutManager.updateShortcutStatus()
-                    }
-                    .controlSize(.small)
-                }
-
-                LabeledContent("Retry Last Transcription") {
-                    ShortcutRecorder(action: .retryLastTranscription) {
-                        recordingShortcutManager.updateShortcutStatus()
-                    }
-                    .controlSize(.small)
-                }
-
-                ExpandableSettingsRow(
-                    isExpanded: $isMiddleClickExpanded,
-                    isEnabled: $recordingShortcutManager.isMiddleClickToggleEnabled,
-                    label: "Middle-Click Recording"
-                ) {
-                    LabeledContent("Activation Delay") {
-                        HStack {
-                            TextField("", value: $recordingShortcutManager.middleClickActivationDelay, formatter: {
-                                let formatter = NumberFormatter()
-                                formatter.minimum = 0
-                                return formatter
-                            }())
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 60)
-                            Text("ms")
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                } label: {
+                    Text(saveTargetsSummary)
+                    Text("Files, URL schemes, shell commands or Notaro — each can have its own finish shortcut.")
                 }
             }
 
@@ -116,7 +78,7 @@ struct SettingsView: View {
 
                 Toggle(isOn: $autoCopyTranscription) {
                     HStack(spacing: 4) {
-                        Text("Auto-copy Transcription")
+                        Text("Copy Every Transcription to Clipboard")
                         InfoTip("Copy every completed transcription to the clipboard, regardless of the mode's destination — so it lands in a clipboard manager's history (e.g. Alfred). While on, the previous clipboard content is never restored after pasting.")
                     }
                 }
@@ -129,12 +91,6 @@ struct SettingsView: View {
                 }
                 .disabled(autoCopyTranscription)
 
-                if autoCopyTranscription {
-                    Text("Overridden while Auto-copy Transcription is on — the transcription stays on the clipboard.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-
                 if restoreClipboardAfterPaste && !autoCopyTranscription {
                     Picker("Restore Delay", selection: $clipboardRestoreDelay) {
                         Text("250ms").tag(0.25)
@@ -146,21 +102,42 @@ struct SettingsView: View {
                         Text("5s").tag(5.0)
                     }
                 }
+
+                Toggle(isOn: $appendTrailingSpace) {
+                    HStack(spacing: 4) {
+                        Text("Add Space After Paste")
+                        InfoTip("Add a trailing space after pasted transcription output.")
+                    }
+                }
             } header: {
-                Text("Pasting (Global Defaults)")
+                Text("Pasting")
+            } footer: {
+                if autoCopyTranscription {
+                    Text("Keep Clipboard Content is off while every transcription is copied — the transcription stays on the clipboard.")
+                }
             }
 
             Section("Transcription") {
+                LabeledContent {
+                    Button("Change…") {
+                        navigate(to: .models)
+                    }
+                } label: {
+                    Text("Model and Language")
+                    Text(transcriptionModelManager.currentTranscriptionModel?.displayName
+                         ?? String(localized: "No model selected"))
+                }
+
                 Toggle(isOn: $globalRealtimeEnabled) {
                     HStack(spacing: 4) {
-                        Text("Real-time Streaming")
+                        Text("Live Transcription (Streaming)")
                         InfoTip("Stream audio to the transcription server while you speak. Falls back to batch transcription automatically when unavailable. Applies to every mode.")
                     }
                 }
 
                 Toggle(isOn: $globalTextFormattingEnabled) {
                     HStack(spacing: 4) {
-                        Text("Paragraph Formatting")
+                        Text("Split Into Paragraphs")
                         InfoTip("Break large blocks of transcribed text into paragraphs. Applies to every mode.")
                     }
                 }
@@ -171,24 +148,43 @@ struct SettingsView: View {
                         InfoTip("Master switch. Off = no mode enhances, regardless of per-mode setting. On = per-mode toggle decides. Useful for temporarily disabling all LLM calls without touching individual modes.")
                     }
                 }
-
-                LabeledContent("Model & Language") {
-                    Text("Set in the AI Models tab")
-                        .foregroundColor(.secondary)
-                }
             }
 
-            Section("Interface") {
-                Picker("Appearance", selection: $appAppearancePreference) {
-                    ForEach(AppAppearancePreference.allCases) { preference in
-                        Text(preference.displayName).tag(preference)
+            Section("Recording Panel") {
+                Picker("Panel Style", selection: $recorderUIManager.recorderPanelStyle) {
+                    ForEach(RecorderPanelStyle.allCases) { style in
+                        Text(style.displayName).tag(style)
                     }
                 }
                 .pickerStyle(.menu)
-                .onChange(of: appAppearancePreference) { _, newValue in
-                    newValue.apply()
+
+                Toggle(isOn: $showLiveTranscript) {
+                    HStack(spacing: 4) {
+                        Text("Live Text Display")
+                        InfoTip("Shows live text while recording with realtime models.")
+                    }
                 }
 
+                Toggle(isOn: $destinationHUDEnabled) {
+                    HStack(spacing: 4) {
+                        Text("Shortcut Hints While Recording")
+                        InfoTip("Show the finish shortcuts of your modes and save targets under the recording bar.")
+                    }
+                }
+            }
+
+            Section("Utility Shortcuts") {
+                ForEach(ShortcutAction.globalUtilityActions, id: \.storageName) { action in
+                    LabeledContent(action.displayName) {
+                        ShortcutRecorder(action: action) {
+                            recordingShortcutManager.updateShortcutStatus()
+                        }
+                        .controlSize(.small)
+                    }
+                }
+            }
+
+            Section("General") {
                 Picker("Language", selection: $appLanguagePreference) {
                     ForEach(AppLanguagePreference.availableOptions) { option in
                         Text(option.displayName).tag(option.id)
@@ -206,100 +202,31 @@ struct SettingsView: View {
                     showLanguageRestartAlert = true
                 }
 
-                Picker("Recorder Style", selection: $recorderUIManager.recorderPanelStyle) {
-                    ForEach(RecorderPanelStyle.allCases) { style in
-                        Text(style.displayName).tag(style)
+                Picker("Appearance", selection: $appAppearancePreference) {
+                    ForEach(AppAppearancePreference.allCases) { preference in
+                        Text(preference.displayName).tag(preference)
                     }
                 }
                 .pickerStyle(.menu)
-
-                Toggle(isOn: $showLiveTranscript) {
-                    HStack(spacing: 4) {
-                        Text("Live Text Display")
-                        InfoTip("Shows live text while recording with realtime models.")
-                    }
+                .onChange(of: appAppearancePreference) { _, newValue in
+                    newValue.apply()
                 }
 
-                Toggle(isOn: $destinationHUDEnabled) {
-                    HStack(spacing: 4) {
-                        Text("Destination Shortcut Hints")
-                        InfoTip("Show a compact bar with finish-destination shortcuts (Copy, Paste, Edit Window, Save Targets) while recording.")
-                    }
-                }
-
-                Picker(selection: $dashboardRecentCount) {
-                    Text("3").tag(3)
-                    Text("5").tag(5)
-                    Text("8").tag(8)
-                    Text("10").tag(10)
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("Recent Transcripts on Dashboard")
-                        InfoTip("How many recent transcriptions the dashboard shows at the top.")
-                    }
-                }
-                .pickerStyle(.menu)
-            }
-
-            Section("General") {
                 Toggle("Hide Dock Icon", isOn: $menuBarManager.isMenuBarOnly)
 
                 LaunchAtLogin.Toggle(String(localized: "Launch at Login"))
 
-                Button("Show Tour") {
-                    AppTour.show()
-                }
-
-                Button("Reset Onboarding") {
-                    showResetOnboardingAlert = true
+                LabeledContent("Diktilo Tour") {
+                    Button("Show Tour") {
+                        AppTour.show()
+                    }
                 }
             }
 
             Section {
-                LabeledContent("Export Settings") {
-                    Button("Export") {
-                        ImportExportService.shared.exportSettings(
-                            enhancementService: enhancementService,
-                            recordingShortcutManager: recordingShortcutManager,
-                            menuBarManager: menuBarManager,
-                            mediaController: mediaController,
-                            playbackController: playbackController,
-                            recorderUIManager: recorderUIManager,
-                            modelContext: modelContext
-                        )
-                    }
+                DisclosureGroup("Advanced", isExpanded: $isAdvancedExpanded) {
+                    advancedContent
                 }
-
-                LabeledContent("Import Settings") {
-                    Button("Import") {
-                        ImportExportService.shared.importSettings(
-                            enhancementService: enhancementService,
-                            recordingShortcutManager: recordingShortcutManager,
-                            menuBarManager: menuBarManager,
-                            mediaController: mediaController,
-                            playbackController: playbackController,
-                            recorderUIManager: recorderUIManager,
-                            modelContext: modelContext,
-                            transcriptionModelManager: transcriptionModelManager
-                        )
-                    }
-                }
-            } header: {
-                Text("Backup")
-            } footer: {
-                Text("Export all settings, or choose specific categories when importing a backup.")
-            }
-
-            Section("Save Targets") {
-                LabeledContent("Save Targets") {
-                    Button("Manage") {
-                        isShowingSaveTargets = true
-                    }
-                }
-            }
-
-            Section("Diagnostics") {
-                DiagnosticsSettingsView()
             }
         }
         .formStyle(.grouped)
@@ -333,6 +260,76 @@ struct SettingsView: View {
         }
     }
 
+
+    @ViewBuilder
+    private var advancedContent: some View {
+        Picker(selection: $dashboardRecentCount) {
+            Text("3").tag(3)
+            Text("5").tag(5)
+            Text("8").tag(8)
+            Text("10").tag(10)
+        } label: {
+            HStack(spacing: 4) {
+                Text("Recent Transcripts on Dashboard")
+                InfoTip("How many recent transcriptions the dashboard shows at the top.")
+            }
+        }
+        .pickerStyle(.menu)
+
+        LabeledContent {
+            HStack(spacing: 8) {
+                Button("Export") {
+                    ImportExportService.shared.exportSettings(
+                        enhancementService: enhancementService,
+                        recordingShortcutManager: recordingShortcutManager,
+                        menuBarManager: menuBarManager,
+                        mediaController: mediaController,
+                        playbackController: playbackController,
+                        recorderUIManager: recorderUIManager,
+                        modelContext: modelContext
+                    )
+                }
+
+                Button("Import") {
+                    ImportExportService.shared.importSettings(
+                        enhancementService: enhancementService,
+                        recordingShortcutManager: recordingShortcutManager,
+                        menuBarManager: menuBarManager,
+                        mediaController: mediaController,
+                        playbackController: playbackController,
+                        recorderUIManager: recorderUIManager,
+                        modelContext: modelContext,
+                        transcriptionModelManager: transcriptionModelManager
+                    )
+                }
+            }
+        } label: {
+            Text("Backup")
+            Text("Export all settings, or choose specific categories when importing a backup.")
+        }
+
+        LabeledContent("Onboarding") {
+            Button("Reset Onboarding") {
+                showResetOnboardingAlert = true
+            }
+        }
+
+        DiagnosticsSettingsView()
+    }
+
+    private var saveTargetsSummary: String {
+        let names = saveTargetManager.targets.map(\.name)
+        guard !names.isEmpty else { return String(localized: "No save targets yet") }
+        return names.joined(separator: ", ")
+    }
+
+    private func navigate(to destination: ViewType) {
+        NotificationCenter.default.post(
+            name: .navigateToDestination,
+            object: nil,
+            userInfo: ["destination": destination.rawValue]
+        )
+    }
 }
 
 extension Text {

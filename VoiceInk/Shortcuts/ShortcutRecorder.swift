@@ -48,14 +48,18 @@ struct ShortcutRecorder: View {
             .accessibilityLabel(accessibilityLabel)
             .help(accessibilityLabel)
 
-            Button {
-                bindFnKey()
-            } label: {
-                ShortcutKeyCap(title: "Fn", isRecording: false)
+            // Fn alone only makes sense as a start/stop key; on finish and
+            // utility shortcuts the extra key cap is just noise.
+            if action == .primaryRecording || action == .secondaryRecording {
+                Button {
+                    bindFnKey()
+                } label: {
+                    ShortcutKeyCap(title: "Fn", isRecording: false)
+                }
+                .buttonStyle(.plain)
+                .disabled(recorder.isRecording)
+                .help("Bind Fn / 🌐 key")
             }
-            .buttonStyle(.plain)
-            .disabled(recorder.isRecording)
-            .help("Bind Fn / 🌐 key")
         }
         .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { notification in
             guard let changedAction = notification.object as? ShortcutAction, changedAction == action else { return }

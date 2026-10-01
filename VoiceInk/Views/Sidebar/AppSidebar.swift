@@ -62,7 +62,7 @@ extension ViewType {
         case .transcribeAudio:
             return "Transcribe"
         case .modes:
-            return "Profiles"
+            return "Modes"
         default:
             return LocalizedStringKey(rawValue)
         }

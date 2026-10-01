@@ -127,15 +127,17 @@ struct OutputProfileFormView: View {
                 profileId: draft.id,
                 cleanURL: modeManager.cleanURL
             )
+            outputSection
             aiEnhancementSection
-            finishSection
-            advancedSection
+            if draft.outputMode != .respond {
+                advancedSection
+            }
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .confirmationDialog(
-            "Delete Profile?",
+            "Delete Mode?",
             isPresented: $isShowingDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -374,30 +376,59 @@ struct OutputProfileFormView: View {
         draft.applyOutputRules(canRespond: canRespond)
     }
 
-    private var finishSection: some View {
+    /// What the mode does with the text — the first question a user has about
+    /// a mode, so it sits right under the triggers: output, its own settings,
+    /// and the shortcut that finishes a recording in this mode.
+    private var outputSection: some View {
         Section {
-            LabeledContent("Finish Shortcut") {
-                ShortcutRecorder(action: .profile(draft.id))
-                    .controlSize(.small)
+            Picker("Output", selection: $draft.outputMode) {
+                ForEach(outputChoices, id: \.self) { outputMode in
+                    Label(outputMode.displayName, systemImage: outputMode.iconName)
+                        .tag(outputMode)
+                }
+            }
+            .onChange(of: draft.outputMode) { _, _ in
+                applyOutputRules()
             }
 
-            HStack(alignment: .top, spacing: 4) {
-                Text("Press during recording to finish and deliver via")
-                    .foregroundColor(.secondary)
-                Text(draft.outputMode.displayName)
-                    .foregroundColor(.primary)
-                    .fontWeight(.medium)
-                Text(".")
-                    .foregroundColor(.secondary)
-                Spacer()
+            if draft.outputMode == .customCommand {
+                customCommandControls
             }
-            .font(.system(size: 11))
+
+            if draft.outputMode == .saveTarget {
+                saveTargetControls
+            }
+
+            if draft.outputMode == .editWindow {
+                editWindowNote
+            }
+
+            if draft.outputMode.usesPasteOptions {
+                Picker(selection: $draft.autoSendKey) {
+                    ForEach(AutoSendKey.allCases, id: \.self) { key in
+                        Text(key.displayName).tag(key)
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Auto Send")
+                        InfoTip("Automatically presses a key combination after pasting text. Useful for chat applications or forms that use different send shortcuts.")
+                    }
+                }
+            }
+
+            LabeledContent {
+                ShortcutRecorder(action: .profile(draft.id))
+                    .controlSize(.small)
+            } label: {
+                Text("Finish Shortcut")
+                Text("Press it while recording to finish in this mode.")
+            }
 
             if draft.outputMode.usesPasteOptions {
                 pasteOverridesGroup
             }
         } header: {
-            Text("Finish")
+            Text("Where the Text Goes")
         }
     }
 
@@ -476,48 +507,11 @@ struct OutputProfileFormView: View {
 
     private var advancedSection: some View {
         Section("Advanced") {
-            Picker("Output", selection: $draft.outputMode) {
-                ForEach(outputChoices, id: \.self) { outputMode in
-                    Label(outputMode.displayName, systemImage: outputMode.iconName)
-                        .tag(outputMode)
+            Toggle(isOn: $draft.isDefault) {
+                HStack(spacing: 6) {
+                    Text("Set as default")
+                    InfoTip("Default profile is used when no specific app or website matches are found.")
                 }
-            }
-            .onChange(of: draft.outputMode) { _, _ in
-                applyOutputRules()
-            }
-
-            if draft.outputMode != .respond {
-                Toggle(isOn: $draft.isDefault) {
-                    HStack(spacing: 6) {
-                        Text("Set as default")
-                        InfoTip("Default profile is used when no specific app or website matches are found.")
-                    }
-                }
-            }
-
-            if draft.outputMode.usesPasteOptions {
-                Picker(selection: $draft.autoSendKey) {
-                    ForEach(AutoSendKey.allCases, id: \.self) { key in
-                        Text(key.displayName).tag(key)
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Auto Send")
-                        InfoTip("Automatically presses a key combination after pasting text. Useful for chat applications or forms that use different send shortcuts.")
-                    }
-                }
-            }
-
-            if draft.outputMode == .customCommand {
-                customCommandControls
-            }
-
-            if draft.outputMode == .saveTarget {
-                saveTargetControls
-            }
-
-            if draft.outputMode == .editWindow {
-                editWindowNote
             }
         }
     }
