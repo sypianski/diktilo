@@ -26,6 +26,9 @@ class TranscriptionPipeline {
     private let serviceRegistry: TranscriptionServiceRegistry
     private let enhancementService: AIEnhancementService?
     private let delivery = TranscriptionDelivery()
+    /// Offered on the failure notification; set by the engine, which owns the
+    /// managers the retry needs.
+    var retryLastTranscription: (() -> Void)?
     private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "TranscriptionPipeline")
 
     init(
@@ -66,6 +69,8 @@ class TranscriptionPipeline {
         assistant: AssistantHooks = .inactive
     ) async {
         let model = transcriptionConfiguration.model
+        // The model that actually produced the text (a fallback when `model` failed).
+        var usedModel: any TranscriptionModel = model
         var finalText: String?
         var didInsertSessionMetric = false
         var responseError: String?
@@ -103,14 +108,26 @@ class TranscriptionPipeline {
         do {
             let transcriptionStart = Date()
             var text: String
-            if let session {
-                text = try await session.transcribe(audioURL: audioURL)
-            } else {
-                text = try await serviceRegistry.transcribe(
+            do {
+                if let session {
+                    text = try await session.transcribe(audioURL: audioURL)
+                } else {
+                    text = try await serviceRegistry.transcribe(
+                        audioURL: audioURL,
+                        model: model,
+                        context: transcriptionConfiguration.requestContext
+                    )
+                }
+            } catch {
+                if error is CancellationError || shouldCancel() { throw error }
+                let fallback = try await transcribeWithFallbacks(
                     audioURL: audioURL,
-                    model: model,
-                    context: transcriptionConfiguration.requestContext
+                    configuration: transcriptionConfiguration,
+                    firstFailure: error,
+                    shouldCancel: shouldCancel
                 )
+                text = fallback.text
+                usedModel = fallback.model
             }
             text = TranscriptionOutputFilter.filter(text)
             let transcriptionDuration = Date().timeIntervalSince(transcriptionStart)
@@ -145,7 +162,7 @@ class TranscriptionPipeline {
 
             transcription.text = cleanedText
             transcription.duration = actualDuration
-            transcription.transcriptionModelName = model.displayName
+            transcription.transcriptionModelName = usedModel.displayName
             transcription.transcriptionDuration = transcriptionDuration
             transcription.modeName = modeMetadata.name
             transcription.modeEmoji = modeMetadata.emoji
@@ -184,18 +201,22 @@ class TranscriptionPipeline {
                         let enhancedText: String
                         let enhancementDuration: TimeInterval
                         let promptName: String?
+                        // The mode's model, or the fallback that answered instead.
+                        var usedEnhancementConfiguration = resolvedEnhancementConfiguration
                         if let prewarmed = prewarmedEnhancement(textForAI) {
                             (enhancedText, enhancementDuration, promptName) = prewarmed
                         } else {
                             let contextSnapshot = await recordingContextSnapshot()
-                            (enhancedText, enhancementDuration, promptName) = try await enhancementService.enhance(
+                            let outcome = try await enhancementService.enhanceWithFallbacks(
                                 textForAI,
                                 configuration: resolvedEnhancementConfiguration,
                                 contextSnapshot: contextSnapshot
                             )
+                            (enhancedText, enhancementDuration, promptName) = (outcome.text, outcome.duration, outcome.promptName)
+                            usedEnhancementConfiguration = outcome.configuration
                         }
                         transcription.enhancedText = enhancedText
-                        transcription.aiEnhancementModelName = resolvedEnhancementConfiguration.modelName ?? resolvedEnhancementConfiguration.provider?.defaultModel
+                        transcription.aiEnhancementModelName = usedEnhancementConfiguration.modelName ?? usedEnhancementConfiguration.provider?.defaultModel
                         transcription.promptName = promptName
                         transcription.enhancementDuration = enhancementDuration
                         transcription.aiRequestSystemMessage = enhancementService.lastSystemMessageSent
@@ -205,7 +226,7 @@ class TranscriptionPipeline {
                         let errorDescription = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                         transcription.enhancedText = String(format: String(localized: "Enhancement failed: %@"), errorDescription)
                         responseError = errorDescription
-                        let shortReason = String(errorDescription.prefix(80))
+                        let shortReason = String(errorDescription.prefix(160))
                         await MainActor.run {
                             NotificationManager.shared.showNotification(
                                 title: String(format: String(localized: "Enhancement failed: %@"), shortReason),
@@ -230,6 +251,15 @@ class TranscriptionPipeline {
                         duration: 5.0
                     )
                 }
+            } else if !shouldCancel() {
+                // Every model of the chain failed: say so instead of closing the
+                // panel silently. The recording stays in History.
+                NotificationManager.shared.showNotification(
+                    title: String(format: String(localized: "Transcription failed: %@"), String(errorDescription.prefix(160))),
+                    type: .error,
+                    duration: 8.0,
+                    actionButton: retryLastTranscription.map { (label: String(localized: "Transcribe Again"), action: $0) }
+                )
             }
 
             transcription.text = String(format: String(localized: "Transcription Failed: %@"), errorDescription)
@@ -241,7 +271,7 @@ class TranscriptionPipeline {
                 do {
                     didInsertSessionMetric = try SessionMetricRecorder.recordRecorderSession(
                         transcription: transcription,
-                        model: model,
+                        model: usedModel,
                         in: modelContext
                     )
                 } catch {
@@ -307,6 +337,41 @@ class TranscriptionPipeline {
         )
 
         saveTranscriptionAndPostCompletion()
+    }
+
+    /// Tries the usable models after the main one, in fallback-chain order.
+    private func transcribeWithFallbacks(
+        audioURL: URL,
+        configuration: TranscriptionRuntimeConfiguration,
+        firstFailure: Error,
+        shouldCancel: () -> Bool
+    ) async throws -> (text: String, model: any TranscriptionModel) {
+        guard !configuration.fallbackModels.isEmpty else { throw firstFailure }
+
+        var attempts = [ModelChainError.Attempt(
+            name: configuration.model.displayName,
+            reason: ModelChainError.reason(for: firstFailure)
+        )]
+        logger.warning("Transcription with \(configuration.model.name, privacy: .public) failed, trying fallbacks: \(firstFailure, privacy: .public)")
+
+        for fallback in configuration.fallbackModels {
+            if shouldCancel() { throw CancellationError() }
+            do {
+                let text = try await serviceRegistry.transcribe(
+                    audioURL: audioURL,
+                    model: fallback,
+                    context: configuration.requestContext(forFallback: fallback)
+                )
+                logger.notice("Transcribed with fallback model \(fallback.name, privacy: .public)")
+                return (text: text, model: fallback)
+            } catch {
+                if error is CancellationError { throw error }
+                logger.warning("Fallback \(fallback.name, privacy: .public) failed: \(error, privacy: .public)")
+                attempts.append(.init(name: fallback.displayName, reason: ModelChainError.reason(for: error)))
+            }
+        }
+
+        throw ModelChainError(attempts: attempts)
     }
 
     private func metadata(for mode: OutputProfile?) -> (name: String?, emoji: String?) {

@@ -16548,7 +16548,7 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Niepołączone"
+            "value": "Nie połączono"
           }
         }
       }
@@ -29435,6 +29435,1238 @@
           "stringUnit": {
             "state": "translated",
             "value": "Diktilo 使用本地模型，或通过带 API 密钥的外部提供商进行转写。"
+          }
+        }
+      }
+    },
+    "All models failed (%@)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystkie modele zawiodły (%@)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Modelle sind fehlgeschlagen (%@)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有模型均失败（%@）"
+          }
+        }
+      }
+    },
+    "Transcription failed: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja nie powiodła się: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkription fehlgeschlagen: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "转写失败：%@"
+          }
+        }
+      }
+    },
+    "Transcribe Again": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrybuj ponownie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut transkribieren"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新转写"
+          }
+        }
+      }
+    },
+    "Model Order": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kolejność modeli"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modellreihenfolge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模型顺序"
+          }
+        }
+      }
+    },
+    "Diktilo starts with the first one. If a model doesn't respond or returns an error, it takes the next one on the list.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo zaczyna od pierwszego. Jeśli model nie odpowie albo zwróci błąd, bierze następny z listy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo beginnt mit dem ersten. Antwortet ein Modell nicht oder meldet einen Fehler, nimmt es das nächste aus der Liste."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo 从第一个开始。如果某个模型没有响应或返回错误，就使用列表中的下一个。"
+          }
+        }
+      }
+    },
+    "Add Fallback Model": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj model zapasowy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersatzmodell hinzufügen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加备用模型"
+          }
+        }
+      }
+    },
+    "Drag to change the order": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przeciągnij, żeby zmienić kolejność"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Ändern der Reihenfolge ziehen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拖动以更改顺序"
+          }
+        }
+      }
+    },
+    "if none of them works": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gdy żaden nie zadziała"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenn keines funktioniert"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果都不可用"
+          }
+        }
+      }
+    },
+    "The recording stays in History and you get a notification with a Transcribe Again button.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagranie zostaje w Historii, a Ty dostajesz powiadomienie z przyciskiem Transkrybuj ponownie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Aufnahme bleibt im Verlauf, und du erhältst eine Mitteilung mit der Taste „Erneut transkribieren“."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音会保留在历史记录中，并会收到带有“重新转写”按钮的通知。"
+          }
+        }
+      }
+    },
+    "This model is no longer available.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tego modelu już nie ma."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Modell ist nicht mehr verfügbar."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此模型已不可用。"
+          }
+        }
+      }
+    },
+    "On this Mac, works offline": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na tym Macu, działa bez internetu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem Mac, funktioniert offline"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在这台 Mac 上，可离线使用"
+          }
+        }
+      }
+    },
+    "Built into macOS": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wbudowany w macOS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In macOS integriert"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 内置"
+          }
+        }
+      }
+    },
+    "Your own server, live transcription": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własny serwer, transkrypcja na żywo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigener Server, Live-Transkription"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自有服务器，实时转写"
+          }
+        }
+      }
+    },
+    "Your own server": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własny serwer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigener Server"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自有服务器"
+          }
+        }
+      }
+    },
+    "API key, live transcription": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klucz API, transkrypcja na żywo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-Schlüssel, Live-Transkription"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API 密钥，实时转写"
+          }
+        }
+      }
+    },
+    "Not available": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niedostępny"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht verfügbar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不可用"
+          }
+        }
+      }
+    },
+    "Needs macOS 26": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wymaga macOS 26"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfordert macOS 26"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要 macOS 26"
+          }
+        }
+      }
+    },
+    "Not downloaded": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niepobrany"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht geladen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未下载"
+          }
+        }
+      }
+    },
+    "No API key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak klucza API"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein API-Schlüssel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有 API 密钥"
+          }
+        }
+      }
+    },
+    "Provider not connected": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostawca niepołączony"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anbieter nicht verbunden"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提供商未连接"
+          }
+        }
+      }
+    },
+    "%@, so Diktilo skips it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, więc Diktilo go pominie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, daher überspringt Diktilo es."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@，因此 Diktilo 会跳过它。"
+          }
+        }
+      }
+    },
+    "if the server doesn't respond": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gdy serwer nie odpowiada"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenn der Server nicht antwortet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果服务器无响应"
+          }
+        }
+      }
+    },
+    "if the model returns an error": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gdy model zwróci błąd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenn das Modell einen Fehler meldet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果模型返回错误"
+          }
+        }
+      }
+    },
+    "if the provider doesn't respond": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gdy dostawca nie odpowiada"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenn der Anbieter nicht antwortet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果提供商无响应"
+          }
+        }
+      }
+    },
+    "Model set in the mode": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model ustawiony w trybie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Modus eingestelltes Modell"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模式中设置的模型"
+          }
+        }
+      }
+    },
+    "always first": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zawsze pierwszy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "immer zuerst"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "始终第一"
+          }
+        }
+      }
+    },
+    "if it doesn't answer within %lld s or returns an error": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gdy nie odpowie w %lld s albo zwróci błąd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenn es nicht innerhalb von %lld s antwortet oder einen Fehler meldet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果 %lld 秒内无响应或返回错误"
+          }
+        }
+      }
+    },
+    "if this one fails too": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gdy też zawiedzie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenn auch dieses fehlschlägt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果这个也失败"
+          }
+        }
+      }
+    },
+    "Diktilo pastes the text without enhancement and shows which models failed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo wkleja tekst bez ulepszania i pokazuje, które modele zawiodły."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo fügt den Text ohne Verbesserung ein und zeigt, welche Modelle fehlgeschlagen sind."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo 会粘贴未增强的文本，并显示哪些模型失败。"
+          }
+        }
+      }
+    },
+    "Each mode can have its own.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każdy tryb może mieć własny."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeder Modus kann ein eigenes haben."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每个模式都可以有自己的模型。"
+          }
+        }
+      }
+    },
+    "Each mode can have its own; %1$@ uses %2$@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każdy tryb może mieć własny; %1$@ używa %2$@."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeder Modus kann ein eigenes haben; %1$@ nutzt %2$@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每个模式都可以有自己的模型；%1$@ 使用 %2$@。"
+          }
+        }
+      }
+    },
+    "Your own provider": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własny dostawca"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigener Anbieter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自有提供商"
+          }
+        }
+      }
+    },
+    "Search models": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj modelu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelle suchen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索模型"
+          }
+        }
+      }
+    },
+    "No other models to add. Download a model or connect a provider below.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma innych modeli do dodania. Pobierz model albo połącz dostawcę niżej."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine weiteren Modelle. Lade unten ein Modell oder verbinde einen Anbieter."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有其他可添加的模型。请在下方下载模型或连接提供商。"
+          }
+        }
+      }
+    },
+    "built in": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wbudowany"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "integriert"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内置"
+          }
+        }
+      }
+    },
+    "downloaded": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pobrany"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "geladen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已下载"
+          }
+        }
+      }
+    },
+    "connected": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "połączony"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "verbunden"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已连接"
+          }
+        }
+      }
+    },
+    "no key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brak klucza"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kein Schlüssel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无密钥"
+          }
+        }
+      }
+    },
+    "Remove from the list": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń z listy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus der Liste entfernen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从列表中移除"
+          }
+        }
+      }
+    },
+    "Move Up": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyżej"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach oben"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上移"
+          }
+        }
+      }
+    },
+    "Move Down": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niżej"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach unten"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下移"
+          }
+        }
+      }
+    },
+    "Skipped": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pominięty"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersprungen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已跳过"
+          }
+        }
+      }
+    },
+    "Ready": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "就绪"
+          }
+        }
+      }
+    },
+    "One Key, Many Models": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeden klucz, wiele modeli"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Schlüssel, viele Modelle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一个密钥，多种模型"
+          }
+        }
+      }
+    },
+    "For AI enhancement an aggregator is the easiest choice: one key gives you Claude, GPT, Gemini or Llama, you pay in one place, and backup models need no extra accounts.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do ulepszania AI najwygodniej połączyć agregator. Jednym kluczem wybierasz Claude, GPT, Gemini czy Llamę, płacisz w jednym miejscu, a modele zapasowe ustawisz bez zakładania kolejnych kont."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für die KI-Verbesserung ist ein Aggregator am einfachsten: Mit einem Schlüssel nutzt du Claude, GPT, Gemini oder Llama, bezahlst an einer Stelle und brauchst für Ersatzmodelle keine weiteren Konten."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于 AI 润色时，聚合服务最方便：一个密钥即可使用 Claude、GPT、Gemini 或 Llama，在一处付费，备用模型也无需另开账户。"
+          }
+        }
+      }
+    },
+    "Models from all the major vendors under one key, with the price shown next to each model.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modele wszystkich dużych dostawców pod jednym kluczem, z ceną widoczną przy każdym modelu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelle aller großen Anbieter unter einem Schlüssel, mit Preis bei jedem Modell."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一个密钥即可使用各大厂商的模型，每个模型都标明价格。"
+          }
+        }
+      }
+    },
+    "One key for many vendors, with a cost dashboard and spending limits.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeden klucz do wielu dostawców, z panelem kosztów i limitami wydatków."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Schlüssel für viele Anbieter, mit Kostenübersicht und Ausgabenlimits."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一个密钥对接多家厂商，附带费用面板和支出上限。"
+          }
+        }
+      }
+    },
+    "model router": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "router modeli"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modell-Router"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模型路由"
+          }
+        }
+      }
+    },
+    "Models: %lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modele: %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelle: %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模型：%lld"
+          }
+        }
+      }
+    },
+    "Choose Models": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz modele"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelle auswählen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择模型"
+          }
+        }
+      }
+    },
+    "Transcription in the Cloud": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja w chmurze"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkription in der Cloud"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "云端转写"
+          }
+        }
+      }
+    },
+    "Aggregators don't turn speech into text.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agregatory nie zamieniają mowy na tekst."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggregatoren wandeln keine Sprache in Text um."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "聚合服务不能将语音转为文字。"
+          }
+        }
+      }
+    },
+    "Individual AI Providers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pojedynczy dostawcy AI"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einzelne KI-Anbieter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "单独的 AI 提供商"
+          }
+        }
+      }
+    },
+    "Groq, Gemini and Mistral also enhance text; they're listed above.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groq, Gemini i Mistral też ulepszają tekst; znajdziesz ich wyżej."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groq, Gemini und Mistral verbessern auch Text; sie stehen weiter oben."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groq、Gemini 和 Mistral 也能润色文本，见上方列表。"
+          }
+        }
+      }
+    },
+    "Show All": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż wszystkich"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle anzeigen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示全部"
+          }
+        }
+      }
+    },
+    "Show Fewer": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż mniej"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weniger anzeigen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收起"
           }
         }
       }

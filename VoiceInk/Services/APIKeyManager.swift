@@ -23,7 +23,8 @@ final class APIKeyManager {
         "cartesia": "cartesiaAPIKey",
         "openai": "openAIAPIKey",
         "anthropic": "anthropicAPIKey",
-        "openrouter": "openRouterAPIKey"
+        "openrouter": "openRouterAPIKey",
+        "requesty": "requestyAPIKey"
     ]
 
     private init() {}

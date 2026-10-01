@@ -8,6 +8,7 @@ enum AIProvider: String, CaseIterable {
     case anthropic = "Anthropic"
     case openAI = "OpenAI"
     case openRouter = "OpenRouter"
+    case requesty = "Requesty"
     case mistral = "Mistral"
     case elevenLabs = "ElevenLabs"
     case deepgram = "Deepgram"
@@ -33,6 +34,8 @@ enum AIProvider: String, CaseIterable {
             return "https://api.openai.com/v1/chat/completions"
         case .openRouter:
             return "https://openrouter.ai/api/v1/chat/completions"
+        case .requesty:
+            return "https://router.requesty.ai/v1/chat/completions"
         case .mistral:
             return "https://api.mistral.ai/v1/chat/completions"
         case .elevenLabs:
@@ -86,6 +89,8 @@ enum AIProvider: String, CaseIterable {
             return CustomAIProviderManager.shared.defaultModelName
         case .openRouter:
             return "openai/gpt-oss-120b"
+        case .requesty:
+            return "openai/gpt-4.1-mini"
         }
     }
     
@@ -156,7 +161,7 @@ enum AIProvider: String, CaseIterable {
             return []
         case .custom:
             return CustomAIProviderManager.shared.availableModelNames
-        case .openRouter:
+        case .openRouter, .requesty:
             return []
         }
     }
@@ -168,6 +173,12 @@ enum AIProvider: String, CaseIterable {
         default:
             return true
         }
+    }
+
+    /// Aggregators route one key to many vendors' models; their model list is
+    /// fetched from the provider instead of shipped with the app.
+    var isAggregator: Bool {
+        self == .openRouter || self == .requesty
     }
 
     var supportsEnhancement: Bool {
@@ -229,6 +240,7 @@ class AIService: ObservableObject {
     private var apiKeyChangeObserver: NSObjectProtocol?
     
     @Published private var openRouterModels: [String] = []
+    @Published private var requestyModels: [String] = []
     @Published private(set) var isOllamaRefreshing = false
     
     var connectedProviders: [AIProvider] {
@@ -287,6 +299,8 @@ class AIService: ObservableObject {
             return ollamaService.availableModels.map { $0.name }
         } else if provider == .openRouter {
             return openRouterModels
+        } else if provider == .requesty {
+            return requestyModels
         } else if provider == .custom {
             return CustomAIProviderManager.shared.availableModelNames
         }
@@ -371,6 +385,9 @@ class AIService: ObservableObject {
     private func loadSavedOpenRouterModels() {
         if let savedModels = userDefaults.array(forKey: "openRouterModels") as? [String] {
             openRouterModels = savedModels
+        }
+        if let savedModels = userDefaults.array(forKey: "requestyModels") as? [String] {
+            requestyModels = savedModels
         }
     }
     
@@ -628,6 +645,41 @@ class AIService: ObservableObject {
         NotificationCenter.default.post(name: .AppSettingsDidChange, object: nil)
     }
     
+    /// Refreshes the fetched model list of an aggregator; other providers ship theirs.
+    func refreshModels(for provider: AIProvider) async {
+        switch provider {
+        case .openRouter:
+            await fetchOpenRouterModels()
+        case .requesty:
+            await fetchRequestyModels()
+        default:
+            break
+        }
+    }
+
+    /// Requesty's list is public; with a key it narrows to the models the
+    /// organization allows, so the key is sent when there is one.
+    func fetchRequestyModels() async {
+        let apiKey = APIKeyManager.shared.getAPIKey(forProvider: AIProvider.requesty.rawValue)
+        do {
+            let models = try await RequestyModelList.fetch(apiKey: apiKey)
+            await MainActor.run {
+                self.requestyModels = models
+                self.userDefaults.set(models, forKey: "requestyModels")
+                if self.selectedProvider == .requesty && self.currentModel == self.selectedProvider.defaultModel && !models.isEmpty && !models.contains(self.currentModel) {
+                    self.selectModel(models.first!)
+                }
+                self.objectWillChange.send()
+            }
+        } catch {
+            await MainActor.run {
+                self.requestyModels = []
+                self.userDefaults.set([String](), forKey: "requestyModels")
+                self.objectWillChange.send()
+            }
+        }
+    }
+
     func fetchOpenRouterModels() async {
         do {
             let models = try await OpenRouterClient.fetchModels()

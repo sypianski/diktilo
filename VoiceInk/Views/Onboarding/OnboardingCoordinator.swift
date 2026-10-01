@@ -226,6 +226,7 @@ final class OnboardingCoordinator: ObservableObject {
             .gemini,
             .openAI,
             .openRouter,
+            .requesty,
             .anthropic,
             .mistral
         ]

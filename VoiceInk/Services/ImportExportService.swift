@@ -164,6 +164,8 @@ class ImportExportService {
             appAppearancePreference: AppAppearancePreference.stored.rawValue,
             appLanguagePreference: AppLanguagePreference.storedRawValue,
             userAddressForm: UserAddressForm.current.rawValue,
+            transcriptionModelChain: ModelFallbackChain.transcriptionOrder,
+            enhancementFallbackChain: ModelFallbackChain.enhancementLinks,
             isTranscriptionCleanupEnabled: UserDefaults.standard.bool(forKey: CleanupSettingsKeys.isTranscriptionCleanupEnabled),
             transcriptionRetentionMinutes: UserDefaults.standard.integer(forKey: CleanupSettingsKeys.transcriptionRetentionMinutes),
             isAudioCleanupEnabled: UserDefaults.standard.bool(forKey: CleanupSettingsKeys.isAudioCleanupEnabled),

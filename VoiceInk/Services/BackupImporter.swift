@@ -163,6 +163,13 @@ enum BackupImporter {
            let addressForm = UserAddressForm(rawValue: rawAddressForm) {
             UserDefaults.standard.set(addressForm.rawValue, forKey: UserAddressForm.userDefaultsKey)
         }
+        // The chain's first entry is re-synced with the main model on next read.
+        if let transcriptionModelChain = general.transcriptionModelChain {
+            ModelFallbackChain.setTranscriptionOrder(transcriptionModelChain)
+        }
+        if let enhancementFallbackChain = general.enhancementFallbackChain {
+            ModelFallbackChain.setEnhancementLinks(enhancementFallbackChain)
+        }
 
         if let transcriptionCleanup = general.isTranscriptionCleanupEnabled {
             UserDefaults.standard.set(transcriptionCleanup, forKey: CleanupSettingsKeys.isTranscriptionCleanupEnabled)

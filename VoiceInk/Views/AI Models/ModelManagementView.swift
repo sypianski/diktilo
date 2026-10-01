@@ -95,6 +95,8 @@ struct ModelManagementView: View {
 
                     TranscriptionSettingsSection()
 
+                    ModelFallbackChainSection()
+
                     ModelAdvisorCard(onShowCloudProviders: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             selectedFilter = .cloud

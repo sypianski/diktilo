@@ -423,6 +423,64 @@ class AIEnhancementService: ObservableObject {
         }
     }
 
+    struct EnhancementOutcome {
+        let text: String
+        let duration: TimeInterval
+        let promptName: String?
+        /// The mode's configuration, or the fallback that answered instead.
+        let configuration: EnhancementRuntimeConfiguration
+    }
+
+    /// `enhance`, then the fallback chain: after the mode's model (with its own
+    /// retries) fails, each connected provider/model of the chain is tried in
+    /// order. Links whose provider is not connected are skipped.
+    func enhanceWithFallbacks(
+        _ text: String,
+        configuration: EnhancementRuntimeConfiguration,
+        contextSnapshot: RecordingContextSnapshot? = nil
+    ) async throws -> EnhancementOutcome {
+        var attempts: [ModelChainError.Attempt] = []
+        var firstError: Error?
+
+        for candidate in [configuration] + fallbackConfigurations(after: configuration) {
+            do {
+                let (result, duration, promptName) = try await enhance(
+                    text,
+                    configuration: candidate,
+                    contextSnapshot: contextSnapshot
+                )
+                if !attempts.isEmpty {
+                    logger.notice("Enhanced with fallback \(Self.chainLabel(for: candidate), privacy: .public)")
+                }
+                return EnhancementOutcome(text: result, duration: duration, promptName: promptName, configuration: candidate)
+            } catch {
+                if error is CancellationError || Task.isCancelled { throw error }
+                logger.warning("Enhancement with \(Self.chainLabel(for: candidate), privacy: .public) failed: \(error, privacy: .public)")
+                firstError = firstError ?? error
+                attempts.append(.init(name: Self.chainLabel(for: candidate), reason: ModelChainError.reason(for: error)))
+            }
+        }
+
+        if attempts.count == 1, let firstError { throw firstError }
+        throw ModelChainError(attempts: attempts)
+    }
+
+    private func fallbackConfigurations(after configuration: EnhancementRuntimeConfiguration) -> [EnhancementRuntimeConfiguration] {
+        let connected = aiService.connectedProviders
+        return ModelFallbackChain.enhancementLinks.compactMap { link in
+            guard let provider = link.aiProvider, connected.contains(provider) else { return nil }
+            guard provider != configuration.provider || link.model != configuration.modelName else { return nil }
+            let candidate = configuration.replacing(provider: provider, modelName: link.model)
+            return isConfigured(for: candidate) ? candidate : nil
+        }
+    }
+
+    static func chainLabel(for configuration: EnhancementRuntimeConfiguration) -> String {
+        [configuration.provider?.rawValue, configuration.modelName]
+            .compactMap { $0 }
+            .joined(separator: " ")
+    }
+
     func captureScreenContext() async {
         guard CGPreflightScreenCaptureAccess() else {
             return

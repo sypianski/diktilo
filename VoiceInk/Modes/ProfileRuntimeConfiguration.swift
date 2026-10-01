@@ -5,6 +5,8 @@ struct TranscriptionRuntimeConfiguration {
     let model: any TranscriptionModel
     let language: String
     let isRealtimeEnabled: Bool
+    /// Usable models after `model` in the fallback chain, tried in order when it fails.
+    var fallbackModels: [any TranscriptionModel] = []
 
     var metadata: (name: String?, emoji: String?) {
         guard let profile, profile.isEnabled else {
@@ -17,6 +19,14 @@ struct TranscriptionRuntimeConfiguration {
         TranscriptionRequestContext(
             language: language,
             prompt: model.provider == .whisper ? UserDefaults.standard.string(forKey: "TranscriptionPrompt") : nil
+        )
+    }
+
+    /// Same language and prompt, adapted to a fallback model of the chain.
+    func requestContext(forFallback fallback: any TranscriptionModel) -> TranscriptionRequestContext {
+        TranscriptionRequestContext(
+            language: TranscriptionLanguageSupport.validLanguageOrFallback(language, for: fallback),
+            prompt: fallback.provider == .whisper ? UserDefaults.standard.string(forKey: "TranscriptionPrompt") : nil
         )
     }
 }
@@ -35,6 +45,20 @@ struct EnhancementRuntimeConfiguration {
     let useClipboardContext: Bool
     let useSelectedTextContext: Bool
     let useScreenCaptureContext: Bool
+
+    /// The same request sent to another provider/model (fallback chain).
+    func replacing(provider: AIProvider, modelName: String?) -> EnhancementRuntimeConfiguration {
+        EnhancementRuntimeConfiguration(
+            profile: profile,
+            isEnabled: isEnabled,
+            prompt: prompt,
+            provider: provider,
+            modelName: modelName,
+            useClipboardContext: useClipboardContext,
+            useSelectedTextContext: useSelectedTextContext,
+            useScreenCaptureContext: useScreenCaptureContext
+        )
+    }
 
     func replacingPrompt(_ prompt: CustomPrompt) -> EnhancementRuntimeConfiguration {
         EnhancementRuntimeConfiguration(
@@ -71,12 +95,14 @@ enum ProfileRuntimeResolver {
         transcriptionModelManager: TranscriptionModelManager
     ) -> TranscriptionRuntimeConfiguration? {
         let profile = profile ?? OutputProfileManager.shared.currentEffectiveConfiguration
-        let model = resolvedModel(
+        let chain = transcriptionModelManager.usableModelsInChainOrder()
+        let model = chain.first ?? resolvedModel(
             named: GlobalTranscriptionSettings.modelName,
             transcriptionModelManager: transcriptionModelManager
         )
 
         guard let model else { return nil }
+        let fallbackModels = chain.filter { $0.name != model.name }
 
         let realtimeEnabled = GlobalTranscriptionSettings.isRealtimeEnabled
         let language = TranscriptionLanguageSupport.validLanguageOrFallback(
@@ -89,7 +115,8 @@ enum ProfileRuntimeResolver {
             profile: profile,
             model: model,
             language: language,
-            isRealtimeEnabled: TranscriptionRealtimeSupport.isEnabled(for: model, modeValue: realtimeEnabled)
+            isRealtimeEnabled: TranscriptionRealtimeSupport.isEnabled(for: model, modeValue: realtimeEnabled),
+            fallbackModels: fallbackModels
         )
     }
 
@@ -149,6 +176,7 @@ enum ProfileRuntimeResolver {
         )
     }
 
+    /// Last resort when nothing in the fallback chain is usable.
     private static func resolvedModel(
         named modelName: String?,
         transcriptionModelManager: TranscriptionModelManager

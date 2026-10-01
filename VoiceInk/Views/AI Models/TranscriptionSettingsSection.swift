@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// App-wide transcription settings: one model, language and pipeline shared by
-/// every mode. Sits at the top of AI Models, above the catalog it picks from.
+/// App-wide transcription settings: language and pipeline shared by every mode.
+/// The model itself is the first link of "Model Order" (ModelFallbackChainSection).
 struct TranscriptionSettingsSection: View {
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
     @EnvironmentObject private var whisperModelManager: WhisperModelManager
@@ -26,14 +26,6 @@ struct TranscriptionSettingsSection: View {
                     .foregroundStyle(AppTheme.Text.secondary)
             }
             .padding(.bottom, 6)
-
-            row {
-                Text("Transcription Model")
-            } content: {
-                modelPicker
-            }
-
-            PerforationRule()
 
             row {
                 Text("Language")
@@ -82,53 +74,6 @@ struct TranscriptionSettingsSection: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(AppMaterialCardBackground(cornerRadius: AppTheme.Radius.card))
-    }
-
-    // MARK: - Model
-
-    /// Only models that can transcribe right now: downloaded local models,
-    /// cloud models with an API key, custom models. The current model stays in
-    /// the list even if it became unusable, so the picker never shows blank.
-    private var selectableModels: [any TranscriptionModel] {
-        var models = transcriptionModelManager.usableModels.filter {
-            transcriptionModelManager.isAvailableOnCurrentOS($0)
-        }
-        if let current = transcriptionModelManager.currentTranscriptionModel,
-           !models.contains(where: { $0.name == current.name }) {
-            models.insert(current, at: 0)
-        }
-        return models
-    }
-
-    private var modelSelection: Binding<String> {
-        Binding(
-            get: { transcriptionModelManager.currentTranscriptionModel?.name ?? "" },
-            set: { name in
-                guard let model = selectableModels.first(where: { $0.name == name }) else { return }
-                transcriptionModelManager.setDefaultTranscriptionModel(model)
-            }
-        )
-    }
-
-    @ViewBuilder
-    private var modelPicker: some View {
-        if selectableModels.isEmpty {
-            Text("Download a model below first")
-                .foregroundStyle(AppTheme.Text.secondary)
-        } else {
-            Picker("Transcription Model", selection: modelSelection) {
-                if transcriptionModelManager.currentTranscriptionModel == nil {
-                    Text("No model selected").tag("")
-                }
-                ForEach(selectableModels, id: \.name) { model in
-                    Text(model.displayName).tag(model.name)
-                }
-            }
-            .pickerStyle(.menu)
-            .labelsHidden()
-            .fixedSize()
-            .help("Only downloaded local models, cloud providers with an API key and your custom models are listed.")
-        }
     }
 
     // MARK: - Live transcription

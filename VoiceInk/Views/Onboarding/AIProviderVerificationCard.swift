@@ -423,6 +423,8 @@ fileprivate extension AIProvider {
             return URL(string: "https://console.mistral.ai/api-keys/")
         case .openRouter:
             return URL(string: "https://openrouter.ai/keys")
+        case .requesty:
+            return URL(string: "https://app.requesty.ai/api-keys")
         case .cerebras:
             return URL(string: "https://cloud.cerebras.ai/platform")
         default:

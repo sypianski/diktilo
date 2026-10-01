@@ -239,7 +239,7 @@ struct OutputProfileFormView: View {
             let models = aiModelOptions(for: provider)
             if models.isEmpty {
                 LabeledContent("AI Model") {
-                    Text(provider == .openRouter ? LocalizedStringKey("No models loaded") : LocalizedStringKey("No models available"))
+                    Text(provider.isAggregator ? LocalizedStringKey("No models loaded") : LocalizedStringKey("No models available"))
                         .foregroundColor(.secondary)
                         .italic()
                 }
@@ -260,9 +260,9 @@ struct OutputProfileFormView: View {
                     }
                 }
 
-                if provider == .openRouter {
+                if provider.isAggregator {
                     Button("Refresh Models") {
-                        Task { await aiService.fetchOpenRouterModels() }
+                        Task { await aiService.refreshModels(for: provider) }
                     }
                     .help("Refresh models")
                 }

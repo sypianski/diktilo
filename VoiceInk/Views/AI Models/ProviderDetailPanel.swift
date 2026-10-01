@@ -10,7 +10,7 @@ struct ProviderDetailPanel: View {
 
     @State private var apiKey = ""
     @State private var isVerifying = false
-    @State private var isRefreshingOpenRouterModels = false
+    @State private var isRefreshingModelList = false
     @State private var verificationMessage: String?
     @State private var verificationDetailMessage: String?
     @State private var verificationSucceeded = false
@@ -288,32 +288,32 @@ struct ProviderDetailPanel: View {
             let models = aiService.availableModels(for: provider)
 
             ProviderModelListSection(title: "Available Enhancement Models") {
-                if provider == .openRouter {
+                if provider.isAggregator {
                     HStack(spacing: 12) {
-                        Text(openRouterModelAvailabilityText(for: models.count))
+                        Text(fetchedModelAvailabilityText(for: models.count))
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(models.isEmpty ? .secondary : .primary)
 
                         Spacer()
 
                         Button {
-                            refreshOpenRouterModels()
+                            refreshModelList(for: provider)
                         } label: {
                             HStack(spacing: 5) {
-                                if isRefreshingOpenRouterModels {
+                                if isRefreshingModelList {
                                     ProgressView()
                                         .controlSize(.small)
                                 } else {
                                     Image(systemName: "arrow.clockwise")
                                 }
-                                Text(isRefreshingOpenRouterModels ? LocalizedStringKey("Refreshing") : LocalizedStringKey("Refresh"))
+                                Text(isRefreshingModelList ? LocalizedStringKey("Refreshing") : LocalizedStringKey("Refresh"))
                             }
                             .font(.system(size: 12, weight: .medium))
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.small)
-                        .disabled(isRefreshingOpenRouterModels)
-                        .opacity(isRefreshingOpenRouterModels ? 0.55 : 1)
+                        .disabled(isRefreshingModelList)
+                        .opacity(isRefreshingModelList ? 0.55 : 1)
                     }
                     .padding(.vertical, 8)
                 } else if models.isEmpty {
@@ -348,7 +348,7 @@ struct ProviderDetailPanel: View {
         }
     }
 
-    private func openRouterModelAvailabilityText(for count: Int) -> String {
+    private func fetchedModelAvailabilityText(for count: Int) -> String {
         if count == 0 {
             return String(localized: "No models loaded.")
         }
@@ -422,7 +422,7 @@ struct ProviderDetailPanel: View {
         verificationSucceeded = isConfigured
         apiKey = ""
         isVerifying = false
-        isRefreshingOpenRouterModels = false
+        isRefreshingModelList = false
         verificationMessage = nil
         verificationDetailMessage = nil
         isShowingRemoveAPIKeyConfirmation = false
@@ -497,14 +497,14 @@ struct ProviderDetailPanel: View {
         NotificationCenter.default.post(name: .aiProviderKeyChanged, object: nil)
     }
 
-    private func refreshOpenRouterModels() {
-        guard !isRefreshingOpenRouterModels else { return }
-        isRefreshingOpenRouterModels = true
+    private func refreshModelList(for provider: AIProvider) {
+        guard !isRefreshingModelList else { return }
+        isRefreshingModelList = true
 
         Task {
-            await aiService.fetchOpenRouterModels()
+            await aiService.refreshModels(for: provider)
             await MainActor.run {
-                isRefreshingOpenRouterModels = false
+                isRefreshingModelList = false
             }
         }
     }

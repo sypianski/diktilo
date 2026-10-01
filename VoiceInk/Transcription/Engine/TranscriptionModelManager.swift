@@ -93,6 +93,8 @@ class TranscriptionModelManager: ObservableObject {
 
         self.currentTranscriptionModel = model
         UserDefaults.standard.set(model.name, forKey: "CurrentTranscriptionModel")
+        // The main model is always the first link of the fallback chain.
+        ModelFallbackChain.promoteTranscription(model.name)
         ensureSelectedLanguageIsSupported(by: model)
 
         if model.provider != .whisper {
@@ -146,13 +148,32 @@ class TranscriptionModelManager: ObservableObject {
 
     /// Called by WhisperModelManager.onModelDeleted or FluidAudioModelManager.onModelDeleted.
     func handleModelDeleted(_ modelName: String) {
-        if currentTranscriptionModel?.name == modelName {
+        let wasMainModel = currentTranscriptionModel?.name == modelName
+        if wasMainModel {
             currentTranscriptionModel = nil
             UserDefaults.standard.removeObject(forKey: "CurrentTranscriptionModel")
             whisperModelManager?.loadedWhisperModel = nil
             whisperModelManager?.isModelLoaded = false
             UserDefaults.standard.removeObject(forKey: "CurrentModel")
         }
+        ModelFallbackChain.removeTranscription(modelName)
         refreshAllAvailableModels()
+
+        // The next usable link takes over as the main model.
+        if wasMainModel, let next = firstUsableModelInChain() {
+            setDefaultTranscriptionModel(next)
+        }
+    }
+
+    /// Usable models in fallback-chain order, main model first.
+    func usableModelsInChainOrder() -> [any TranscriptionModel] {
+        let usable = usableModels.filter { isAvailableOnCurrentOS($0) }
+        return ModelFallbackChain.transcriptionOrder.compactMap { name in
+            usable.first { $0.name == name }
+        }
+    }
+
+    func firstUsableModelInChain() -> (any TranscriptionModel)? {
+        usableModelsInChainOrder().first
     }
 }

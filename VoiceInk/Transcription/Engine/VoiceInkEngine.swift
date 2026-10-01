@@ -163,6 +163,16 @@ class VoiceInkEngine: NSObject, ObservableObject {
 
         super.init()
 
+        pipeline.retryLastTranscription = { [weak self] in
+            guard let self else { return }
+            LastTranscriptionService.retryLastTranscription(
+                from: self.modelContext,
+                transcriptionModelManager: self.transcriptionModelManager,
+                serviceRegistry: self.serviceRegistry,
+                enhancementService: self.enhancementService
+            )
+        }
+
         setupNotifications()
         createRecordingsDirectoryIfNeeded()
     }

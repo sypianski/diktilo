@@ -87,6 +87,8 @@ struct GeneralBackup: Codable {
     let appAppearancePreference: String?
     let appLanguagePreference: String?
     let userAddressForm: String?
+    let transcriptionModelChain: [String]?
+    let enhancementFallbackChain: [ModelFallbackChain.EnhancementLink]?
     let isTranscriptionCleanupEnabled: Bool?
     let transcriptionRetentionMinutes: Int?
     let isAudioCleanupEnabled: Bool?
