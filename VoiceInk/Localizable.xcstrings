@@ -55,6 +55,16 @@
         }
       }
     },
+    "%@ cancels": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ je anuluje"
+          }
+        }
+      }
+    },
     "'%@' already exists in word replacements": {
       "localizations": {
         "de": {
@@ -1154,6 +1164,366 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld słów"
+          }
+        }
+      }
+    },
+    "A mode sets whether AI rewrites the text and where the result goes: pasted, copied, opened in the edit window or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb ustala, czy AI przeredaguje tekst i dokąd trafi wynik: wklejenie, schowek, okno edycji albo zapis do pliku. Zakończ nagranie skrótem trybu, żeby go użyć. Przy otwartym pasku ⌥1…⌥0 przełącza tryby."
+          }
+        }
+      }
+    },
+    "at the bottom of the screen": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na dole ekranu"
+          }
+        }
+      }
+    },
+    "at the top of the screen, by the notch": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na górze ekranu, przy wycięciu"
+          }
+        }
+      }
+    },
+    "Copy to Clipboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiuj do schowka"
+          }
+        }
+      }
+    },
+    "Diktilo Tour": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewodnik po Diktilo"
+          }
+        }
+      }
+    },
+    "Edit Window": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Okno edycji"
+          }
+        }
+      }
+    },
+    "Esc pressed twice cancels": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dwukrotne Esc je anuluje"
+          }
+        }
+      }
+    },
+    "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każda transkrypcja trafia do schowka i do Historii. Ostatnie widać w zakładce Dashboard; przycisk kopiowania na karcie kopiuje ją ponownie."
+          }
+        }
+      }
+    },
+    "Every transcription is saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każda transkrypcja trafia do Historii. Ostatnie widać w zakładce Dashboard; przycisk kopiowania na karcie kopiuje ją ponownie."
+          }
+        }
+      }
+    },
+    "Example: the meeting moves to Thursday at ten, please bring the draft.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przykład: spotkanie przesuwamy na czwartek na dziesiątą, weź proszę szkic."
+          }
+        }
+      }
+    },
+    "Finish": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ"
+          }
+        }
+      }
+    },
+    "Help": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomoc"
+          }
+        }
+      }
+    },
+    "History and clipboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Historia i schowek"
+          }
+        }
+      }
+    },
+    "Hold %@ in any app and speak. Let go to finish.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj %@ w dowolnej aplikacji i mów. Puść, żeby skończyć."
+          }
+        }
+      }
+    },
+    "No modes yet — you'll find the starter modes on the Modes screen.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma jeszcze trybów — gotowe szablony znajdziesz na ekranie Tryby."
+          }
+        }
+      }
+    },
+    "Press %@ in any app, speak, then press it again.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij %@ w dowolnej aplikacji, mów, a potem naciśnij jeszcze raz."
+          }
+        }
+      }
+    },
+    "Profiles": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryby"
+          }
+        }
+      }
+    },
+    "Record in any app": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagrywaj w dowolnej aplikacji"
+          }
+        }
+      }
+    },
+    "Recording bar": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasek nagrywania"
+          }
+        }
+      }
+    },
+    "Save Targets": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cele zapisu"
+          }
+        }
+      }
+    },
+    "Save to Target": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapis do celu"
+          }
+        }
+      }
+    },
+    "Set Shortcut in Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw skrót w Ustawieniach"
+          }
+        }
+      }
+    },
+    "Show Tour": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż przewodnik"
+          }
+        }
+      }
+    },
+    "Skip Tour": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomiń przewodnik"
+          }
+        }
+      }
+    },
+    "Start Dictating": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij dyktować"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krok %lld z %lld"
+          }
+        }
+      }
+    },
+    "Tap %@ to start and tap again to finish, or hold it while you speak.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij %@, żeby zacząć, i stuknij znowu, żeby skończyć — albo trzymaj, dopóki mówisz."
+          }
+        }
+      }
+    },
+    "The active mode decides where the text goes.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O tym, dokąd trafi tekst, decyduje aktywny tryb."
+          }
+        }
+      }
+    },
+    "The recording bar": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasek nagrywania"
+          }
+        }
+      }
+    },
+    "The recording shortcut, the bar's style and the app language are in Settings. To see this tour again, choose Help → Diktilo Tour.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania, wygląd paska i język aplikacji zmienisz w Ustawieniach. Przewodnik otworzysz ponownie z menu Pomoc → Przewodnik po Diktilo."
+          }
+        }
+      }
+    },
+    "The text is pasted where your cursor is.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekst wklei się tam, gdzie stoi kursor."
+          }
+        }
+      }
+    },
+    "The text lands on the clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekst trafi do schowka."
+          }
+        }
+      }
+    },
+    "The text opens in the edit window.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekst otworzy się w oknie edycji."
+          }
+        }
+      }
+    },
+    "Today, 10:42": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziś, 10:42"
+          }
+        }
+      }
+    },
+    "While you record, this bar appears %@. The red button finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas nagrywania ten pasek pojawia się %@. Czerwony przycisk kończy nagranie, %@. Skróty pod spodem kończą nagranie i wysyłają tekst w konkretne miejsce."
+          }
+        }
+      }
+    },
+    "You don't have a recording shortcut yet. Set one in Settings to start recording from any app.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie masz jeszcze skrótu nagrywania. Ustaw go w Ustawieniach, żeby nagrywać z dowolnej aplikacji."
           }
         }
       }

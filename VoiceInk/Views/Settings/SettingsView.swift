@@ -246,6 +246,10 @@ struct SettingsView: View {
 
                 LaunchAtLogin.Toggle(String(localized: "Launch at Login"))
 
+                Button("Show Tour") {
+                    AppTour.show()
+                }
+
                 Button("Reset Onboarding") {
                     showResetOnboardingAlert = true
                 }

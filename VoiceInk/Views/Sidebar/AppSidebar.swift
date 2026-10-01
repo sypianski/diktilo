@@ -56,7 +56,7 @@ struct AppSidebar: View {
     }
 }
 
-private extension ViewType {
+extension ViewType {
     var title: LocalizedStringKey {
         switch self {
         case .transcribeAudio:
@@ -124,12 +124,12 @@ private extension ViewType {
     }
 }
 
-private struct SidebarIconStyle {
+struct SidebarIconStyle {
     let background: Color
     var foreground: Color = .white
 }
 
-private struct SidebarItemButton: View {
+struct SidebarItemButton: View {
     let viewType: ViewType
     let isSelected: Bool
     let action: () -> Void
@@ -189,7 +189,7 @@ private struct SidebarItemButton: View {
     }
 }
 
-private struct SidebarIconTile: View {
+struct SidebarIconTile: View {
     let systemName: String
     let style: SidebarIconStyle
 

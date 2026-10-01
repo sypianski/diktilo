@@ -77,7 +77,7 @@ struct RecorderDestinationHUDView: View {
 
 // MARK: - Single chip
 
-private struct DestinationChip: View {
+struct DestinationChip: View {
     let item: FinishDestinationBindings.HUDItem
 
     var body: some View {

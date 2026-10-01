@@ -328,6 +328,11 @@ struct VoiceInkApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) { }
+            CommandGroup(replacing: .help) {
+                Button("Diktilo Tour") {
+                    AppTour.show()
+                }
+            }
         }
 
         MenuBarExtra(isInserted: $showMenuBarIcon) {

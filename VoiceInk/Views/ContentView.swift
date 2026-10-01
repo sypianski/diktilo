@@ -18,6 +18,8 @@ struct ContentView: View {
     private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "ContentView")
     private static let detailBackgroundTintOpacity = 0.50
     @State private var selectedView: ViewType = .dashboard
+    @AppStorage(AppTour.hasSeenKey) private var hasSeenTour = false
+    @State private var isTourPresented = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -29,6 +31,12 @@ struct ContentView: View {
         .frame(minHeight: AppWindowLayout.minimumHeight)
         .onAppear {
             logger.notice("ContentView appeared")
+            if !hasSeenTour {
+                // Let the window settle before the sheet slides in.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    isTourPresented = true
+                }
+            }
         }
         .onDisappear {
             logger.notice("ContentView disappeared")
@@ -39,6 +47,12 @@ struct ContentView: View {
                 logger.notice("navigateToDestination received: \(destination, privacy: .public)")
                 selectedView = viewType
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AppTour.showRequested)) { _ in
+            isTourPresented = true
+        }
+        .sheet(isPresented: $isTourPresented, onDismiss: { hasSeenTour = true }) {
+            AppTourView { isTourPresented = false }
         }
     }
 
