@@ -44,11 +44,7 @@ class AudioTranscriptionService: ObservableObject {
         
         do {
             let mode = mode ?? OutputProfileManager.shared.currentEffectiveConfiguration
-            let language = TranscriptionLanguageSupport.validLanguageOrFallback(
-                GlobalTranscriptionSettings.language,
-                for: model,
-                realtimeEnabled: GlobalTranscriptionSettings.isRealtimeEnabled
-            )
+            let language = DictationLanguages.effectiveLanguage(for: model)
             let requestContext = TranscriptionRequestContext(
                 language: language,
                 prompt: model.provider == .whisper ? UserDefaults.standard.string(forKey: "TranscriptionPrompt") : nil

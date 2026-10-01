@@ -30670,6 +30670,292 @@
           }
         }
       }
+    },
+    "The recording shortcut and modes are in Keyboard Shortcuts; the microphone, dictation languages and the bar's look in Recording; the app's language and appearance in App. To see this tour again, choose Help → Diktilo Tour.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania i tryby są w panelu Skróty klawiszowe, a mikrofon, języki dyktowania i wygląd paska w Nagrywaniu. Język i wygląd samej aplikacji zmienisz w Aplikacji. Przewodnik otworzysz ponownie z menu Pomoc → Przewodnik po Diktilo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahme-Kurzbefehl und Modi findest du unter Tastaturkurzbefehle; Mikrofon, Diktiersprachen und das Aussehen der Leiste unter Aufnahme; Sprache und Erscheinungsbild der App unter App. Die Tour öffnest du erneut über Hilfe → Diktilo-Tour."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音快捷键和模式在“键盘快捷键”中；麦克风、听写语言和录音条外观在“录音”中；应用的语言和外观在“应用”中。要再次查看导览，请选择“帮助 → Diktilo 导览”。"
+          }
+        }
+      }
+    },
+    "Dictation Languages": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Języki dyktowania"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktiersprachen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听写语言"
+          }
+        }
+      }
+    },
+    "Add Language…": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj język…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache hinzufügen …"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加语言…"
+          }
+        }
+      }
+    },
+    "Remove Language": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń język"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache entfernen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除语言"
+          }
+        }
+      }
+    },
+    "Search Languages": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj języka"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachen suchen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索语言"
+          }
+        }
+      }
+    },
+    "None chosen: the model recognizes the language you speak.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie wybrano żadnego: model sam rozpozna język wypowiedzi."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gewählt: Das Modell erkennt die gesprochene Sprache selbst."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未选择：模型会自动识别你说的语言。"
+          }
+        }
+      }
+    },
+    "The model transcribes in this language.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model transkrybuje w tym języku."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Modell transkribiert in dieser Sprache."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模型将用这种语言转写。"
+          }
+        }
+      }
+    },
+    "The model recognizes which of these you speak. Models that can't (e.g. Apple Speech) use the first one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model sam rozpozna, w którym z nich mówisz. Modele, które tego nie potrafią (np. Apple Speech), użyją pierwszego z listy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Modell erkennt, welche davon du sprichst. Modelle, die das nicht können (z. B. Apple Speech), nehmen die erste."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模型会识别你说的是其中哪一种。无法识别的模型（如 Apple Speech）使用第一种。"
+          }
+        }
+      }
+    },
+    "%1$@ doesn't transcribe %2$@. Put another model first in AI Models → Model Order.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ nie transkrybuje: %2$@. Ustaw inny model jako pierwszy w Modele AI → Kolejność modeli."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ transkribiert %2$@ nicht. Setze unter KI-Modelle → Modellreihenfolge ein anderes Modell an die erste Stelle."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ 无法转写 %2$@。请在“AI 模型 → 模型顺序”中把其他模型放在第一位。"
+          }
+        }
+      }
+    },
+    "Dictation languages: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Języki dyktowania: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktiersprachen: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听写语言：%@"
+          }
+        }
+      }
+    },
+    "Fast and accurate in all your languages and recognizes which one you speak; light on memory, and it can transcribe live.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybki i dokładny we wszystkich Twoich językach, sam rozpoznaje, w którym mówisz; oszczędny dla pamięci i potrafi transkrybować na żywo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schnell und genau in all deinen Sprachen und erkennt, welche du sprichst; sparsam beim Speicher und kann live transkribieren."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在你的所有语言中都快速准确，并能识别你说的是哪一种；占用内存少，还能实时转写。"
+          }
+        }
+      }
+    },
+    "Parakeet doesn't cover all your languages. Whisper Large v3 Turbo does and recognizes which one you speak, with high accuracy at a moderate size.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet nie obsługuje wszystkich Twoich języków. Whisper Large v3 Turbo tak i sam rozpoznaje, w którym mówisz, z wysoką dokładnością przy umiarkowanym rozmiarze."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet deckt nicht alle deine Sprachen ab. Whisper Large v3 Turbo schon und erkennt, welche du sprichst – mit hoher Genauigkeit bei moderater Größe."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet 不支持你的全部语言。Whisper Large v3 Turbo 支持，并能识别你说的是哪一种，体积适中、准确度高。"
+          }
+        }
+      }
+    },
+    "Parakeet doesn't cover all your languages, and this Mac has little memory for a large model. Whisper Base handles them at a small size.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet nie obsługuje wszystkich Twoich języków, a ten Mac ma za mało pamięci na duży model. Whisper Base poradzi sobie z nimi przy niewielkim rozmiarze."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet deckt nicht alle deine Sprachen ab, und dieser Mac hat wenig Speicher für ein großes Modell. Whisper Base schafft sie bei kleiner Größe."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet 不支持你的全部语言，而这台 Mac 的内存不足以运行大型模型。Whisper Base 体积小，也能应对。"
+          }
+        }
+      }
     }
   },
   "version": "1.1"

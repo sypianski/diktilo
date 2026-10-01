@@ -25,7 +25,7 @@ struct TranscriptionRuntimeConfiguration {
     /// Same language and prompt, adapted to a fallback model of the chain.
     func requestContext(forFallback fallback: any TranscriptionModel) -> TranscriptionRequestContext {
         TranscriptionRequestContext(
-            language: TranscriptionLanguageSupport.validLanguageOrFallback(language, for: fallback),
+            language: DictationLanguages.effectiveLanguage(for: fallback),
             prompt: fallback.provider == .whisper ? UserDefaults.standard.string(forKey: "TranscriptionPrompt") : nil
         )
     }
@@ -105,11 +105,7 @@ enum ProfileRuntimeResolver {
         let fallbackModels = chain.filter { $0.name != model.name }
 
         let realtimeEnabled = GlobalTranscriptionSettings.isRealtimeEnabled
-        let language = TranscriptionLanguageSupport.validLanguageOrFallback(
-            GlobalTranscriptionSettings.language,
-            for: model,
-            realtimeEnabled: realtimeEnabled
-        )
+        let language = DictationLanguages.effectiveLanguage(for: model)
 
         return TranscriptionRuntimeConfiguration(
             profile: profile,

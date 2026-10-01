@@ -87,9 +87,22 @@ enum ModelAdvisor {
     static let comfortableMemoryGB = 8
 
     static func recommend(for hardware: MacHardwareProfile, language: String) -> ModelRecommendation {
-        let language = baseCode(language)
+        recommend(for: hardware, languages: [language])
+    }
+
+    /// With several languages a model has to cover all of them: Parakeet V3
+    /// only when every one is a Parakeet language, the English models only
+    /// for English alone.
+    static func recommend(for hardware: MacHardwareProfile, languages: [String]) -> ModelRecommendation {
+        var seen = Set<String>()
+        let bases = languages.map(baseCode).filter { !$0.isEmpty && seen.insert($0).inserted }
+        let isEnglishOnly = bases == ["en"] || bases.isEmpty
+        let allIn: (Set<String>) -> Bool = { set in !bases.isEmpty && bases.allSatisfy(set.contains) }
+
+        let isSeveral = bases.count > 1
+        // Apple Speech doesn't detect the language, so it only fits one.
         let appleSpeech: (name: String, reason: String)? =
-            hardware.isAppleSilicon && hardware.macOSMajor >= 26 && appleSpeechLanguages.contains(language)
+            hardware.isAppleSilicon && hardware.macOSMajor >= 26 && !isSeveral && allIn(appleSpeechLanguages)
             ? ("apple-speech", String(localized: "Apple Speech is built into macOS, so there is nothing to download."))
             : nil
 
@@ -98,7 +111,7 @@ enum ModelAdvisor {
         guard hardware.isAppleSilicon else {
             let isSmallMemory = hardware.memoryGB < comfortableMemoryGB
             let modelName: String
-            switch (language == "en", isSmallMemory) {
+            switch (isEnglishOnly, isSmallMemory) {
             case (true, true): modelName = "ggml-tiny.en"
             case (true, false): modelName = "ggml-base.en"
             case (false, true): modelName = "ggml-tiny"
@@ -113,7 +126,7 @@ enum ModelAdvisor {
             )
         }
 
-        if language == "en" {
+        if isEnglishOnly {
             return ModelRecommendation(
                 modelName: "parakeet-tdt-0.6b-v2",
                 reason: String(localized: "Made for English: fast, accurate and the smallest download."),
@@ -123,10 +136,12 @@ enum ModelAdvisor {
             )
         }
 
-        if parakeetLanguages.contains(language) {
+        if allIn(parakeetLanguages) {
             return ModelRecommendation(
                 modelName: "parakeet-tdt-0.6b-v3",
-                reason: String(localized: "Fast and accurate in your language, light on memory, and it can transcribe live."),
+                reason: isSeveral
+                    ? String(localized: "Fast and accurate in all your languages and recognizes which one you speak; light on memory, and it can transcribe live.")
+                    : String(localized: "Fast and accurate in your language, light on memory, and it can transcribe live."),
                 alternativeModelName: appleSpeech?.name,
                 alternativeReason: appleSpeech?.reason,
                 suggestsCloud: false
@@ -136,7 +151,9 @@ enum ModelAdvisor {
         if hardware.memoryGB >= comfortableMemoryGB {
             return ModelRecommendation(
                 modelName: "ggml-large-v3-turbo-q5_0",
-                reason: String(localized: "Parakeet doesn't cover your language. Whisper Large v3 Turbo does, with high accuracy at a moderate size."),
+                reason: isSeveral
+                    ? String(localized: "Parakeet doesn't cover all your languages. Whisper Large v3 Turbo does and recognizes which one you speak, with high accuracy at a moderate size.")
+                    : String(localized: "Parakeet doesn't cover your language. Whisper Large v3 Turbo does, with high accuracy at a moderate size."),
                 alternativeModelName: appleSpeech?.name,
                 alternativeReason: appleSpeech?.reason,
                 suggestsCloud: false
@@ -145,7 +162,9 @@ enum ModelAdvisor {
 
         return ModelRecommendation(
             modelName: "ggml-base",
-            reason: String(localized: "Parakeet doesn't cover your language, and this Mac has little memory for a large model. Whisper Base handles it at a small size."),
+            reason: isSeveral
+                ? String(localized: "Parakeet doesn't cover all your languages, and this Mac has little memory for a large model. Whisper Base handles them at a small size.")
+                : String(localized: "Parakeet doesn't cover your language, and this Mac has little memory for a large model. Whisper Base handles it at a small size."),
             alternativeModelName: appleSpeech?.name,
             alternativeReason: appleSpeech?.reason,
             suggestsCloud: false
@@ -178,12 +197,16 @@ enum ModelAdvisor {
         return UserDefaults.standard.persistentDomain(forName: domain)?[GlobalTranscriptionSettings.Keys.language] as? String
     }
 
-    static func currentDictationLanguage() -> String {
-        dictationLanguage(selected: explicitSelectedLanguage, preferredLanguages: Locale.preferredLanguages)
+    /// The chosen dictation languages; with none chosen (detect), the first
+    /// system language any model can transcribe, as a best guess.
+    static func currentDictationLanguages() -> [String] {
+        let chosen = DictationLanguages.codes.map(baseCode)
+        if !chosen.isEmpty { return chosen }
+        return [dictationLanguage(selected: nil, preferredLanguages: Locale.preferredLanguages)]
     }
 
     static func currentRecommendation() -> ModelRecommendation {
-        recommend(for: .cached, language: currentDictationLanguage())
+        recommend(for: .cached, languages: currentDictationLanguages())
     }
 
     static func baseCode(_ identifier: String) -> String {

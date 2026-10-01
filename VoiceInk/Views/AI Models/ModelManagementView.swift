@@ -86,23 +86,17 @@ struct ModelManagementView: View {
             headerSection
 
             ScrollView {
+                // Order: what runs (the chain), then the choice behind it, then
+                // the catalogue. Language, live text and paragraphs live in
+                // Recording; the per-Mac advisor only matters for local models.
                 VStack(alignment: .leading, spacing: 18) {
+                    ModelFallbackChainSection()
+
                     LocalOrKeyCard()
 
                     if SystemArchitecture.isIntelMac {
                         intelMacWarningBanner
                     }
-
-                    TranscriptionSettingsSection()
-
-                    ModelFallbackChainSection()
-
-                    ModelAdvisorCard(onShowCloudProviders: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            selectedFilter = .cloud
-                        }
-                        activePanel = nil
-                    })
 
                     availableModelsSection
                 }
@@ -253,6 +247,13 @@ struct ModelManagementView: View {
 
     private var localModelsSection: some View {
         VStack(spacing: 12) {
+            ModelAdvisorCard(onShowCloudProviders: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    selectedFilter = .cloud
+                }
+                activePanel = nil
+            })
+
             ForEach(localModels, id: \.id) { model in
                 let isWarming = (model as? WhisperModel).map { whisperModel in
                     warmupCoordinator.isWarming(modelNamed: whisperModel.name)

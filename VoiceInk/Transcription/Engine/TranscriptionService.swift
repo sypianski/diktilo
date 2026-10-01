@@ -35,7 +35,10 @@ protocol TranscriptionService {
 
 extension TranscriptionService {
     func transcribe(audioURL: URL, model: any TranscriptionModel) async throws -> String {
-        let context = TranscriptionRequestContext.currentDefaults.scoped(to: model)
+        let context = TranscriptionRequestContext(
+            language: DictationLanguages.effectiveLanguage(for: model),
+            prompt: TranscriptionRequestContext.currentDefaults.prompt
+        ).scoped(to: model)
         return try await transcribe(audioURL: audioURL, model: model, context: context)
     }
 }

@@ -106,14 +106,10 @@ class TranscriptionModelManager: ObservableObject {
         NotificationCenter.default.post(name: .AppSettingsDidChange, object: nil)
     }
 
+    /// The dictation languages don't change with the model; only the mirror of
+    /// what this model receives does.
     private func ensureSelectedLanguageIsSupported(by model: any TranscriptionModel) {
-        let currentLanguage = UserDefaults.standard.string(forKey: "SelectedLanguage")
-        let compatibleLanguage = TranscriptionLanguageSupport.validLanguageOrFallback(currentLanguage, for: model)
-
-        if currentLanguage != compatibleLanguage {
-            UserDefaults.standard.set(compatibleLanguage, forKey: "SelectedLanguage")
-            NotificationCenter.default.post(name: .languageDidChange, object: nil)
-        }
+        DictationLanguages.syncLegacySelectedLanguage(for: model)
     }
 
     // MARK: - Refresh all available models

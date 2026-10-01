@@ -6,8 +6,8 @@ struct ModelAdvisorCard: View {
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
     @EnvironmentObject private var whisperModelManager: WhisperModelManager
     @EnvironmentObject private var fluidAudioModelManager: FluidAudioModelManager
-    // Read so the card follows language changes made in the section above.
-    @AppStorage(GlobalTranscriptionSettings.Keys.language) private var selectedLanguage = "en"
+    // Follows the dictation languages chosen in Recording.
+    @State private var languages = ModelAdvisor.currentDictationLanguages()
 
     /// Shows the cloud providers when local models are a poor fit (Intel).
     var onShowCloudProviders: (() -> Void)?
@@ -15,15 +15,15 @@ struct ModelAdvisorCard: View {
     @State private var hardware = MacHardwareProfile.current()
     @State private var isStartingDownload = false
 
-    private var language: String {
-        ModelAdvisor.dictationLanguage(
-            selected: ModelAdvisor.explicitSelectedLanguage == nil ? nil : selectedLanguage,
-            preferredLanguages: Locale.preferredLanguages
-        )
+    private var recommendation: ModelRecommendation {
+        ModelAdvisor.recommend(for: hardware, languages: languages)
     }
 
-    private var recommendation: ModelRecommendation {
-        ModelAdvisor.recommend(for: hardware, language: language)
+    private var languagesLine: String {
+        let names = languages.map(ModelAdvisor.languageName).joined(separator: ", ")
+        return languages.count > 1
+            ? String(format: String(localized: "Dictation languages: %@"), names)
+            : String(format: String(localized: "Dictation language: %@"), names)
     }
 
     private var recommendedModel: (any TranscriptionModel)? {
@@ -49,7 +49,7 @@ struct ModelAdvisorCard: View {
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(AppTheme.Text.secondary)
 
-                Text(String(format: String(localized: "Dictation language: %@"), ModelAdvisor.languageName(language)))
+                Text(languagesLine)
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(AppTheme.Text.secondary)
             }
@@ -91,6 +91,9 @@ struct ModelAdvisorCard: View {
         .padding(.vertical, 14)
         .background(AppMaterialCardBackground(cornerRadius: AppTheme.Radius.card))
         .onAppear { hardware = MacHardwareProfile.current() }
+        .onReceive(NotificationCenter.default.publisher(for: .dictationLanguagesDidChange)) { _ in
+            languages = ModelAdvisor.currentDictationLanguages()
+        }
     }
 
     // MARK: - Action
@@ -163,18 +166,11 @@ struct ModelAdvisorCard: View {
         }
     }
 
-    /// Switches to the model; when the user never chose a language, also sets
-    /// the one the advice was based on, so the model isn't told "English".
+    /// Switches to the model. The languages stay as chosen: with none chosen
+    /// the model detects the language, so it's never told "English" by default.
     private func use(named name: String) {
         guard let model = transcriptionModelManager.usableModels.first(where: { $0.name == name }) else { return }
         transcriptionModelManager.setDefaultTranscriptionModel(model)
-
-        guard ModelAdvisor.explicitSelectedLanguage == nil,
-              let code = model.supportedLanguages.keys.first(where: { ModelAdvisor.baseCode($0) == language }) else {
-            return
-        }
-        selectedLanguage = code
-        NotificationCenter.default.post(name: .languageDidChange, object: nil)
     }
 }
 

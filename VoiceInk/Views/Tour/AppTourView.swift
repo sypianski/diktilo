@@ -270,7 +270,7 @@ private struct AppTourCaption: View {
                 ? String(localized: "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
                 : String(localized: "Every transcription is saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
         case .settings:
-            return String(localized: "The recording shortcut and modes are in Keyboard Shortcuts, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.")
+            return String(localized: "The recording shortcut and modes are in Keyboard Shortcuts; the microphone, dictation languages and the bar's look in Recording; the app's language and appearance in App. To see this tour again, choose Help → Diktilo Tour.")
         }
     }
 }

@@ -164,6 +164,7 @@ class ImportExportService {
             appAppearancePreference: AppAppearancePreference.stored.rawValue,
             appLanguagePreference: AppLanguagePreference.storedRawValue,
             userAddressForm: UserAddressForm.current.rawValue,
+            dictationLanguages: DictationLanguages.codes,
             transcriptionModelChain: ModelFallbackChain.transcriptionOrder,
             enhancementFallbackChain: ModelFallbackChain.enhancementLinks,
             isTranscriptionCleanupEnabled: UserDefaults.standard.bool(forKey: CleanupSettingsKeys.isTranscriptionCleanupEnabled),

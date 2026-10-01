@@ -87,6 +87,7 @@ struct GeneralBackup: Codable {
     let appAppearancePreference: String?
     let appLanguagePreference: String?
     let userAddressForm: String?
+    let dictationLanguages: [String]?
     let transcriptionModelChain: [String]?
     let enhancementFallbackChain: [ModelFallbackChain.EnhancementLink]?
     let isTranscriptionCleanupEnabled: Bool?

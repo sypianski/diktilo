@@ -23,9 +23,15 @@ enum GlobalTranscriptionSettings {
         set { UserDefaults.standard.set(newValue, forKey: Keys.model) }
     }
 
+    /// What the current model receives; the languages themselves are
+    /// `DictationLanguages`. Setting it replaces that list with this one
+    /// language ("auto" clears it), for the callers that still set one.
     static var language: String {
         get { UserDefaults.standard.string(forKey: Keys.language) ?? defaultLanguage }
-        set { UserDefaults.standard.set(newValue, forKey: Keys.language) }
+        set {
+            DictationLanguages.setFromLegacy(newValue)
+            UserDefaults.standard.set(newValue, forKey: Keys.language)
+        }
     }
 
     static var isRealtimeEnabled: Bool {

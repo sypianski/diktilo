@@ -27,6 +27,10 @@ struct AudioSetupView: View {
                 }
             }
 
+            // Right after the microphone: what you say and how it becomes text,
+            // before how the bar looks.
+            TranscriptionSection()
+
             Section {
                 Picker("Panel Style", selection: $recorderUIManager.recorderPanelStyle) {
                     ForEach(RecorderPanelStyle.allCases) { style in
