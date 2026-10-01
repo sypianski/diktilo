@@ -7412,28 +7412,6 @@
         }
       }
     },
-    "Connect providers here, then choose models inside Modes.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anbieter hier verbinden, dann Modelle in Modi auswählen."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在此处连接提供商，然后在「模式」中选择模型。"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Połącz dostawców tutaj, a następnie wybierz modele w sekcji Tryby."
-          }
-        }
-      }
-    },
     "Connected": {
       "localizations": {
         "de": {
@@ -27811,28 +27789,6 @@
         }
       }
     },
-    "Set Shortcut in Modes": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ustaw skrót w Trybach"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kurzbefehl in Modi festlegen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在模式中设置快捷键"
-          }
-        }
-      }
-    },
     "Where to change things": {
       "localizations": {
         "pl": {
@@ -27851,50 +27807,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "在哪里更改设置"
-          }
-        }
-      }
-    },
-    "You don't have a recording shortcut yet. Set one in Modes to start recording from any app.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nie masz jeszcze skrótu nagrywania. Ustaw go w Trybach, żeby nagrywać z dowolnej aplikacji."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Du hast noch keinen Aufnahme-Kurzbefehl. Lege einen unter Modi fest, um in jeder App aufzunehmen."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你还没有录音快捷键。请在“模式”中设置，以便在任何应用中录音。"
-          }
-        }
-      }
-    },
-    "The recording shortcut and modes are in Modes, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skrót nagrywania i tryby są w Trybach, mikrofon i wygląd paska w Nagrywaniu, a język i wygląd aplikacji w Aplikacji. Przewodnik otworzysz ponownie z menu Pomoc → Przewodnik po Diktilo."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aufnahme-Kurzbefehl und Modi findest du unter Modi, Mikrofon und Leiste unter Aufnahme, Sprache und Erscheinungsbild unter App. Die Tour öffnest du erneut über Hilfe → Diktilo-Tour."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "录音快捷键和模式在“模式”中，麦克风和录音条外观在“录音”中，语言和外观在“应用”中。要再次查看导览，请选择“帮助 → Diktilo 导览”。"
           }
         }
       }
@@ -28405,50 +28317,6 @@
         }
       }
     },
-    "No targets configured — add one in Modes → Save Targets.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak celów zapisu — dodaj je w Tryby → Cele zapisu."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Ziele eingerichtet — füge eines unter Modi → Speicherziele hinzu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "尚未配置目标 — 请在“模式 → 保存目标”中添加。"
-          }
-        }
-      }
-    },
-    "Save to Target mode requires a configured save target. Add one in Modes → Save Targets.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tryb „Zapis do celu” wymaga skonfigurowanego celu zapisu. Dodaj go w Tryby → Cele zapisu."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der Modus „In Ziel speichern“ benötigt ein eingerichtetes Speicherziel. Füge eines unter Modi → Speicherziele hinzu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "“保存到目标”模式需要已配置的保存目标。请在“模式 → 保存目标”中添加。"
-          }
-        }
-      }
-    },
     "Delete Save Target?": {
       "localizations": {
         "pl": {
@@ -28467,28 +28335,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "要删除保存目标吗？"
-          }
-        }
-      }
-    },
-    "No modes yet — add one on the Modes screen.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jeszcze brak trybów — dodaj tryb na ekranie Tryby."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch keine Modi – füge auf dem Bildschirm Modi einen hinzu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "还没有模式——请在“模式”页面添加。"
           }
         }
       }
@@ -29391,6 +29237,182 @@
           "stringUnit": {
             "state": "translated",
             "value": "按使用量付费"
+          }
+        }
+      }
+    },
+    "You don't have a recording shortcut yet. Set one in Keyboard Shortcuts to start recording from any app.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie masz jeszcze skrótu nagrywania. Ustaw go w panelu Skróty klawiszowe, żeby nagrywać z dowolnej aplikacji."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast noch keinen Aufnahme-Kurzbefehl. Lege einen unter Tastaturkurzbefehle fest, um in jeder App aufzunehmen."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你还没有录音快捷键。请在“键盘快捷键”中设置，以便在任何应用中录音。"
+          }
+        }
+      }
+    },
+    "The recording shortcut and modes are in Keyboard Shortcuts, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania i tryby są w panelu Skróty klawiszowe, mikrofon i wygląd paska w Nagrywaniu, a język i wygląd aplikacji w Aplikacji. Przewodnik otworzysz ponownie z menu Pomoc → Przewodnik po Diktilo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufnahme-Kurzbefehl und Modi findest du unter Tastaturkurzbefehle, Mikrofon und Leiste unter Aufnahme, Sprache und Erscheinungsbild unter App. Die Tour öffnest du erneut über Hilfe → Diktilo-Tour."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音快捷键和模式在“键盘快捷键”中，麦克风和录音条外观在“录音”中，语言和外观在“应用”中。要再次查看导览，请选择“帮助 → Diktilo 导览”。"
+          }
+        }
+      }
+    },
+    "No targets configured — add one in Keyboard Shortcuts → Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak celów zapisu — dodaj je w Skróty klawiszowe → Cele zapisu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ziele konfiguriert – füge eines unter Tastaturkurzbefehle → Speicherziele hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置保存目标——请在“键盘快捷键 → 保存目标”中添加。"
+          }
+        }
+      }
+    },
+    "No modes yet — add one in Keyboard Shortcuts.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeszcze brak trybów — dodaj tryb w panelu Skróty klawiszowe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Modi – füge unter Tastaturkurzbefehle einen hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有模式——请在“键盘快捷键”中添加。"
+          }
+        }
+      }
+    },
+    "Connect providers here, then choose a model in each mode (Keyboard Shortcuts).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinde hier Anbieter und wähle dann in jedem Modus ein Modell (Tastaturkurzbefehle)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在此连接提供商，然后在每个模式中选择模型（键盘快捷键）。"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Połącz dostawców tutaj, a potem wybierz model w każdym trybie (panel Skróty klawiszowe)."
+          }
+        }
+      }
+    },
+    "Save to Target mode requires a configured save target. Add one in Keyboard Shortcuts → Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb „Zapis do celu” wymaga skonfigurowanego celu zapisu. Dodaj go w Skróty klawiszowe → Cele zapisu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Modus „In Ziel speichern“ benötigt ein eingerichtetes Speicherziel. Füge eines unter Modi → Speicherziele hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“保存到目标”模式需要已配置的保存目标。请在“模式 → 保存目标”中添加。"
+          }
+        }
+      }
+    },
+    "Keyboard Shortcuts": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tastaturkurzbefehle"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty klawiszowe"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键盘快捷键"
+          }
+        }
+      }
+    },
+    "System Info": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systeminformationen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informacje o systemie"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "系统信息"
           }
         }
       }

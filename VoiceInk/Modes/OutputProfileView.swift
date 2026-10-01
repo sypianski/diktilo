@@ -93,7 +93,7 @@ struct OutputProfileView: View {
     var body: some View {
             VStack(spacing: 0) {
                 AppScreenHeader(
-                    title: "Modes",
+                    title: "Keyboard Shortcuts",
                     infoMessage: "Modes help you set up Diktilo for different writing tasks, workflows, and scenarios."
                 ) {
                     orderButton

@@ -537,7 +537,7 @@ struct OutputProfileFormView: View {
         let targets = SaveTargetManager.shared.targets
         if targets.isEmpty {
             LabeledContent("Save Target") {
-                Text("No targets configured — add one in Modes → Save Targets.")
+                Text("No targets configured — add one in Keyboard Shortcuts → Save Targets.")
                     .foregroundColor(.secondary)
                     .italic()
             }

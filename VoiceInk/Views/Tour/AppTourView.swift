@@ -220,7 +220,7 @@ private struct AppTourCaption: View {
                 .lineSpacing(2)
 
             if step == .record && TourFacts.primaryShortcut == nil {
-                Button("Set Shortcut in Modes", action: onOpenSettings)
+                Button("Set Recording Shortcut", action: onOpenSettings)
                     .controlSize(.small)
                     .padding(.top, 2)
             }
@@ -248,7 +248,7 @@ private struct AppTourCaption: View {
         switch step {
         case .record:
             guard let shortcut = TourFacts.primaryShortcut else {
-                return String(localized: "You don't have a recording shortcut yet. Set one in Modes to start recording from any app.")
+                return String(localized: "You don't have a recording shortcut yet. Set one in Keyboard Shortcuts to start recording from any app.")
             }
             let keys = shortcut.displayString
             let how: String
@@ -279,7 +279,7 @@ private struct AppTourCaption: View {
                 ? String(localized: "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
                 : String(localized: "Every transcription is saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
         case .settings:
-            return String(localized: "The recording shortcut and modes are in Modes, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.")
+            return String(localized: "The recording shortcut and modes are in Keyboard Shortcuts, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.")
         }
     }
 }
@@ -386,7 +386,7 @@ private struct ModesStage: View {
         let modes = TourFacts.modes
         VStack(spacing: 8) {
             if modes.isEmpty {
-                Text("No modes yet — add one on the Modes screen.")
+                Text("No modes yet — add one in Keyboard Shortcuts.")
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(modes) { mode in

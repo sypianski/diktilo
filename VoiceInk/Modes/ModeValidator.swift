@@ -27,7 +27,7 @@ enum ModeValidationError: Error, Identifiable {
         case .emptyCustomCommand:
             return String(localized: "Custom command cannot be empty.")
         case .saveTargetNotConfigured:
-            return String(localized: "Save to Target mode requires a configured save target. Add one in Modes → Save Targets.")
+            return String(localized: "Save to Target mode requires a configured save target. Add one in Keyboard Shortcuts → Save Targets.")
         case .duplicateName(let name):
             return String(
                 format: String(localized: "A mode with the name '%@' already exists."),

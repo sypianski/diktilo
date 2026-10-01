@@ -64,7 +64,7 @@ extension ViewType {
         case .dictionary:
             return "Personal Dictionary"
         case .modes:
-            return "Modes"
+            return "Keyboard Shortcuts"
         case .audio:
             return "Recording"
         case .settings:
@@ -101,7 +101,7 @@ extension ViewType {
         case .transcribeAudio: return "waveform.path"
         case .history: return "doc.text"
         case .models: return "cpu"
-        case .modes: return "sparkles"
+        case .modes: return "keyboard"
         case .audio: return "mic"
         case .dictionary: return "text.book.closed"
         case .settings: return "macwindow"

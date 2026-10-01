@@ -359,13 +359,6 @@ struct VoiceInkApp: App {
         }
         .menuBarExtraStyle(.menu)
 
-        #if DEBUG
-        WindowGroup("Debug") {
-            Button("Toggle Menu Bar Only") {
-                menuBarManager.isMenuBarOnly.toggle()
-            }
-        }
-        #endif
     }
 
     private func showAccessibilityReminderIfNeeded() {

@@ -24,7 +24,6 @@ struct DashboardContent: View {
     @State private var isInsightsViewPresented = false
     @State private var selectedProductivityPeriod: DashboardProductivityPeriod = .lastSevenDays
     @State private var isAccessibilityEnabled = AXIsProcessTrusted()
-    @State private var isSystemInfoCopied = false
     @State private var isEditingDisplayName = false
     @State private var displayNameDraft = ""
     @AppStorage("dashboardDisplayName") private var dashboardDisplayName: String = ""
@@ -134,16 +133,6 @@ struct DashboardContent: View {
                         onViewAll: navigateToHistory
                     )
                 }
-            }
-
-            Spacer(minLength: DashboardLayout.footerTopSpacing)
-
-            nameEditorDismissArea {
-                HStack {
-                    Spacer()
-                    footerActionsView
-                }
-                .frame(maxWidth: .infinity)
             }
         }
         .frame(width: availableWidth, alignment: .topLeading)
@@ -515,21 +504,6 @@ struct DashboardContent: View {
         )
     }
 
-    private var footerActionsView: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Button(action: copySystemInfo) {
-                footerActionLabel(
-                    icon: isSystemInfoCopied ? "checkmark" : "doc.on.doc",
-                    title: isSystemInfoCopied ? "Copied!" : "Copy System Info",
-                    color: isSystemInfoCopied ? AppTheme.Sidebar.license : AppTheme.Sidebar.fallback
-                )
-            }
-            .buttonStyle(.plain)
-            .fixedSize(horizontal: true, vertical: true)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSystemInfoCopied)
-        }
-    }
-
     @ViewBuilder
     private func footerActionLabel(icon: String, title: LocalizedStringKey, color: Color) -> some View {
         HStack(alignment: .center, spacing: 8) {
@@ -543,20 +517,6 @@ struct DashboardContent: View {
         .padding(.horizontal, 14)
         .frame(height: 36)
         .background(AppCardBackground(cornerRadius: 18))
-    }
-
-    private func copySystemInfo() {
-        SystemInfoService.shared.copySystemInfoToClipboard()
-
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-            isSystemInfoCopied = true
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                isSystemInfoCopied = false
-            }
-        }
     }
 
     private var displayNameBinding: Binding<String> {
