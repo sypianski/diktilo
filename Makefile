@@ -130,6 +130,27 @@ dmg: check setup
 		build
 	@APP_PATH="$(DIST_DERIVED_DATA)/Build/Products/Release/Diktilo.app" && \
 	if [ ! -d "$$APP_PATH" ]; then echo "Error: Could not find built Diktilo.app at $$APP_PATH"; exit 1; fi && \
+	echo "Re-signing vendored frameworks (Xcode signs these ad-hoc regardless of" && \
+	echo "CODE_SIGN_IDENTITY — known Sparkle/SPM-package notarization gotcha)..." && \
+	FW="$$APP_PATH/Contents/Frameworks" && \
+	codesign --force --options runtime --timestamp --preserve-metadata=entitlements \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/Sparkle.framework/Versions/B/Autoupdate" && \
+	codesign --force --options runtime --timestamp --preserve-metadata=entitlements \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/Sparkle.framework/Versions/B/Updater.app" && \
+	codesign --force --options runtime --timestamp --preserve-metadata=entitlements \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/Sparkle.framework/Versions/B/XPCServices/Installer.xpc" && \
+	codesign --force --options runtime --timestamp --preserve-metadata=entitlements \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc" && \
+	codesign --force --options runtime --timestamp \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/Sparkle.framework" && \
+	codesign --force --options runtime --timestamp \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/whisper.framework" && \
+	codesign --force --options runtime --timestamp \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$FW/MediaRemoteAdapter.framework" && \
+	echo "Re-signing main app bundle..." && \
+	codesign --force --options runtime --timestamp \
+		--entitlements "$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" \
+		--sign "$(DEVELOPER_ID_IDENTITY)" "$$APP_PATH" && \
 	echo "Verifying code signature..." && \
 	codesign --verify --deep --strict --verbose=2 "$$APP_PATH" && \
 	STAGE="$(DIST_DIR)/stage" && mkdir -p "$$STAGE" && \
