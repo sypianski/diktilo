@@ -67,7 +67,7 @@ struct AppTourView: View {
 
             Divider()
 
-            AppTourCaption(step: step, onOpenSettings: openSettings, onOpenModels: openModels)
+            AppTourCaption(step: step, onOpenSettings: openSettings)
                 .padding(.horizontal, 28)
                 .padding(.top, 20)
                 .frame(maxWidth: .infinity, minHeight: 128, alignment: .topLeading)
@@ -141,15 +141,6 @@ struct AppTourView: View {
         )
         onClose()
     }
-
-    private func openModels() {
-        NotificationCenter.default.post(
-            name: .navigateToDestination,
-            object: nil,
-            userInfo: ["destination": ViewType.models.rawValue]
-        )
-        onClose()
-    }
 }
 
 // MARK: - Live data the steps describe
@@ -206,7 +197,6 @@ private enum TourFacts {
 private struct AppTourCaption: View {
     let step: AppTourStep
     let onOpenSettings: () -> Void
-    let onOpenModels: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -225,10 +215,11 @@ private struct AppTourCaption: View {
                     .padding(.top, 2)
             }
 
+            // The full explainer, not a link away: this choice decides where
+            // recordings go, so the tour shows it in whole.
             if step == .models {
-                Button("Open AI Models", action: onOpenModels)
-                    .controlSize(.small)
-                    .padding(.top, 2)
+                LocalOrKeyExplainer()
+                    .padding(.top, 4)
             }
         }
     }
@@ -273,7 +264,7 @@ private struct AppTourCaption: View {
         case .modes:
             return String(localized: "A mode sets whether AI rewrites the text and where the result goes: pasted, copied, opened in the edit window or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.")
         case .models:
-            return String(localized: "Diktilo transcribes with a local model or through an outside provider. A local model keeps your recordings on this Mac and works offline. With an API key, recordings go to the provider (e.g. Groq), which sends back the text: you create an account there, paste the key into AI Models and pay for use, often with a free allowance.")
+            return String(localized: "Diktilo transcribes with a local model or through an outside provider with an API key.")
         case .history:
             return TourFacts.isAutoCopyEnabled
                 ? String(localized: "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
@@ -470,51 +461,16 @@ private struct HistoryStage: View {
     }
 }
 
-/// Local vs key side by side, and the model the advisor picks for this Mac.
+/// The model the advisor picks for this Mac; the local-vs-key explainer
+/// itself sits in the caption, where it has room to grow.
 private struct ModelsStage: View {
     private let recommendation = ModelAdvisor.currentRecommendation()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 12) {
-                choice(
-                    icon: "macbook",
-                    title: "On this Mac",
-                    points: ["Recordings stay on the computer", "Works offline"]
-                )
-                choice(
-                    icon: "key",
-                    title: "With an API key",
-                    points: ["Sent to the provider", "Paid per use"]
-                )
-            }
-
-            ModelAdvisorSummary(recommendation: recommendation)
-                .padding(12)
-                .background(AppCardBackground(cornerRadius: 10))
-        }
-        .padding(.horizontal, 28)
-    }
-
-    private func choice(icon: String, title: LocalizedStringKey, points: [LocalizedStringKey]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                Text(title)
-                    .font(.system(size: 13, weight: .semibold))
-            }
-            .foregroundStyle(AppTheme.Text.primary)
-
-            ForEach(points.indices, id: \.self) { index in
-                Text(points[index])
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.Text.secondary)
-            }
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppCardBackground(cornerRadius: 10))
+        ModelAdvisorSummary(recommendation: recommendation)
+            .padding(16)
+            .background(AppCardBackground(cornerRadius: 12))
+            .padding(.horizontal, 28)
     }
 }
 

@@ -87,6 +87,8 @@ struct ModelManagementView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
+                    LocalOrKeyCard()
+
                     if SystemArchitecture.isIntelMac {
                         intelMacWarningBanner
                     }

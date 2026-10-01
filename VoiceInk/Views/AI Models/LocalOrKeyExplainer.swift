@@ -92,6 +92,26 @@ struct LocalOrKeyExplainer: View {
     }
 }
 
+/// The explainer as the first card of AI Models: the choice everything else on
+/// that screen depends on, so it starts expanded; folding it is remembered.
+struct LocalOrKeyCard: View {
+    @AppStorage("ModelsLocalOrKeyExpanded") private var isExpanded = true
+
+    var body: some View {
+        DisclosureGroup(isExpanded: $isExpanded) {
+            LocalOrKeyExplainer(showsMore: true)
+                .padding(.top, 10)
+        } label: {
+            Text("Local or with an API key?")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppTheme.Text.primary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(AppMaterialCardBackground(cornerRadius: AppTheme.Radius.card))
+    }
+}
+
 /// The explainer folded under one line, for screens without room to spare
 /// (onboarding): the line says the gist, the disclosure the details.
 struct LocalOrKeyDisclosure: View {

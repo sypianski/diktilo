@@ -14,7 +14,6 @@ struct ModelAdvisorCard: View {
 
     @State private var hardware = MacHardwareProfile.current()
     @State private var isStartingDownload = false
-    @State private var isExplainerExpanded = false
 
     private var language: String {
         ModelAdvisor.dictationLanguage(
@@ -86,16 +85,6 @@ struct ModelAdvisorCard: View {
                 }
                 .padding(.top, 4)
             }
-            .padding(.vertical, 10)
-
-            PerforationRule()
-
-            DisclosureGroup("Local or with an API key?", isExpanded: $isExplainerExpanded) {
-                LocalOrKeyExplainer(showsMore: true)
-                    .padding(.top, 8)
-            }
-            .font(.system(size: 13))
-            .foregroundStyle(AppTheme.Text.primary)
             .padding(.top, 10)
         }
         .padding(.horizontal, 16)
