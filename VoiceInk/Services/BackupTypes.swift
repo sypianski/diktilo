@@ -86,6 +86,7 @@ struct GeneralBackup: Codable {
     let recorderType: String?
     let appAppearancePreference: String?
     let appLanguagePreference: String?
+    let userAddressForm: String?
     let isTranscriptionCleanupEnabled: Bool?
     let transcriptionRetentionMinutes: Int?
     let isAudioCleanupEnabled: Bool?

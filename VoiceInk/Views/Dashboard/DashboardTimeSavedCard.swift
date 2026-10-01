@@ -17,6 +17,8 @@ struct DashboardTimeSavedCard: View {
 
     let summary: DashboardTimeSavedSummary
 
+    @AppStorage(UserAddressForm.userDefaultsKey) private var addressForm = UserAddressForm.masculine
+
     private var savedTimeText: String {
         Formatters.formattedCompactHoursAndMinutes(summary.timeSaved)
     }
@@ -44,7 +46,7 @@ struct DashboardTimeSavedCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("You saved")
+            Text(verbatim: UserAddressForm.localized("You saved", form: addressForm))
                 .font(.system(size: 18, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.Text.primary)
                 .lineLimit(1)

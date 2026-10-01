@@ -15,6 +15,7 @@ struct SettingsView: View {
     @AppStorage("hasCompletedOnboardingV2") private var hasCompletedOnboardingV2 = true
     @AppStorage(AppAppearancePreference.userDefaultsKey) private var appAppearancePreference = AppAppearancePreference.system
     @AppStorage(AppLanguagePreference.userDefaultsKey) private var appLanguagePreference = AppLanguagePreference.systemValue
+    @AppStorage(UserAddressForm.userDefaultsKey) private var userAddressForm = UserAddressForm.masculine
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isRealtimeEnabled) private var globalRealtimeEnabled = true
@@ -200,6 +201,20 @@ struct SettingsView: View {
                     }
                     AppLanguagePreference.apply(rawValue: normalizedValue)
                     showLanguageRestartAlert = true
+                }
+
+                if UserAddressForm.appliesToCurrentLanguage {
+                    Picker(selection: $userAddressForm) {
+                        ForEach(UserAddressForm.allCases) { form in
+                            Text(form.displayName).tag(form)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Grammatical gender")
+                            InfoTip("Used where Diktilo addresses you in Polish.")
+                        }
+                    }
+                    .pickerStyle(.menu)
                 }
 
                 Picker("Appearance", selection: $appAppearancePreference) {

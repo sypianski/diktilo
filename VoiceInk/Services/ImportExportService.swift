@@ -163,6 +163,7 @@ class ImportExportService {
             recorderType: recorderUIManager.recorderPanelStyle.rawValue,
             appAppearancePreference: AppAppearancePreference.stored.rawValue,
             appLanguagePreference: AppLanguagePreference.storedRawValue,
+            userAddressForm: UserAddressForm.current.rawValue,
             isTranscriptionCleanupEnabled: UserDefaults.standard.bool(forKey: CleanupSettingsKeys.isTranscriptionCleanupEnabled),
             transcriptionRetentionMinutes: UserDefaults.standard.integer(forKey: CleanupSettingsKeys.transcriptionRetentionMinutes),
             isAudioCleanupEnabled: UserDefaults.standard.bool(forKey: CleanupSettingsKeys.isAudioCleanupEnabled),
@@ -331,7 +332,7 @@ class ImportExportService {
             alert.messageText = String(localized: "Import Successful")
             var informativeText = message
             if needsAPIKeyReminder {
-                informativeText += "\n\n" + String(localized: "IMPORTANT: If you were using AI enhancement features, please make sure to reconfigure your API keys in the AI Models section.")
+                informativeText += "\n\n" + UserAddressForm.localized("IMPORTANT: If you were using AI enhancement features, please make sure to reconfigure your API keys in the AI Models section.")
             }
             informativeText += "\n\n" + String(localized: "It is recommended to restart Diktilo for all changes to take full effect.")
             alert.informativeText = informativeText

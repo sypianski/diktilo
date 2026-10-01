@@ -1,0 +1,54 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Diktilo is private by default. No data leaves your device unless you opt in." : {
+      "comment" : "Override of the Localizable entry with the same key, used when the user picks this grammatical gender (UserAddressForm). Only gendered strings belong here.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diktilo jest domyślnie prywatne. Żadne dane nie opuszczają urządzenia, jeśli samo tego nie wybierzesz."
+          }
+        }
+      }
+    },
+    "IMPORTANT: If you were using AI enhancement features, please make sure to reconfigure your API keys in the AI Models section." : {
+      "comment" : "Override of the Localizable entry with the same key, used when the user picks this grammatical gender (UserAddressForm). Only gendered strings belong here.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WAŻNE: jeśli korzystałoś z funkcji ulepszania AI, pamiętaj o ponownej konfiguracji kluczy API w sekcji Modele AI."
+          }
+        }
+      }
+    },
+    "You have saved %@ with Diktilo" : {
+      "comment" : "Override of the Localizable entry with the same key, used when the user picks this grammatical gender (UserAddressForm). Only gendered strings belong here.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaoszczędziłoś %@ dzięki Diktilo"
+          }
+        }
+      }
+    },
+    "You saved" : {
+      "comment" : "Override of the Localizable entry with the same key, used when the user picks this grammatical gender (UserAddressForm). Only gendered strings belong here.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaoszczędziłoś"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

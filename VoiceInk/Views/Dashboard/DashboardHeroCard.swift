@@ -21,6 +21,8 @@ struct DashboardHeroCard: View {
     let actionAccessibilityLabel: String
     let onViewInsights: () -> Void
 
+    @AppStorage(UserAddressForm.userDefaultsKey) private var addressForm = UserAddressForm.masculine
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if isLocked {
@@ -81,7 +83,7 @@ struct DashboardHeroCard: View {
             text = AttributedString(localized: "Start recording to build \(highlightedValue).")
         case .savedTime(let value):
             highlightedValue = value
-            text = AttributedString(localized: "You have saved \(highlightedValue) with Diktilo")
+            text = AttributedString(UserAddressForm.localizedFormat("You have saved %@ with Diktilo", highlightedValue, form: addressForm))
         }
 
         text.font = Self.headlineFont

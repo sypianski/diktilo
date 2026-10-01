@@ -159,6 +159,10 @@ enum BackupImporter {
             UserDefaults.standard.set(languagePreference, forKey: AppLanguagePreference.userDefaultsKey)
             AppLanguagePreference.apply(rawValue: languagePreference)
         }
+        if let rawAddressForm = general.userAddressForm,
+           let addressForm = UserAddressForm(rawValue: rawAddressForm) {
+            UserDefaults.standard.set(addressForm.rawValue, forKey: UserAddressForm.userDefaultsKey)
+        }
 
         if let transcriptionCleanup = general.isTranscriptionCleanupEnabled {
             UserDefaults.standard.set(transcriptionCleanup, forKey: CleanupSettingsKeys.isTranscriptionCleanupEnabled)

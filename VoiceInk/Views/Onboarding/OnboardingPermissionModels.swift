@@ -88,7 +88,7 @@ enum OnboardingStage: String, CaseIterable {
         case .contextAwareness:
             return String(localized: "Diktilo can select the right mode from the app you are using and the rules you configure.")
         case .trust:
-            return String(localized: "Diktilo is private by default. No data leaves your device unless you opt in.")
+            return UserAddressForm.localized("Diktilo is private by default. No data leaves your device unless you opt in.")
         case .license:
             return String(localized: "Activate an existing key, purchase a license, or start a 7-day free trial.")
         }
