@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - RecorderStatusMessageCenter
 
 /// Singleton that owns the transient status message shown inside the
-/// recorder HUD strip (28 pt band shared with RecorderDestinationHUDView).
+/// recorder HUD strip (band shared with RecorderDestinationHUDView).
 /// Any code running on @MainActor can call `show(_:icon:text:duration:)`;
 /// the message auto-clears after the duration elapses.  A new `show` call
 /// cancels the pending auto-clear and starts a fresh timer.
@@ -49,9 +49,19 @@ final class RecorderStatusMessageCenter: ObservableObject {
     }
 }
 
+// MARK: - HUD metrics
+
+enum RecorderHUDMetrics {
+    /// Height of the strip under the recorder's control bar. Tall enough that
+    /// both the chip row and the status capsule get vertical breathing room.
+    static let bandHeight: CGFloat = 34
+}
+
 // MARK: - RecorderStatusMessageView
 
-/// Renders a single status message as a capsule fitting the 28 pt HUD band.
+/// Renders a single status message as a capsule inside the HUD band. The
+/// capsule stays ~24 pt tall so it keeps ≥5 pt clear of the band's edges
+/// (the divider above and the panel's bottom edge).
 struct RecorderStatusMessageView: View {
     let message: RecorderStatusMessageCenter.Message
 
@@ -67,7 +77,7 @@ struct RecorderStatusMessageView: View {
                 .lineLimit(1)
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 5)
+        .padding(.vertical, 4)
         .background(
             Capsule()
                 .fill(Color.white.opacity(0.10))
@@ -76,7 +86,7 @@ struct RecorderStatusMessageView: View {
                         .strokeBorder(strokeColor, lineWidth: 0.5)
                 )
         )
-        .frame(height: 28)
+        .frame(height: RecorderHUDMetrics.bandHeight)
     }
 
     private var iconColor: Color {

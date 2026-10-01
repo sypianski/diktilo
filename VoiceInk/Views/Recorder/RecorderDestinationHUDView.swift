@@ -22,7 +22,10 @@ struct RecorderDestinationHUDView: View {
     @State private var items: [FinishDestinationBindings.HUDItem] = []
 
     var body: some View {
-        Group {
+        // ZStack, not Group: modifiers on a Group are applied to its children,
+        // so with no message and no chips yet there was nothing for onAppear to
+        // attach to — items were never built and the band stayed empty.
+        ZStack {
             if let msg = messageCenter.current {
                 // Status message takes over the strip, crossfading with chips.
                 HStack {
@@ -37,7 +40,7 @@ struct RecorderDestinationHUDView: View {
             }
         }
         .animation(.easeOut(duration: 0.22), value: messageCenter.current)
-        .frame(height: 28)
+        .frame(height: RecorderHUDMetrics.bandHeight)
         .onAppear { rebuildItems() }
         .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { _ in
             rebuildItems()
@@ -59,7 +62,8 @@ struct RecorderDestinationHUDView: View {
                 }
             }
             .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            // Fill the band so the chips sit vertically centred in it.
+            .frame(maxHeight: .infinity)
         }
     }
 
