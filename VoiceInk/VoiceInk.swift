@@ -6,7 +6,8 @@ import OSLog
 import AppIntents
 import FluidAudio
 
-@main
+// Launched from DiktiloMain (AppRuntime.swift), which keeps this whole app out
+// of unit test runs.
 struct VoiceInkApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let container: ModelContainer

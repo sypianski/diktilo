@@ -14,6 +14,16 @@ LOCAL_DERIVED_DATA := $(CURDIR)/.local-build
 LOCAL_SIGN_IDENTITY ?= -
 LOCAL_SIGN_KEYCHAIN ?=
 
+# `make test` always signs the test host with the stable local identity (see
+# the target). TEST_SIGN_LEAF is the leading hex of that certificate's leaf
+# hash; the run aborts unless the host's designated requirement pins it.
+TEST_DERIVED_DATA := $(CURDIR)/.test-build
+TEST_ARCH := $(shell uname -m)
+TEST_SIGN_IDENTITY ?= Diktilo Local
+TEST_SIGN_KEYCHAIN ?= $(HOME)/Library/Keychains/diktilo-signing.keychain-db
+TEST_SIGN_KEYCHAIN_PASSWORD ?= diktilo
+TEST_SIGN_LEAF ?= ddb5b7b2
+
 # Code signing for `make dmg`/`make notarize` — distribution outside the Mac
 # App Store (Developer ID, not sandboxed; see macos/CLAUDE.md for why the App
 # Store is off the table: GPLv3 vs. the Store Developer Agreement). Reuses the
@@ -26,7 +36,7 @@ NOTARY_PROFILE ?= diktilo-notary
 DIST_DERIVED_DATA := $(CURDIR)/.dist-build
 DIST_DIR := $(CURDIR)/dist
 
-.PHONY: all clean whisper setup build test-build local check healthcheck help dev run dmg notarize
+.PHONY: all clean whisper setup build test-build test local check healthcheck help dev run dmg notarize
 
 # Default target
 all: check build
@@ -66,12 +76,48 @@ setup: whisper
 build: setup
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug CODE_SIGN_IDENTITY="" build
 
-# Compile the test target without running it. The test host is a full copy
-# of the app sharing the installed Diktilo's bundle id, so actually running
-# the tests (`test`/`test-without-building`) here would risk clobbering the
-# installed app's TCC grants — do that only in a disposable worktree/VM.
+# Compile the test targets (unit + UI) without running them.
 test-build: setup
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug CODE_SIGN_IDENTITY="" build-for-testing
+
+# Run the unit tests (VoiceInkTests; UI tests are excluded — they launch the
+# full app). The test host is a Diktilo.app with the installed app's bundle id,
+# so before anything launches it, it is re-signed with the same stable identity
+# as the installed build: TCC keys grants on the designated requirement, and an
+# ad-hoc host would not match it. xcodebuild can't reach the signing keychain
+# over ssh, hence the separate codesign step. Inside the host the app detects
+# the test run (AppRuntime.isRunningTests) and starts nothing but a bare run loop.
+test: check setup
+	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug \
+		-derivedDataPath "$(TEST_DERIVED_DATA)" \
+		-destination "platform=macOS,arch=$(TEST_ARCH)" \
+		CODE_SIGNING_ALLOWED=NO \
+		SWIFT_ACTIVE_COMPILATION_CONDITIONS='$$(inherited) LOCAL_BUILD' \
+		build-for-testing
+	@APP="$(TEST_DERIVED_DATA)/Build/Products/Debug/Diktilo.app"; \
+	KC="$(TEST_SIGN_KEYCHAIN)"; \
+	[ -d "$$APP/Contents/PlugIns/VoiceInkTests.xctest" ] || { echo "Test host not found: $$APP"; exit 1; }; \
+	security unlock-keychain -p "$(TEST_SIGN_KEYCHAIN_PASSWORD)" "$$KC" || exit 1; \
+	ORIG=$$(security list-keychains -d user | tr -d '"' | xargs); \
+	trap 'security list-keychains -d user -s $$ORIG' EXIT; trap 'exit 130' INT TERM; \
+	security list-keychains -d user -s $$ORIG "$$KC" || exit 1; \
+	echo "Re-signing test host with '$(TEST_SIGN_IDENTITY)'..."; \
+	codesign --force --deep --sign "$(TEST_SIGN_IDENTITY)" --keychain "$$KC" \
+		--entitlements "$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" "$$APP" || exit 1; \
+	codesign --verify --deep --strict "$$APP" || exit 1; \
+	DR=$$(codesign -d -r- "$$APP" 2>&1 | grep '^designated'); \
+	echo "$$DR"; \
+	echo "$$DR" | grep -q 'certificate leaf = H"$(TEST_SIGN_LEAF)' || \
+		{ echo "Test host is not signed with the '$(TEST_SIGN_IDENTITY)' leaf $(TEST_SIGN_LEAF), not running tests."; exit 1; }; \
+	if [ -d /Applications/Diktilo.app ]; then \
+		INSTALLED=$$(codesign -d -r- /Applications/Diktilo.app 2>&1 | grep '^designated'); \
+		[ "$$DR" = "$$INSTALLED" ] || \
+			{ echo "Designated requirement differs from /Applications/Diktilo.app:"; echo "$$INSTALLED"; echo "Not running tests."; exit 1; }; \
+	fi
+	xcodebuild test-without-building \
+		-xctestrun "$$(ls -t "$(TEST_DERIVED_DATA)"/Build/Products/*.xctestrun | head -1)" \
+		-destination "platform=macOS,arch=$(TEST_ARCH)" \
+		-only-testing:VoiceInkTests
 
 # Build for local use without Apple Developer certificate
 local: check setup
@@ -223,6 +269,8 @@ help:
 	@echo "  whisper            Clone and build whisper.cpp XCFramework"
 	@echo "  setup              Copy whisper XCFramework to VoiceInk project"
 	@echo "  build              Build the VoiceInk Xcode project"
+	@echo "  test-build         Compile unit + UI test targets without running them"
+	@echo "  test               Run unit tests in a Diktilo Local-signed, test-mode host"
 	@echo "  local              Build for local use (no Apple Developer certificate needed)"
 	@echo "  dmg                Build a Developer ID-signed, hardened-runtime .dmg (dist/)"
 	@echo "  notarize           Submit dist/*.dmg to Apple, staple ticket, verify Gatekeeper"
