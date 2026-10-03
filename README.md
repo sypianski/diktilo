@@ -6,7 +6,7 @@
 
   [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.4%2B-brightgreen)
-  ![Interface](https://img.shields.io/badge/interface-English%20%C2%B7%20Polski%20%C2%B7%20Esperanto-orange)
+  ![Interface](https://img.shields.io/badge/interface-English%20%C2%B7%20Polski%20%C2%B7%20Esperanto%20%C2%B7%20Catal%C3%A0-orange)
 
   <p><a href="https://sypian.ski/diktilo/">Website</a></p>
 </div>
@@ -78,7 +78,7 @@ If AI enhancement is on, Diktilo starts working on it while you are still speaki
 - Dictionary and word replacements for names, terms and abbreviations.
 - Modes: separate settings for email, notes, code and so on.
 - Transcription of audio files.
-- Interface in English, Polish and Esperanto.
+- Interface in English, Polish, Esperanto and Catalan.
 
 ## Building from source
 
