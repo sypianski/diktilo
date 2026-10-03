@@ -135,6 +135,22 @@ struct InlineHistoryView: View {
                 }
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .transcriptionDeleted)) { _ in
+            // Deletions may come from the other history surface (tab vs. window) or
+            // auto-cleanup, so drop references to models that may no longer exist.
+            selectedTranscriptions.removeAll()
+            Task {
+                await loadInitialContent()
+                let loadedIds = Set(displayedTranscriptions.map(\.id))
+                if let id = expandedId, !loadedIds.contains(id) {
+                    expandedId = nil
+                }
+                if let id = panelTranscriptionId, !loadedIds.contains(id) {
+                    panelTranscriptionId = nil
+                    closePanel()
+                }
+            }
+        }
     }
 
     // MARK: - Top Bar
@@ -416,7 +432,6 @@ struct InlineHistoryView: View {
             do {
                 try modelContext.save()
                 NotificationCenter.default.post(name: .transcriptionDeleted, object: nil)
-                await loadInitialContent()
             } catch {
                 print("Error saving deletion: \(error.localizedDescription)")
                 await loadInitialContent()
