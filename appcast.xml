@@ -9,5 +9,20 @@
         <title>Diktilo</title>
         <link>https://sypian.ski/diktilo/appcast.xml</link>
         <language>en</language>
+        <item>
+            <title>2.8.7</title>
+            <description><![CDATA[
+                <ul>
+                    <li>Interface now also in Catalan, alongside English, Polish and Esperanto.</li>
+                    <li>Automatic updates: Diktilo checks for new versions itself (Check for Updates… in the app menu).</li>
+                    <li>The Notch recorder keeps the mode icon inside the pill and gets a taller shortcut strip.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Sat, 03 Oct 2026 20:37:05 +0200</pubDate>
+            <sparkle:version>1626</sparkle:version>
+            <sparkle:shortVersionString>2.8.7</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.4</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/sypianski/diktilo/releases/download/v2.8.7/Diktilo.dmg" sparkle:edSignature="p9dzmTNUr7WfVqj/ylG+jxiDo3JMW2kgaEXOgPIBZBnOQpp72Y1+rqjk+IVnlraofIS2GQ3jR4orXJLxGlaGDQ==" length="35461858" type="application/octet-stream"/>
+        </item>
     </channel>
 </rss>
