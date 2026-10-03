@@ -1,107 +1,96 @@
 <div align="center">
-  <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="180" height="180" />
-  <h1>VoiceInk</h1>
-  <p>Voice to text app for macOS to transcribe what you say to text almost instantly</p>
+  <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="160" height="160" alt="Diktilo icon" />
+  <h1>Diktilo</h1>
+  <p>Dictation for the Mac. Hold <kbd>Fn</kbd>, speak, let go. The text appears where the cursor is, in any app.</p>
 
   [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-  ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-brightgreen)
-  [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Beingpax/VoiceInk)](https://github.com/Beingpax/VoiceInk/releases)
-  ![GitHub all releases](https://img.shields.io/github/downloads/Beingpax/VoiceInk/total)
-  ![GitHub stars](https://img.shields.io/github/stars/Beingpax/VoiceInk?style=social)
-  <p>
-    <a href="https://tryvoiceink.com">Website</a> •
-    <a href="https://www.youtube.com/@tryvoiceink">YouTube</a>
-  </p>
+  ![Platform](https://img.shields.io/badge/platform-macOS%2014.4%2B-brightgreen)
+  ![Interface](https://img.shields.io/badge/interface-English%20%C2%B7%20Polski%20%C2%B7%20Esperanto-orange)
 
-  <a href="https://tryvoiceink.com">
-    <img src="https://img.shields.io/badge/Download%20Now-Latest%20Version-blue?style=for-the-badge&logo=apple" alt="Download VoiceInk" width="250"/>
-  </a>
+  <p><a href="https://sypian.ski/diktilo/">sypian.ski/diktilo</a> · <a href="#polski">Polski</a> · <a href="#esperanto">Esperanto</a></p>
 </div>
 
----
+<p align="center">
+  <img src="docs/recorder-mini.png" width="483" alt="The Mini recorder while dictating: live transcript above, waveform and record button in the middle, shortcut strip below" />
+</p>
 
-VoiceInk is a native macOS application that transcribes what you say to text almost instantly. You can find all the information and download the app from [here](https://tryvoiceink.com). 
+## Download
 
-![VoiceInk Mac App](https://github.com/user-attachments/assets/12367379-83e7-48a6-b52c-4488a6a04bba)
+- [Diktilo for Apple Silicon](https://github.com/sypianski/diktilo/releases/latest/download/Diktilo-arm64.dmg) (M1 and later)
+- [Diktilo for Intel](https://github.com/sypianski/diktilo/releases/latest/download/Diktilo-x86_64.dmg)
 
-After dedicating the past 5 months to developing this app, I've decided to open source it for the greater good. 
+Not sure which? Apple menu → About This Mac. “Apple M…” means Apple Silicon.
 
-My goal is to make it **the most efficient and privacy-focused voice-to-text solution for macOS** that is a joy to use. While the source code is now open for experienced developers to build and contribute, purchasing a license helps support continued development and gives you access to automatic updates, priority support, and upcoming features.
+1. Open the `.dmg` and drag Diktilo into **Applications**.
+2. Launch it. The app is signed and notarised by Apple.
+3. Allow access to the **microphone** and to **Accessibility** (the second lets Diktilo type into other apps).
+4. Accept the suggested model and wait for it to download. Then hold <kbd>Fn</kbd> and speak.
 
-## Features
+Requires macOS 14.4 Sonoma or later. Local models run best on Apple Silicon.
 
-- 🎙️ **Accurate Transcription**: Local AI models that transcribe your voice to text with 99% accuracy, almost instantly
-- 🔒 **Privacy First**: 100% offline processing ensures your data never leaves your device
-- ⚡ **Modes**: Intelligent app detection automatically applies your perfect pre-configured settings based on the app/ URL you're on
-- 🧠 **Context Aware**: Smart AI that understands your screen content and adapts to the context
-- 🎯 **Global Shortcuts**: Configurable keyboard shortcuts for quick recording and push-to-talk functionality
-- 📝 **Personal Dictionary**: Train the AI to understand your unique terminology with custom words, industry terms, and smart text replacements
-- 🔄 **Smart Modes**: Instantly switch between AI-powered modes optimized for different writing styles and contexts
-- 🤖 **AI Assistant**: Built-in voice assistant mode for a quick chatGPT like conversational assistant
+## Your recordings stay on your Mac
 
-## Get Started
+After installing, Diktilo downloads a speech recognition model to your disk. You download it once; from then on it runs on the Mac itself. **The recording never leaves the computer and dictation works without internet.**
 
-### Download
-Get the latest version with a free trial from [tryvoiceink.com](https://tryvoiceink.com). Your purchase helps me work on VoiceInk full-time and continuously improve it with new features and updates.
+| | Where the recording goes |
+|---|---|
+| **Local model** (default) | Nowhere. Speech becomes text on your own processor. |
+| **API key** (only if you enter one) | To the provider you chose (Groq, OpenAI, ElevenLabs, Deepgram, Mistral, Gemini…), which sends back text. You pay the provider and need internet. |
+| **Your own server** | Only to it, e.g. [speaches](https://github.com/speaches-ai/speaches) on your VPS, with live streaming over the OpenAI Realtime API. |
 
-#### Homebrew
-Alternatively, you can install VoiceInk via `brew`:
+An API key is your ID with an outside provider: you open an account there, copy the key and paste it into Diktilo. AI enhancement of the text (punctuation, rewording) follows the same rule: locally through Ollama, or with a provider's key, in which case only the text is sent, never the recording.
 
-```shell
-brew install --cask voiceink
-```
+## A model chosen for your Mac
 
-### Build from Source
-As an open-source project, you can build VoiceInk yourself by following the instructions in [BUILDING.md](BUILDING.md). However, the compiled version includes additional benefits like automatic updates, priority support via Discord and email, and helps fund ongoing development.
+On first launch Diktilo reads the chip, memory, macOS version and the languages you dictate in, and suggests a model:
 
-## Requirements
+| Your Mac and languages | Suggested model |
+|---|---|
+| Apple Silicon, English only | Parakeet V2 (V3 as an alternative) |
+| Apple Silicon, European languages (Polish, German, French, Ukrainian and 21 more) | Parakeet V3: fast, light on memory, transcribes live, recognises which language you speak |
+| Apple Silicon, other languages, 8 GB RAM or more | Whisper Large v3 Turbo |
+| Apple Silicon, other languages, less than 8 GB | Whisper Base |
+| Apple Silicon on macOS 26, one of de/en/es/fr/it/ja/ko/pt/zh | Apple Speech as an alternative, built into the system |
+| Intel | a small Whisper model, with a hint that a cloud model will be faster |
 
-- macOS 14.4 or later
+You can always pick another model by hand.
 
-## Documentation
+## You see the text before you finish speaking
 
-- [Building from Source](BUILDING.md) - Detailed instructions for building the project
-- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to VoiceInk
-- [Code of Conduct](CODE_OF_CONDUCT.md) - Our community standards
+While you hold the key, a small recorder shows the waveform and the text as it is being written. **Mini** (the default) is a bar at the bottom of the screen; **Notch** slides out of the MacBook's screen notch. Below it, a strip shows the shortcuts that finish the recording and send the text somewhere specific.
 
-## Contributing
+If AI enhancement is on, Diktilo starts working on it while you are still speaking, so the corrected text is ready sooner when you let go.
 
-This project is **not accepting pull requests** at this time. You're welcome to fork and modify VoiceInk for your own use.
+## Where the text goes
 
-You can still contribute by:
-- Reporting bugs via [issues](https://github.com/Beingpax/VoiceInk/issues)
-- Suggesting features or enhancements
-- Improving documentation via issues
+- **Paste** at the cursor, in the app you are writing in.
+- **Copy** to the clipboard; paste it yourself with <kbd>⌘V</kbd>. By default on <kbd>⌃⌥C</kbd>.
+- **Edit window** with vim keys, before it goes anywhere (needs the separate Vimileto app).
+- **A .md or .txt file**, e.g. appending to a daily note.
+- **A shell command** (the text goes to standard input) or **a URL scheme**.
 
-For more details, see our [Contributing Guidelines](CONTRIBUTING.md). For build instructions, see our [Building Guide](BUILDING.md).
+<kbd>⌘↩</kbd> finishes the recording in the current mode; <kbd>⌥1</kbd>…<kbd>⌥0</kbd> switch modes.
 
-## License
+## Also
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+- Several dictation languages at once; the model recognises which one you are speaking.
+- Dictionary and word replacements for names, terms and abbreviations.
+- Modes: separate settings for email, notes, code and so on.
+- Transcription of audio files.
+- Interface in English, Polish and Esperanto.
 
-## Support
+## Polski
 
-If you encounter any issues or have questions, please:
-1. Check the existing issues in the GitHub repository
-2. Create a new issue if your problem isn't already reported
-3. Provide as much detail as possible about your environment and the problem
+Dyktowanie na Macu. Trzymasz <kbd>Fn</kbd>, mówisz, puszczasz, a tekst pojawia się tam, gdzie stoi kursor. Domyślnie Diktilo używa modelu pobranego na dysk: nagranie nie wychodzi z komputera, a dyktowanie działa bez internetu. Nagranie trafia na zewnątrz tylko wtedy, gdy sam wpiszesz klucz API dostawcy albo wskażesz własny serwer. Aplikacja dobiera model do Twojego Maca, pokazuje tekst w trakcie mówienia i pozwala wybrać, czy tekst ma być wklejony od razu, czy trafić do schowka. Interfejs jest po polsku, angielsku i w esperanto. Więcej: [sypian.ski/diktilo](https://sypian.ski/diktilo/).
 
-## Acknowledgments
+## Esperanto
 
-### Core Technology
-- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) - High-performance inference of OpenAI's Whisper model
-- [FluidAudio](https://github.com/FluidInference/FluidAudio) - Used for Parakeet model implementation
+Diktado por Mac. Tenu <kbd>Fn</kbd>, parolu, liberigu, kaj la teksto aperas tie, kie staras la kursoro. Defaŭlte Diktilo uzas modelon elŝutitan al la disko: la registraĵo ne forlasas la komputilon, kaj diktado funkcias sen interreto. La registraĵo iras eksteren nur se vi mem enigas API-ŝlosilon de provizanto aŭ indikas propran servilon. La aplikaĵo elektas modelon laŭ via Mac, montras la tekston dum vi parolas kaj lasas vin elekti, ĉu alglui la tekston tuj aŭ meti ĝin en la tondujon. La interfaco estas pola, angla kaj Esperanto. Pli: [sypian.ski/diktilo](https://sypian.ski/diktilo/#eo).
 
-### Essential Dependencies
-- [Sparkle](https://github.com/sparkle-project/Sparkle) - Keeping VoiceInk up to date
-- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) - User-customizable keyboard shortcuts
-- [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin) - Launch at login functionality
-- [MediaRemoteAdapter](https://github.com/ejbills/mediaremote-adapter) - Media playback control during recording
-- [Zip](https://github.com/marmelroy/Zip) - File compression and decompression utilities
-- [SelectedTextKit](https://github.com/tisfeng/SelectedTextKit) - A modern macOS library for getting selected text
-- [Swift Atomics](https://github.com/apple/swift-atomics) - Low-level atomic operations for thread-safe concurrent programming
+## Building from source
 
+`make local` builds an unsigned app for your own use (needs Xcode); see [BUILDING.md](BUILDING.md).
 
----
+## Credits
 
-Made with ❤️ by Pax
+Diktilo is a fork of [VoiceInk](https://github.com/Beingpax/VoiceInk) by Pax, licensed under the GNU General Public License v3.0 (see [LICENSE](LICENSE)). It builds on [whisper.cpp](https://github.com/ggerganov/whisper.cpp), [FluidAudio](https://github.com/FluidInference/FluidAudio) (Parakeet), [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts), [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin), [MediaRemoteAdapter](https://github.com/ejbills/mediaremote-adapter), [Zip](https://github.com/marmelroy/Zip), [SelectedTextKit](https://github.com/tisfeng/SelectedTextKit) and [Swift Atomics](https://github.com/apple/swift-atomics).
