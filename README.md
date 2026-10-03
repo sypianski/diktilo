@@ -8,7 +8,7 @@
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.4%2B-brightgreen)
   ![Interface](https://img.shields.io/badge/interface-English%20%C2%B7%20Polski%20%C2%B7%20Esperanto-orange)
 
-  <p><a href="https://sypian.ski/diktilo/">Website</a> · <a href="#polski">Polski</a> · <a href="#esperanto">Esperanto</a></p>
+  <p><a href="https://sypian.ski/diktilo/">Website</a></p>
 </div>
 
 <p align="center">
@@ -79,14 +79,6 @@ If AI enhancement is on, Diktilo starts working on it while you are still speaki
 - Modes: separate settings for email, notes, code and so on.
 - Transcription of audio files.
 - Interface in English, Polish and Esperanto.
-
-## Polski
-
-Dyktowanie na Macu. Trzymasz <kbd>Fn</kbd>, mówisz, puszczasz, a tekst pojawia się tam, gdzie stoi kursor. Domyślnie Diktilo używa modelu pobranego na dysk: nagranie nie wychodzi z komputera, a dyktowanie działa bez internetu. Nagranie trafia na zewnątrz tylko wtedy, gdy sam wpiszesz klucz API dostawcy albo wskażesz własny serwer. Aplikacja dobiera model do Twojego Maca, pokazuje tekst w trakcie mówienia i pozwala wybrać, czy tekst ma być wklejony od razu, czy trafić do schowka. Interfejs jest po polsku, angielsku i w esperanto. Więcej na [stronie aplikacji](https://sypian.ski/diktilo/#pl).
-
-## Esperanto
-
-Diktado por Mac. Tenu <kbd>Fn</kbd>, parolu, liberigu, kaj la teksto aperas tie, kie staras la kursoro. Defaŭlte Diktilo uzas modelon elŝutitan al la disko: la registraĵo ne forlasas la komputilon, kaj diktado funkcias sen interreto. La registraĵo iras eksteren nur se vi mem enigas API-ŝlosilon de provizanto aŭ indikas propran servilon. La aplikaĵo elektas modelon laŭ via Mac, montras la tekston dum vi parolas kaj lasas vin elekti, ĉu alglui la tekston tuj aŭ meti ĝin en la tondujon. La interfaco estas pola, angla kaj Esperanto. Pli en la [retejo de la aplikaĵo](https://sypian.ski/diktilo/#eo).
 
 ## Building from source
 
