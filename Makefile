@@ -155,7 +155,8 @@ local: check setup
 	fi
 
 # Build a notarization-ready, Developer ID-signed universal (arm64 + x86_64)
-# .dmg for distribution outside the Mac App Store. Does NOT notarize — run
+# .dmg for distribution outside the Mac App Store. DIST_BUILD turns on the
+# Sparkle updater (local builds keep it off). Does NOT notarize — run
 # `make notarize` after.
 dmg: check setup
 	@security find-identity -v -p codesigning | grep -q "Developer ID Application" || \
@@ -180,7 +181,7 @@ dmg: check setup
 		ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
 		OTHER_CODE_SIGN_FLAGS="--timestamp" \
 		CODE_SIGN_ENTITLEMENTS="$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" \
-		SWIFT_ACTIVE_COMPILATION_CONDITIONS='$$(inherited) LOCAL_BUILD' \
+		SWIFT_ACTIVE_COMPILATION_CONDITIONS='$$(inherited) LOCAL_BUILD DIST_BUILD' \
 		CURRENT_PROJECT_VERSION="$(BUILD_NUMBER)" \
 		build
 	@APP_PATH="$(DIST_DERIVED_DATA)/Build/Products/Release/Diktilo.app" && \
@@ -208,6 +209,12 @@ dmg: check setup
 		--sign "$(DEVELOPER_ID_IDENTITY)" "$$APP_PATH" && \
 	echo "Verifying code signature..." && \
 	codesign --verify --deep --strict --verbose=2 "$$APP_PATH" && \
+	for BIN in "$$APP_PATH/Contents/MacOS/Diktilo" "$$FW/whisper.framework/whisper" \
+		"$$FW/MediaRemoteAdapter.framework/MediaRemoteAdapter"; do \
+		ARCHS_FOUND=$$(lipo -archs "$$BIN") && echo "$$BIN: $$ARCHS_FOUND" && \
+		case "$$ARCHS_FOUND" in *x86_64*arm64*|*arm64*x86_64*) ;; \
+			*) echo "Error: $$BIN is not universal"; exit 1;; esac; \
+	done && \
 	STAGE="$(DIST_DIR)/stage" && mkdir -p "$$STAGE" && \
 	ditto "$$APP_PATH" "$$STAGE/Diktilo.app" && \
 	ln -s /Applications "$$STAGE/Applications" && \

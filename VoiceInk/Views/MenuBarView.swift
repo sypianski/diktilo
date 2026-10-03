@@ -10,6 +10,7 @@ struct MenuBarView: View {
     @EnvironmentObject var menuBarManager: MenuBarManager
     @EnvironmentObject var enhancementService: AIEnhancementService
     @EnvironmentObject var aiService: AIService
+    @EnvironmentObject var updaterViewModel: UpdaterViewModel
     @ObservedObject private var modeManager = OutputProfileManager.shared
     @ObservedObject var audioDeviceManager = AudioDeviceManager.shared
     @AppStorage("hasCompletedOnboardingV2") private var hasCompletedOnboardingV2 = false
@@ -143,6 +144,10 @@ struct MenuBarView: View {
                 menuBarManager.openMainWindowAndNavigate(to: "Settings")
             }
             .keyboardShortcut(",", modifiers: .command)
+
+            if UpdaterViewModel.isEnabled {
+                CheckForUpdatesView(updaterViewModel: updaterViewModel)
+            }
 
             Button("Quit Diktilo") {
                 NSApplication.shared.terminate(nil)

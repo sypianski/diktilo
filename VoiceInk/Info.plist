@@ -2,14 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Sparkle auto-update deliberately disabled in this fork: the upstream
-	     appcast (beingpax.github.io/VoiceInk) would offer VoiceInk builds that
-	     overwrite Diktilo and break its stable code signature / TCC grants.
-	     No SUFeedURL, automatic checks off. -->
+	<!-- Sparkle reads Diktilo's own appcast, never upstream VoiceInk's.
+	     Updates are EdDSA-signed; the private key is in 1Password ("Diktilo
+	     Sparkle EdDSA key", vault other) and on the Mac in
+	     ~/.config/diktilo/sparkle_ed_private.txt. The updater only starts in
+	     `make dmg` builds (DIST_BUILD), see UpdaterViewModel. -->
 	<key>LSUIElement</key>
 	<false/>
+	<key>SUFeedURL</key>
+	<string>https://sypian.ski/diktilo/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>4U0FLw6/bOTvyeA8cWqaj4iiWt0yO6q0kqeTCFq0UUY=</string>
 	<key>SUEnableAutomaticChecks</key>
-	<false/>
+	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Diktilo needs access to your microphone to record audio for transcription.</string>
 	<key>NSAppleEventsUsageDescription</key>

@@ -329,6 +329,11 @@ struct VoiceInkApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) { }
+            #if DIST_BUILD
+            CommandGroup(after: .appInfo) {
+                CheckForUpdatesView(updaterViewModel: updaterViewModel)
+            }
+            #endif
             CommandGroup(replacing: .help) {
                 Button("Diktilo Tour") {
                     AppTour.show()
@@ -386,11 +391,20 @@ struct VoiceInkApp: App {
 class UpdaterViewModel: ObservableObject {
     private let updaterController: SPUStandardUpdaterController
 
+    /// Sparkle runs only in `make dmg` builds (DIST_BUILD). Local builds are
+    /// signed with "Diktilo Local"; installing a Developer ID update over them
+    /// would change the designated requirement and drop every TCC grant.
+    #if DIST_BUILD
+    static let isEnabled = true
+    #else
+    static let isEnabled = false
+    #endif
+
     @Published var canCheckForUpdates = false
     @Published var automaticallyChecksForUpdates = false
 
     init() {
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+        updaterController = SPUStandardUpdaterController(startingUpdater: Self.isEnabled, updaterDelegate: nil, userDriverDelegate: nil)
 
         automaticallyChecksForUpdates = updaterController.updater.automaticallyChecksForUpdates
 
