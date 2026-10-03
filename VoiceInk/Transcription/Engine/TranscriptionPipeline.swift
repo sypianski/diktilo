@@ -29,7 +29,7 @@ class TranscriptionPipeline {
     /// Offered on the failure notification; set by the engine, which owns the
     /// managers the retry needs.
     var retryLastTranscription: (() -> Void)?
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "TranscriptionPipeline")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "TranscriptionPipeline")
 
     init(
         modelContext: ModelContext,

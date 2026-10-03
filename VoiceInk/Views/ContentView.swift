@@ -15,7 +15,7 @@ enum ViewType: String, CaseIterable, Identifiable {
 }
 
 struct ContentView: View {
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "ContentView")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "ContentView")
     @State private var selectedView: ViewType = .dashboard
     @AppStorage(AppTour.hasSeenKey) private var hasSeenTour = false
     @State private var isTourPresented = false

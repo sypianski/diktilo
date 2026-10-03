@@ -26,7 +26,7 @@ NOTARY_PROFILE ?= diktilo-notary
 DIST_DERIVED_DATA := $(CURDIR)/.dist-build
 DIST_DIR := $(CURDIR)/dist
 
-.PHONY: all clean whisper setup build local check healthcheck help dev run dmg notarize
+.PHONY: all clean whisper setup build test-build local check healthcheck help dev run dmg notarize
 
 # Default target
 all: check build
@@ -65,6 +65,13 @@ setup: whisper
 
 build: setup
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug CODE_SIGN_IDENTITY="" build
+
+# Compile the test target without running it. The test host is a full copy
+# of the app sharing the installed Diktilo's bundle id, so actually running
+# the tests (`test`/`test-without-building`) here would risk clobbering the
+# installed app's TCC grants — do that only in a disposable worktree/VM.
+test-build: setup
+	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug CODE_SIGN_IDENTITY="" build-for-testing
 
 # Build for local use without Apple Developer certificate
 local: check setup

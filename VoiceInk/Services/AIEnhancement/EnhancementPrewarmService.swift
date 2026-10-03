@@ -9,7 +9,7 @@ import os
 /// partial transcript → `consume` from the pipeline with the final text →
 /// `cancel` on recording cancel/cleanup.
 ///
-/// Disable with `defaults write com.prakashjoshipax.VoiceInk EnhancementPrewarmEnabled -bool NO`.
+/// Disable with `defaults write cc.sypianski.diktilo EnhancementPrewarmEnabled -bool NO`.
 @MainActor
 final class EnhancementPrewarmService {
 
@@ -20,7 +20,7 @@ final class EnhancementPrewarmService {
     /// Minimum spacing between speculative requests.
     private static let minInterval: TimeInterval = 2.0
 
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "EnhancementPrewarmService")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "EnhancementPrewarmService")
     private let enhancementService: AIEnhancementService
 
     private var configuration: EnhancementRuntimeConfiguration?

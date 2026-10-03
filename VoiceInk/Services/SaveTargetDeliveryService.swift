@@ -40,7 +40,7 @@ enum SaveTargetDeliveryError: Error, LocalizedError {
 
 enum SaveTargetDeliveryService {
     private static let logger = Logger(
-        subsystem: "com.prakashjoshipax.voiceink",
+        subsystem: "cc.sypianski.diktilo",
         category: "SaveTargetDeliveryService"
     )
 

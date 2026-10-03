@@ -24,7 +24,7 @@ final class TranscriptEditManager {
     /// Retained for API compatibility with older call sites / settings.
     static let vimEnabledKey = "EditWindowVimEnabled"
 
-    private let logger = Logger(subsystem: "com.prakashjoshipax.VoiceInk", category: "VimiletoBridge")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "VimiletoBridge")
     private static let vimiletoBundleID = "cc.sypianski.vimileto"
     private static let doneNotification = "cc.sypianski.vimileto.session.done"
 

@@ -8,7 +8,7 @@ import os
 @MainActor
 final class SakoClient {
     static let shared = SakoClient()
-    private let logger = Logger(subsystem: "com.prakashjoshipax.VoiceInk", category: "SakoClient")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "SakoClient")
 
     private init() {}
 

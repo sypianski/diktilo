@@ -1,5 +1,5 @@
 import Testing
-@testable import VoiceInk
+@testable import Diktilo
 
 struct ModelAdvisorTests {
     private func mac(

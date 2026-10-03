@@ -5,7 +5,7 @@ import OSLog
 class TranscriptionAutoCleanupService {
     static let shared = TranscriptionAutoCleanupService()
 
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "TranscriptionAutoCleanupService")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "TranscriptionAutoCleanupService")
     private var modelContext: ModelContext?
 
     private var recordingsDirectory: URL {

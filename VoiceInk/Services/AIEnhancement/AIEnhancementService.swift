@@ -6,7 +6,7 @@ import LLMkit
 
 @MainActor
 class AIEnhancementService: ObservableObject {
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "AIEnhancementService")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "AIEnhancementService")
 
     @Published var customPrompts: [CustomPrompt] {
         didSet {

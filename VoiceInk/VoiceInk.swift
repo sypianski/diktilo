@@ -45,7 +45,7 @@ struct VoiceInkApp: App {
         OnboardingV2Migration.prepareIfNeeded()
         LegacyFinishShortcutMigration.runIfNeeded()
 
-        let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "Initialization")
+        let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "Initialization")
         // Keep existing model order stable; append new models after synced entities.
         let schema = Schema([
             Transcription.self,
@@ -216,11 +216,8 @@ struct VoiceInkApp: App {
         )
 
         let dictionarySchema = Schema([VocabularyWord.self, WordReplacement.self])
-        #if LOCAL_BUILD
+        // Dictionary store is local-only (no CloudKit).
         let dictionaryCloudKit: ModelConfiguration.CloudKitDatabase = .none
-        #else
-        let dictionaryCloudKit: ModelConfiguration.CloudKitDatabase = .private("iCloud.com.prakashjoshipax.VoiceInk")
-        #endif
         let dictionaryConfig = ModelConfiguration(
             "dictionary",
             schema: dictionarySchema,

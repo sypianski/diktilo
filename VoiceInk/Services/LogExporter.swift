@@ -4,8 +4,13 @@ import OSLog
 final class LogExporter {
     static let shared = LogExporter()
 
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "LogExporter")
-    private let subsystem = "com.prakashjoshipax.voiceink"
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "LogExporter")
+    private let subsystem = "cc.sypianski.diktilo"
+    // Logger subsystem was renamed from "com.prakashjoshipax.voiceink" to
+    // "cc.sypianski.diktilo". Keep matching the legacy subsystem too,
+    // so an export run shortly after upgrading still picks up pre-upgrade
+    // sessions instead of silently dropping them.
+    private let legacySubsystem = "com.prakashjoshipax.voiceink"
     private let maxSessionsToKeep = 3
     private let sessionsKey = "logExporter.sessionStartDates.v1"
 
@@ -47,7 +52,7 @@ final class LogExporter {
         }
 
         let store = try OSLogStore(scope: .system)
-        let predicate = NSPredicate(format: "subsystem == %@", subsystem)
+        let predicate = NSPredicate(format: "subsystem == %@ OR subsystem == %@", subsystem, legacySubsystem)
 
         var logLines: [String] = []
         let dateFormatter = DateFormatter()
@@ -55,7 +60,7 @@ final class LogExporter {
 
         logLines.append("=== Diktilo Diagnostic Logs ===")
         logLines.append("Export Date: \(dateFormatter.string(from: Date()))")
-        logLines.append("Subsystem: \(subsystem)")
+        logLines.append("Subsystem: \(subsystem) (also includes legacy \(legacySubsystem))")
         logLines.append("Total Sessions: \(sessionStartDates.count)")
         logLines.append("================================")
         logLines.append("")

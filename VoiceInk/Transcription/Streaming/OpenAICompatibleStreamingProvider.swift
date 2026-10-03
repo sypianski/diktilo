@@ -18,7 +18,7 @@ import os
 ///   word-level partials — the live transcript grows utterance by utterance.
 final class OpenAICompatibleStreamingProvider: StreamingTranscriptionProvider {
 
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "OpenAICompatibleStreamingProvider")
+    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "OpenAICompatibleStreamingProvider")
     private var webSocketTask: URLSessionWebSocketTask?
     private var urlSession: URLSession?
     private var eventsContinuation: AsyncStream<StreamingTranscriptionEvent>.Continuation?
