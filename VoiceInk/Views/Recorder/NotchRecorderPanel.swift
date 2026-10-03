@@ -10,6 +10,9 @@ class NotchRecorderPanel: KeyablePanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
 
+    /// Display the recorder was last placed on; the notch view sizes itself from it.
+    static private(set) var targetScreen: NSScreen?
+
     init(contentRect: NSRect) {
         let metrics = NotchRecorderPanel.calculateWindowMetrics()
 
@@ -44,8 +47,10 @@ class NotchRecorderPanel: KeyablePanel {
         )
     }
 
-    static func calculateWindowMetrics() -> (frame: NSRect, notchWidth: CGFloat, notchHeight: CGFloat) {
-        guard let screen = NSScreen.main else {
+    static func calculateWindowMetrics(
+        on screen: NSScreen? = NSScreen.main
+    ) -> (frame: NSRect, notchWidth: CGFloat, notchHeight: CGFloat) {
+        guard let screen else {
             return (NSRect(x: 0, y: 0, width: 280, height: 24), 280, 24)
         }
 
@@ -73,7 +78,9 @@ class NotchRecorderPanel: KeyablePanel {
     }
 
     func show() {
-        let metrics = NotchRecorderPanel.calculateWindowMetrics()
+        let screen = ActiveScreen.current()
+        Self.targetScreen = screen
+        let metrics = NotchRecorderPanel.calculateWindowMetrics(on: screen)
         setFrame(metrics.frame, display: true)
         orderFrontRegardless()
     }
@@ -81,7 +88,10 @@ class NotchRecorderPanel: KeyablePanel {
     @objc private func handleScreenParametersChange() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self else { return }
-            let metrics = NotchRecorderPanel.calculateWindowMetrics()
+            if let screen = Self.targetScreen, !NSScreen.screens.contains(screen) {
+                Self.targetScreen = ActiveScreen.current()
+            }
+            let metrics = NotchRecorderPanel.calculateWindowMetrics(on: Self.targetScreen)
             self.setFrame(metrics.frame, display: true)
         }
     }
