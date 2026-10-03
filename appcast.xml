@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Diktilo Sparkle feed, served at https://sypian.ski/diktilo/appcast.xml
      (copy of this file in ~/www/sypian.ski/diktilo/ on ibn-masawayh).
-     Newest <item> first. Each enclosure is signed with
-     `sign_update --ed-key-file ~/.config/diktilo/sparkle_ed_private.txt <dmg>`;
+     Newest <item> first. Each enclosure is signed with Sparkle's sign_update
+     and the key file ~/.config/diktilo/sparkle_ed_private.txt (see CLAUDE.md);
      sparkle:version must equal the build's CFBundleVersion (git commit count). -->
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
