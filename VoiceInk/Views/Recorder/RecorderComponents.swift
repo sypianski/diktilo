@@ -425,9 +425,10 @@ struct LiveTranscriptView: View {
 
     // Grow with the spoken text (panel is bottom-anchored, so height grows
     // upward) up to a cap, then scroll. Keeps early lines visible instead of
-    // scrolling them out of a fixed-height window.
+    // scrolling them out of a fixed-height window. A fixed-height host (the
+    // notch) passes its own height as the cap, or it would crop the text.
+    var maxHeight: CGFloat = 220
     private let minHeight: CGFloat = 30
-    private let maxHeight: CGFloat = 220
     @State private var contentHeight: CGFloat = 0
 
     var body: some View {

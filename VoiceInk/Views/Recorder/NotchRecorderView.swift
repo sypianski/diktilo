@@ -67,13 +67,19 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
 
     // MARK: - Layout Constants
 
-    private let recordingSideExpansion: CGFloat = 90
-    private let transcriptSideExpansion: CGFloat = 110
+    // Each side holds the visualizer (73 pt), spacing and the mode button
+    // (20 pt) plus the edge padding; narrower sides spill the mode icon past
+    // the pill's edge.
+    private let recordingSideExpansion: CGFloat = 124
+    private let transcriptSideExpansion: CGFloat = 124
     private let assistantSideExpansion: CGFloat = 230
     private let activeHeightBonus: CGFloat = 6
     private let transcriptPanelHeight: CGFloat = 57
     private let assistantPanelHeight: CGFloat = 320
-    private let hudPanelHeight: CGFloat = 28
+    // The band plus the perforated rule above it; less clips the chips.
+    private let hudPanelHeight: CGFloat = RecorderHUDMetrics.bandHeight + 1.5
+    /// Least clear space between content and the pill's visible edge.
+    private let edgeGutter: CGFloat = 10
 
     private var mainRowHeight: CGFloat { notchHeight + activeHeightBonus }
 
@@ -124,8 +130,19 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         }
     }
 
+    // NotchShape draws its sides `topCornerRadius` in from the frame (the
+    // outer strip is only the flare meeting the menu bar), so edge padding
+    // is measured from there.
+    private var topCornerRadius: CGFloat {
+        displayState == .liveText ? 12 : 8
+    }
+
+    private var bottomCornerRadius: CGFloat {
+        displayState == .liveText || displayState == .assistant || shouldShowHUD ? 22 : 16
+    }
+
     private var sideEdgePadding: CGFloat {
-        displayState == .liveText || displayState == .assistant ? 20 : 16
+        topCornerRadius + edgeGutter
     }
 
     private var shouldShowCloseButton: Bool {
@@ -176,8 +193,8 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         )
         .clipShape(
             NotchShape(
-                topCornerRadius: displayState == .liveText ? 12 : 8,
-                bottomCornerRadius: displayState == .liveText || displayState == .assistant || shouldShowHUD ? 22 : 16
+                topCornerRadius: topCornerRadius,
+                bottomCornerRadius: bottomCornerRadius
             )
         )
     }
@@ -189,6 +206,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
             if shouldShowHUD {
                 PerforationRule(color: AppTheme.Palette.Slot.rule)
                 RecorderDestinationHUDView()
+                    .padding(.horizontal, sideEdgePadding)
             }
         }
         .frame(height: shouldShowHUD ? hudPanelHeight : 0)
@@ -214,7 +232,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 Spacer(minLength: 0)
             }
             .padding(.leading, sideEdgePadding)
-            .frame(width: sideExpansion)
+            .frame(width: sideExpansion, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(displayState != .collapsed ? 1 : 0)
             .animation(
@@ -232,7 +250,9 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 RecorderModeButton(buttonSize: 20, padding: EdgeInsets())
             }
             .padding(.trailing, sideEdgePadding)
-            .frame(width: sideExpansion)
+            // Trailing alignment: if the content ever outgrows the side, it
+            // spills under the hardware notch, never past the pill's edge.
+            .frame(width: sideExpansion, alignment: .trailing)
             .frame(maxWidth: .infinity, alignment: .trailing)
             .opacity(displayState != .collapsed ? 1 : 0)
             .animation(
@@ -249,8 +269,11 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         VStack(spacing: 0) {
             if displayState == .liveText {
                 PerforationRule(color: AppTheme.Palette.Slot.rule)
-                LiveTranscriptView(text: stateProvider.partialTranscript)
-                    .padding(.horizontal, 8)
+                LiveTranscriptView(
+                    text: stateProvider.partialTranscript,
+                    maxHeight: transcriptPanelHeight - 1.5
+                )
+                .padding(.horizontal, 8)
             }
         }
         .frame(height: displayState == .liveText ? transcriptPanelHeight : 0)
