@@ -2,16 +2,17 @@
   <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="160" height="160" alt="Diktilo icon" />
   <h1>Diktilo</h1>
   <p>Dictation for the Mac. Hold <kbd>Fn</kbd>, speak, let go. The text appears where the cursor is, in any app.</p>
+  <p>by <a href="https://sypian.ski/">Jakub Sypiański</a></p>
 
   [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.4%2B-brightgreen)
   ![Interface](https://img.shields.io/badge/interface-English%20%C2%B7%20Polski%20%C2%B7%20Esperanto-orange)
 
-  <p><a href="https://sypian.ski/diktilo/">sypian.ski/diktilo</a> · <a href="#polski">Polski</a> · <a href="#esperanto">Esperanto</a></p>
+  <p><a href="https://sypian.ski/diktilo/">Website</a> · <a href="#polski">Polski</a> · <a href="#esperanto">Esperanto</a></p>
 </div>
 
 <p align="center">
-  <img src="docs/recorder-mini.png" width="483" alt="The Mini recorder while dictating: live transcript above, waveform and record button in the middle, shortcut strip below" />
+  <img src="docs/recorder-mini.png" width="483" alt="Animation of the Mini recorder while dictating, rendered from the app's own SwiftUI views: the waveform moves, the live transcript grows above it, then it switches to Transcribing" />
 </p>
 
 ## Download
@@ -81,11 +82,11 @@ If AI enhancement is on, Diktilo starts working on it while you are still speaki
 
 ## Polski
 
-Dyktowanie na Macu. Trzymasz <kbd>Fn</kbd>, mówisz, puszczasz, a tekst pojawia się tam, gdzie stoi kursor. Domyślnie Diktilo używa modelu pobranego na dysk: nagranie nie wychodzi z komputera, a dyktowanie działa bez internetu. Nagranie trafia na zewnątrz tylko wtedy, gdy sam wpiszesz klucz API dostawcy albo wskażesz własny serwer. Aplikacja dobiera model do Twojego Maca, pokazuje tekst w trakcie mówienia i pozwala wybrać, czy tekst ma być wklejony od razu, czy trafić do schowka. Interfejs jest po polsku, angielsku i w esperanto. Więcej: [sypian.ski/diktilo](https://sypian.ski/diktilo/).
+Dyktowanie na Macu. Trzymasz <kbd>Fn</kbd>, mówisz, puszczasz, a tekst pojawia się tam, gdzie stoi kursor. Domyślnie Diktilo używa modelu pobranego na dysk: nagranie nie wychodzi z komputera, a dyktowanie działa bez internetu. Nagranie trafia na zewnątrz tylko wtedy, gdy sam wpiszesz klucz API dostawcy albo wskażesz własny serwer. Aplikacja dobiera model do Twojego Maca, pokazuje tekst w trakcie mówienia i pozwala wybrać, czy tekst ma być wklejony od razu, czy trafić do schowka. Interfejs jest po polsku, angielsku i w esperanto. Więcej na [stronie aplikacji](https://sypian.ski/diktilo/#pl).
 
 ## Esperanto
 
-Diktado por Mac. Tenu <kbd>Fn</kbd>, parolu, liberigu, kaj la teksto aperas tie, kie staras la kursoro. Defaŭlte Diktilo uzas modelon elŝutitan al la disko: la registraĵo ne forlasas la komputilon, kaj diktado funkcias sen interreto. La registraĵo iras eksteren nur se vi mem enigas API-ŝlosilon de provizanto aŭ indikas propran servilon. La aplikaĵo elektas modelon laŭ via Mac, montras la tekston dum vi parolas kaj lasas vin elekti, ĉu alglui la tekston tuj aŭ meti ĝin en la tondujon. La interfaco estas pola, angla kaj Esperanto. Pli: [sypian.ski/diktilo](https://sypian.ski/diktilo/#eo).
+Diktado por Mac. Tenu <kbd>Fn</kbd>, parolu, liberigu, kaj la teksto aperas tie, kie staras la kursoro. Defaŭlte Diktilo uzas modelon elŝutitan al la disko: la registraĵo ne forlasas la komputilon, kaj diktado funkcias sen interreto. La registraĵo iras eksteren nur se vi mem enigas API-ŝlosilon de provizanto aŭ indikas propran servilon. La aplikaĵo elektas modelon laŭ via Mac, montras la tekston dum vi parolas kaj lasas vin elekti, ĉu alglui la tekston tuj aŭ meti ĝin en la tondujon. La interfaco estas pola, angla kaj Esperanto. Pli en la [retejo de la aplikaĵo](https://sypian.ski/diktilo/#eo).
 
 ## Building from source
 
@@ -94,3 +95,7 @@ Diktado por Mac. Tenu <kbd>Fn</kbd>, parolu, liberigu, kaj la teksto aperas tie,
 ## Credits
 
 Diktilo is a fork of [VoiceInk](https://github.com/Beingpax/VoiceInk) by Pax, licensed under the GNU General Public License v3.0 (see [LICENSE](LICENSE)). It builds on [whisper.cpp](https://github.com/ggerganov/whisper.cpp), [FluidAudio](https://github.com/FluidInference/FluidAudio) (Parakeet), [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts), [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin), [MediaRemoteAdapter](https://github.com/ejbills/mediaremote-adapter), [Zip](https://github.com/marmelroy/Zip), [SelectedTextKit](https://github.com/tisfeng/SelectedTextKit) and [Swift Atomics](https://github.com/apple/swift-atomics).
+
+---
+
+<p align="center">Diktilo · <a href="https://sypian.ski/">Jakub Sypiański</a> · GPL-3.0</p>
