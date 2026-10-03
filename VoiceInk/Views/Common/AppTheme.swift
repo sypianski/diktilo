@@ -20,6 +20,15 @@ enum AppTheme {
         /// Live waveform: ink on paper, amber on charcoal.
         static let waveform = dynamic(light: 0x33302C, dark: 0xFDAE2C)
 
+        /// The notch recorder sits on black whatever the appearance, so it
+        /// takes the charcoal values fixed instead of the dynamic ones above.
+        enum Slot {
+            static let ink = Color(nsColor: NSColor(rgb: 0xF3ECE0))
+            static let inkSecondary = Color(nsColor: NSColor(rgb: 0xB5AA9C))
+            static let chip = Color(nsColor: NSColor(rgb: 0x2D2925))
+            static let rule = Color(nsColor: NSColor(rgb: 0x3A3531))
+        }
+
         /// Dashed rule, echoing the perforation of the icon's paper tape.
         static let perforation = StrokeStyle(lineWidth: 1.5, dash: [5, 4])
 

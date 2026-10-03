@@ -80,9 +80,11 @@ struct MetricTintBackground: View {
 
 /// Dashed horizontal rule: the perforation of the icon's paper tape.
 struct PerforationRule: View {
+    var color: Color = AppTheme.Palette.rule
+
     var body: some View {
         Line()
-            .stroke(AppTheme.Palette.rule, style: AppTheme.Palette.perforation)
+            .stroke(color, style: AppTheme.Palette.perforation)
             .frame(height: 1.5)
     }
 

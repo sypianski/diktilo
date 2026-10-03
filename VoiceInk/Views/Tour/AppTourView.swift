@@ -341,11 +341,7 @@ private struct RecorderBarStage: View {
             }
             .frame(height: 40)
 
-            if surface == .panel {
-                PerforationRule()
-            } else {
-                Divider().background(Color.white.opacity(0.10))
-            }
+            PerforationRule(color: RecorderPalette(surface).rule)
 
             HStack(spacing: 6) {
                 ForEach(FinishDestinationBindings.hudItems().prefix(3)) { item in

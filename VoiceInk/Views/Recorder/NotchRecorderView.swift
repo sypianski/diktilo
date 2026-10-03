@@ -187,7 +187,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private var hudPanel: some View {
         VStack(spacing: 0) {
             if shouldShowHUD {
-                Divider().background(Color.white.opacity(0.10))
+                PerforationRule(color: AppTheme.Palette.Slot.rule)
                 RecorderDestinationHUDView()
             }
         }
@@ -248,7 +248,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private var liveTextPanel: some View {
         VStack(spacing: 0) {
             if displayState == .liveText {
-                Divider().background(Color.white.opacity(0.15))
+                PerforationRule(color: AppTheme.Palette.Slot.rule)
                 LiveTranscriptView(text: stateProvider.partialTranscript)
                     .padding(.horizontal, 8)
             }
@@ -260,7 +260,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private var assistantPanel: some View {
         VStack(spacing: 0) {
             if displayState == .assistant {
-                Divider().background(Color.white.opacity(0.15))
+                PerforationRule(color: AppTheme.Palette.Slot.rule)
                 AssistantPanelView(
                     session: assistantSession,
                     liveFollowUpText: liveAssistantFollowUpText,

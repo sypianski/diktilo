@@ -2,9 +2,10 @@ import SwiftUI
 
 // MARK: - Surface
 
-/// Where the shared recorder controls are drawn. The notch panel stays
-/// white-on-black so it blends into the hardware notch; the floating mini
-/// panel uses the app palette (paper in light mode, charcoal in dark).
+/// Where the shared recorder controls are drawn. The notch panel keeps a
+/// black body so it blends into the hardware notch, but draws on it with the
+/// charcoal palette (warm ink, amber accents); the floating mini panel uses
+/// the app palette (paper in light mode, charcoal in dark).
 enum RecorderSurface {
     case notch
     case panel
@@ -21,8 +22,8 @@ extension EnvironmentValues {
     }
 }
 
-/// Colour roles for the recorder controls. Each role takes the white opacity
-/// the notch has always used, so the notch look stays exactly as it was.
+/// Colour roles for the recorder controls. On the notch each role takes the
+/// opacity it always had, applied to the slot's warm ink instead of white.
 struct RecorderPalette {
     let surface: RecorderSurface
 
@@ -31,37 +32,40 @@ struct RecorderPalette {
     }
 
     private var isPanel: Bool { surface == .panel }
+    private typealias Slot = AppTheme.Palette.Slot
 
     func text(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.ink : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.ink : Slot.ink.opacity(opacity)
     }
 
     func secondaryText(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.inkSecondary : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.inkSecondary : Slot.ink.opacity(opacity)
     }
 
     func disabledText(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.inkSecondary.opacity(0.5) : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.inkSecondary.opacity(0.5) : Slot.ink.opacity(opacity)
     }
 
     func fill(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.chip : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.chip : Slot.ink.opacity(opacity)
     }
 
     func subtleFill(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.chip.opacity(0.55) : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.chip.opacity(0.55) : Slot.ink.opacity(opacity)
     }
 
     func border(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.rule : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.rule : Slot.ink.opacity(opacity)
     }
 
     func accent(notch opacity: Double) -> Color {
-        isPanel ? AppTheme.Palette.amber : .white.opacity(opacity)
+        isPanel ? AppTheme.Palette.amber : AppTheme.Palette.amber.opacity(opacity)
     }
 
-    var onAccent: Color { isPanel ? AppTheme.Palette.onAmber : .black }
-    var waveform: Color { isPanel ? AppTheme.Palette.waveform : .white }
+    var onAccent: Color { AppTheme.Palette.onAmber }
+    var waveform: Color { isPanel ? AppTheme.Palette.waveform : AppTheme.Palette.amber }
+    /// Dashed divider between the recorder's bands.
+    var rule: Color { isPanel ? AppTheme.Palette.rule : Slot.rule }
     /// Backdrop behind icon-only controls; the notch draws none.
     var controlFill: Color { isPanel ? AppTheme.Palette.chip : .clear }
 }
@@ -170,22 +174,21 @@ struct RecorderRecordButton: View {
         switch visualState {
         case .ready:
             return StateColors(
-                surface: Color(red: 0.30, green: 0.30, blue: 0.32),
-                border: Color(red: 0.42, green: 0.42, blue: 0.44),
-                mark: Color(red: 0.78, green: 0.78, blue: 0.80)
+                surface: AppTheme.Palette.Slot.chip,
+                border: AppTheme.Palette.Slot.rule,
+                mark: AppTheme.Palette.Slot.inkSecondary
             )
         case .recording:
-            let red = AppTheme.Status.error
             return StateColors(
-                surface: red.opacity(0.92),
-                border: red.opacity(0.98),
-                mark: .white
+                surface: AppTheme.Palette.amber,
+                border: AppTheme.Palette.amber,
+                mark: AppTheme.Palette.onAmber
             )
         case .processing:
             return StateColors(
-                surface: Color.white.opacity(0.13),
-                border: Color.white.opacity(0.18),
-                mark: Color.white.opacity(0.86)
+                surface: AppTheme.Palette.Slot.chip,
+                border: AppTheme.Palette.Slot.rule,
+                mark: AppTheme.Palette.Slot.ink.opacity(0.86)
             )
         }
     }
