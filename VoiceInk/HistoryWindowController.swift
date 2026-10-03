@@ -8,12 +8,19 @@ class HistoryWindowController: NSObject, NSWindowDelegate {
     private var historyWindow: NSWindow?
     private let windowIdentifier = NSUserInterfaceItemIdentifier("cc.sypianski.diktilo.historyWindow")
     private let windowAutosaveName = NSWindow.FrameAutosaveName("DiktiloHistoryWindowFrame")
+    // Default matches the main window's content area (window width minus sidebar).
+    private let defaultSize = NSSize(width: 730, height: AppWindowLayout.minimumHeight)
+    private let minimumSize = NSSize(width: 600, height: 500)
 
     private override init() {
         super.init()
     }
 
-    func showHistoryWindow(modelContainer: ModelContainer, engine: VoiceInkEngine) {
+    func showHistoryWindow(
+        modelContainer: ModelContainer,
+        engine: VoiceInkEngine,
+        recordingShortcutManager: RecordingShortcutManager
+    ) {
         if let existingWindow = historyWindow {
             if existingWindow.isMiniaturized {
                 existingWindow.deminiaturize(nil)
@@ -23,23 +30,38 @@ class HistoryWindowController: NSObject, NSWindowDelegate {
             return
         }
 
-        let window = createHistoryWindow(modelContainer: modelContainer, engine: engine)
+        let window = createHistoryWindow(
+            modelContainer: modelContainer,
+            engine: engine,
+            recordingShortcutManager: recordingShortcutManager
+        )
         historyWindow = window
         window.makeKeyAndOrderFront(nil)
         NSApplication.shared.activate(ignoringOtherApps: true)
     }
 
-    private func createHistoryWindow(modelContainer: ModelContainer, engine: VoiceInkEngine) -> NSWindow {
-        let historyView = TranscriptionHistoryView()
+    private func createHistoryWindow(
+        modelContainer: ModelContainer,
+        engine: VoiceInkEngine,
+        recordingShortcutManager: RecordingShortcutManager
+    ) -> NSWindow {
+        // Same view as the main window's History tab; inject everything its subtree
+        // reads from the environment (AudioPlayerView, HistorySettingsPanel).
+        let historyView = InlineHistoryView()
+            .background(
+                AppTheme.Surface.window
+                    .ignoresSafeArea(.container, edges: .top)
+            )
             .modelContainer(modelContainer)
             .environmentObject(engine)
             .environmentObject(engine.enhancementService!)
-            .frame(minWidth: 1150, minHeight: 700)
+            .environmentObject(recordingShortcutManager)
+            .frame(minWidth: minimumSize.width, minHeight: minimumSize.height)
 
         let hostingController = NSHostingController(rootView: historyView)
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 1250, height: 750),
+            contentRect: NSRect(origin: .zero, size: defaultSize),
             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -55,7 +77,7 @@ class HistoryWindowController: NSObject, NSWindowDelegate {
         window.isOpaque = false
         window.isReleasedWhenClosed = false
         window.collectionBehavior = [.fullScreenPrimary]
-        window.minSize = NSSize(width: 1150, height: 700)
+        window.minSize = minimumSize
 
         window.setFrameAutosaveName(windowAutosaveName)
         if !window.setFrameUsingName(windowAutosaveName) {

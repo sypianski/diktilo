@@ -313,7 +313,8 @@ class RecordingShortcutManager: ObservableObject {
         case .openHistoryWindow:
             HistoryWindowController.shared.showHistoryWindow(
                 modelContainer: engine.modelContext.container,
-                engine: engine
+                engine: engine,
+                recordingShortcutManager: self
             )
         case .quickAddToDictionary:
             DictionaryQuickAddManager.shared.toggle(modelContainer: engine.modelContext.container)

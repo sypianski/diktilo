@@ -590,3 +590,17 @@ private struct HistoryCardRow: View {
         }
     }
 }
+
+struct CircularCheckboxStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button(action: {
+            configuration.isOn.toggle()
+        }) {
+            Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundColor(configuration.isOn ? AppTheme.Selection.foreground : .secondary)
+                .font(.system(size: 18))
+        }
+        .buttonStyle(.plain)
+    }
+}

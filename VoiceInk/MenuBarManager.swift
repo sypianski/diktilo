@@ -12,6 +12,7 @@ class MenuBarManager: ObservableObject {
 
     private var modelContainer: ModelContainer?
     private var engine: VoiceInkEngine?
+    private var recordingShortcutManager: RecordingShortcutManager?
 
     init() {
         self.isMenuBarOnly = UserDefaults.standard.bool(forKey: "IsMenuBarOnly")
@@ -42,9 +43,14 @@ class MenuBarManager: ObservableObject {
         }
     }
 
-    func configure(modelContainer: ModelContainer, engine: VoiceInkEngine) {
+    func configure(
+        modelContainer: ModelContainer,
+        engine: VoiceInkEngine,
+        recordingShortcutManager: RecordingShortcutManager
+    ) {
         self.modelContainer = modelContainer
         self.engine = engine
+        self.recordingShortcutManager = recordingShortcutManager
     }
     
     func toggleMenuBarOnly() {
@@ -99,13 +105,15 @@ class MenuBarManager: ObservableObject {
 
     func openHistoryWindow() {
         guard let modelContainer = modelContainer,
-              let engine = engine else {
+              let engine = engine,
+              let recordingShortcutManager = recordingShortcutManager else {
             return
         }
         NSApplication.shared.setActivationPolicy(.regular)
         HistoryWindowController.shared.showHistoryWindow(
             modelContainer: modelContainer,
-            engine: engine
+            engine: engine,
+            recordingShortcutManager: recordingShortcutManager
         )
     }
 }
