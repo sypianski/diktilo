@@ -5,6 +5,12 @@
       "comment" : "Bundle display name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diktilo"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41,6 +47,12 @@
       "comment" : "Bundle name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diktilo"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -76,6 +88,12 @@
     "CFBundleTypeName" : {
       "extractionState" : "stale",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -112,6 +130,12 @@
       "comment" : "Privacy - AppleEvents Sending Usage Description",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diktilo necessita permís per enviar ordres a altres aplicacions per inserir-hi text."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -148,6 +172,12 @@
       "comment" : "Copyright (human-readable)",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -184,6 +214,12 @@
       "comment" : "Privacy - Microphone Usage Description",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diktilo necessita accés al micròfon per reconèixer la parla."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -219,6 +255,12 @@
     "NSScreenCaptureUsageDescription" : {
       "extractionState" : "stale",
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diktilo necessita la gravació de pantalla per detectar el camp de text actiu i inserir-hi el text amb precisió."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",

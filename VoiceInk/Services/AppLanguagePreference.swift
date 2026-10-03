@@ -6,7 +6,7 @@ enum AppLanguagePreference {
 
     private static let appleLanguagesKey = "AppleLanguages"
     private static let managesAppleLanguagesKey = "AppLanguagePreferenceManagedAppleLanguages"
-    private static let bundledLanguageIdentifiers = ["en", "pl", "eo"]
+    private static let bundledLanguageIdentifiers = ["en", "pl", "eo", "ca"]
     // Translations stay in the catalogs, but these aren't offered for now.
     private static let hiddenLanguageIdentifiers: Set<String> = ["de", "zh-Hans"]
 
