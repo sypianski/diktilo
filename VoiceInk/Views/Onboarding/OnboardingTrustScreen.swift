@@ -4,13 +4,13 @@ import SwiftUI
 struct OnboardingTrustScreen: View {
     let contentMaxWidth: CGFloat
     let onBack: () -> Void
-    let onContinue: () -> Void
+    let onFinish: () -> Void
 
     var body: some View {
         OnboardingStepScreen(
             systemImage: "lock.shield",
             title: "Privacy Starts Here",
-            subtitle: "Review how Diktilo handles your data before choosing a license.",
+            subtitle: "Review how Diktilo handles your data.",
             contentMaxWidth: max(contentMaxWidth, 720),
             showsHeader: false,
             contentYOffset: 0
@@ -19,10 +19,10 @@ struct OnboardingTrustScreen: View {
         } bottomBar: {
             OnboardingBottomBar(
                 leadingTitle: "Back",
-                primaryTitle: "Continue",
+                primaryTitle: "Finish",
                 isPrimaryEnabled: true,
                 onLeading: onBack,
-                onPrimary: onContinue
+                onPrimary: onFinish
             )
         }
     }

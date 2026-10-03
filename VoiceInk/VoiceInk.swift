@@ -321,7 +321,6 @@ struct VoiceInkApp: App {
                         })
                 }
             }
-            .confettiCelebrationPresenter()
         }
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: AppWindowLayout.width, height: AppWindowLayout.minimumHeight)

@@ -81,7 +81,7 @@ final class TranscriptionDelivery {
     private func deliverCopy(_ item: Request, actions: Actions) async {
         SoundManager.shared.playStopSound()
 
-        if let text = item.text, !ClipboardManager.setClipboard(deliverableText(from: text)) {
+        if let text = item.text, !ClipboardManager.setClipboard(text) {
             logger.error("Failed to copy transcription to clipboard")
         }
 
@@ -93,9 +93,8 @@ final class TranscriptionDelivery {
         await actions.dismiss()
 
         guard let text = item.text else { return }
-        let editText = deliverableText(from: text)
-        ClipboardManager.autoCopyTranscription(editText)
-        TranscriptEditManager.shared.present(text: editText)
+        ClipboardManager.autoCopyTranscription(text)
+        TranscriptEditManager.shared.present(text: text)
     }
 
     private func deliverResponse(_ item: Request, actions: Actions) async {
@@ -127,23 +126,19 @@ final class TranscriptionDelivery {
             return
         }
 
-        let commandText = deliverableText(from: text)
-        ClipboardManager.autoCopyTranscription(commandText)
+        ClipboardManager.autoCopyTranscription(text)
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 
         Task {
-            await runCustomCommand(command: command, commandText: commandText)
+            await runCustomCommand(command: command, commandText: text)
         }
     }
 
     private func deliverSaveTarget(_ item: Request, actions: Actions) async {
         let center = RecorderStatusMessageCenter.shared
 
-        // Pick text the same way deliverCopy does.
-        let textToSave = item.text.map { deliverableText(from: $0) }
-
-        guard let text = textToSave else {
+        guard let text = item.text else {
             // Nothing to save — tell the user inside the panel, then dismiss.
             center.show(.warning, icon: "exclamationmark.triangle.fill",
                         text: String(localized: "No transcription text — nothing to save."), duration: 2.2)
@@ -329,9 +324,8 @@ final class TranscriptionDelivery {
     }
 
     private func paste(_ text: String, output: OutputRuntimeConfiguration, actions: Actions) async {
-        let textToPaste = deliverableText(from: text)
         let appendSpace = UserDefaults.standard.bool(forKey: "AppendTrailingSpace")
-        let pastedText = textToPaste + (appendSpace ? " " : "")
+        let pastedText = text + (appendSpace ? " " : "")
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 
@@ -346,17 +340,5 @@ final class TranscriptionDelivery {
                 CursorPaster.performAutoSend(autoSendKey)
             }
         }
-    }
-
-    private func deliverableText(from text: String) -> String {
-        var textToDeliver = text
-        if let restrictionMessage = LicenseViewModel().usageRestrictionMessage {
-            textToDeliver = """
-                \(restrictionMessage)
-                \n\(textToDeliver)
-                """
-        }
-
-        return textToDeliver
     }
 }
