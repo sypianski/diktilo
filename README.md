@@ -3,6 +3,7 @@
   <h1>Diktilo</h1>
   <p>Dictation for the Mac. Hold <kbd>Fn</kbd>, speak, let go. The text appears where the cursor is, in any app.</p>
   <p>by <a href="https://sypian.ski/">Jakub Sypiański</a></p>
+  <p><strong>Beta.</strong> Feedback is very welcome: <a href="https://github.com/sypianski/diktilo/issues">open an issue</a> or write to jakub.sypianski@gmail.com.</p>
 
   [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   ![Platform](https://img.shields.io/badge/platform-macOS%2014.4%2B-brightgreen)
@@ -76,6 +77,13 @@ If AI enhancement is on, Diktilo starts working on it while you are still speaki
 - Modes: separate settings for email, notes, code and so on.
 - Transcription of audio files.
 - Interface in English, Polish, Esperanto and Catalan.
+
+## Feedback
+
+Diktilo is in beta. If something breaks, behaves oddly or is missing, tell me:
+
+- [Open an issue on GitHub](https://github.com/sypianski/diktilo/issues/new). Bug reports, ideas and questions are all fine there; include your Mac model, macOS version and the transcription model you use.
+- Or email jakub.sypianski@gmail.com.
 
 ## Building from source
 
