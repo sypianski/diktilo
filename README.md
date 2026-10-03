@@ -17,10 +17,7 @@
 
 ## Download
 
-- [Diktilo for Apple Silicon](https://github.com/sypianski/diktilo/releases/latest/download/Diktilo-arm64.dmg) (M1 and later)
-- [Diktilo for Intel](https://github.com/sypianski/diktilo/releases/latest/download/Diktilo-x86_64.dmg)
-
-Not sure which? Apple menu → About This Mac. “Apple M…” means Apple Silicon.
+**[Download Diktilo.dmg](https://github.com/sypianski/diktilo/releases/latest/download/Diktilo.dmg)**, one universal app for Apple Silicon and Intel Macs.
 
 1. Open the `.dmg` and drag Diktilo into **Applications**.
 2. Launch it. The app is signed and notarised by Apple.

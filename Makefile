@@ -154,8 +154,9 @@ local: check setup
 		exit 1; \
 	fi
 
-# Build a notarization-ready, Developer ID-signed .dmg for distribution
-# outside the Mac App Store. Does NOT notarize — run `make notarize` after.
+# Build a notarization-ready, Developer ID-signed universal (arm64 + x86_64)
+# .dmg for distribution outside the Mac App Store. Does NOT notarize — run
+# `make notarize` after.
 dmg: check setup
 	@security find-identity -v -p codesigning | grep -q "Developer ID Application" || \
 		{ echo "No 'Developer ID Application' identity in the default keychain."; \
@@ -176,6 +177,7 @@ dmg: check setup
 		DEVELOPMENT_TEAM="$(DEVELOPMENT_TEAM_ID)" \
 		PROVISIONING_PROFILE_SPECIFIER="" \
 		ENABLE_HARDENED_RUNTIME=YES \
+		ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
 		OTHER_CODE_SIGN_FLAGS="--timestamp" \
 		CODE_SIGN_ENTITLEMENTS="$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" \
 		SWIFT_ACTIVE_COMPILATION_CONDITIONS='$$(inherited) LOCAL_BUILD' \
