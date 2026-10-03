@@ -6,7 +6,9 @@ enum AppLanguagePreference {
 
     private static let appleLanguagesKey = "AppleLanguages"
     private static let managesAppleLanguagesKey = "AppLanguagePreferenceManagedAppleLanguages"
-    private static let bundledLanguageIdentifiers = ["en", "de", "pl", "zh-Hans"]
+    private static let bundledLanguageIdentifiers = ["en", "pl", "eo"]
+    // Translations stay in the catalogs, but these aren't offered for now.
+    private static let hiddenLanguageIdentifiers: Set<String> = ["de", "zh-Hans"]
 
     struct Option: Identifiable, Hashable {
         let id: String
@@ -55,6 +57,7 @@ enum AppLanguagePreference {
         }
 
         let discoveredIdentifiers = Set(bundledLanguageIdentifiers + localizedBundleIdentifiers)
+            .subtracting(hiddenLanguageIdentifiers)
         let bundledIdentifiers = bundledLanguageIdentifiers.filter { discoveredIdentifiers.contains($0) }
         let additionalIdentifiers = discoveredIdentifiers
             .subtracting(bundledLanguageIdentifiers)
