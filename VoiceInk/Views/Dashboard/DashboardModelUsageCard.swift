@@ -44,9 +44,11 @@ struct DashboardModelUsageCard: View {
     }
 
     private func openRecommendedModels() {
-        if let url = URL(string: "https://tryvoiceink.com/docs/recommended-models") {
-            NSWorkspace.shared.open(url)
-        }
+        NotificationCenter.default.post(
+            name: .navigateToDestination,
+            object: nil,
+            userInfo: ["destination": "AI Models"]
+        )
     }
 
     private var header: some View {

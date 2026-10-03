@@ -224,7 +224,7 @@ struct WordReplacementInfoPopover: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 
-                Text("Voicing, Voice ink, Voiceing")
+                Text("Dyktylo, Diktylo, Dyktilo")
                     .font(.callout)
                     .padding(8)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -256,7 +256,7 @@ struct WordReplacementInfoPopover: View {
                         Text("Replacement:")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text(verbatim: "https://tryvoiceink.com")
+                        Text(verbatim: "https://sypianski.cc")
                             .font(.callout)
                     }
                 }
@@ -270,7 +270,7 @@ struct WordReplacementInfoPopover: View {
                         Text("Original:")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text("Voicing, Voice ink")
+                        Text("Dyktylo, Diktylo")
                             .font(.callout)
                     }
 

@@ -301,7 +301,7 @@ struct ModelManagementView: View {
 
             InfoTip(
                 "Add a custom fine-tuned whisper model to use with Diktilo. Select the downloaded .bin file.",
-                learnMoreURL: "https://tryvoiceink.com/docs/custom-local-whisper-models"
+                learnMoreURL: "https://github.com/ggml-org/whisper.cpp/tree/master/models"
             )
             .help("Read more about custom local models")
         }

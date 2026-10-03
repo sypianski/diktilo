@@ -9755,24 +9755,24 @@
         }
       }
     },
-    "e.g. support@tryvoiceink.com": {
+    "e.g. name@example.com": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "z. B. support@tryvoiceink.com"
+            "value": "z. B. name@example.com"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "例如：support@tryvoiceink.com"
+            "value": "例如：name@example.com"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "np. support@tryvoiceink.com"
+            "value": "np. jan.kowalski@example.com"
           }
         }
       }
@@ -24121,46 +24121,46 @@
         }
       }
     },
-    "Voicing, Voice ink": {
+    "Dyktylo, Diktylo": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voicing, Voice ink"
+            "value": "Dyktylo, Diktylo"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voicing, Voice ink"
+            "value": "Dyktylo, Diktylo"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voicing, Voice ink"
+            "value": "Dyktylo, Diktylo"
           }
         }
       }
     },
-    "Voicing, Voice ink, Voiceing": {
+    "Dyktylo, Diktylo, Dyktilo": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voicing, Voice ink, Voiceing"
+            "value": "Dyktylo, Diktylo, Dyktilo"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voicing, Voice ink, Voiceing"
+            "value": "Dyktylo, Diktylo, Dyktilo"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voicing, Voice ink, Voiceing"
+            "value": "Dyktylo, Diktylo, Dyktilo"
           }
         }
       }
