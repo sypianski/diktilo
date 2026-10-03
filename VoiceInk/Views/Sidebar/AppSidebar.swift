@@ -24,9 +24,24 @@ struct AppSidebar: View {
             Spacer(minLength: 16)
 
             sidebarSection(ViewType.secondaryItems)
-                .padding(.bottom, 14)
+                .padding(.bottom, 8)
+
+            versionLabel
+                .padding(.bottom, 10)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var versionLabel: some View {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        return Text(verbatim: "Diktilo \(version) (\(build))")
+            .font(.system(size: 10, design: .monospaced))
+            .foregroundStyle(AppTheme.Text.muted)
+            .textSelection(.enabled)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 21)
     }
 
     private var sidebarBackground: some View {
