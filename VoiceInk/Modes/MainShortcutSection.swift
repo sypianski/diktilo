@@ -22,19 +22,35 @@ struct MainShortcutSection: View {
 
     var body: some View {
         Section {
-            LabeledContent {
-                HStack(spacing: 8) {
-                    modePicker(binding: $recordingShortcutManager.primaryRecordingShortcutMode)
-                    ShortcutRecorder(action: .primaryRecording) {
-                        recordingShortcutManager.primaryRecordingShortcut = .custom
-                        recordingShortcutManager.updateShortcutStatus()
-                    }
-                }
-            } label: {
+            // Stacked rather than a LabeledContent row: the shortcut is the
+            // point of this screen and gets the full width of the section.
+            VStack(alignment: .leading, spacing: 10) {
                 Text("Start and Stop Recording")
                     .font(.system(size: 13, weight: .semibold))
-                Text(modeDescription(recordingShortcutManager.primaryRecordingShortcutMode))
+
+                ShortcutRecorder(action: .primaryRecording, style: .prominent) {
+                    recordingShortcutManager.primaryRecordingShortcut = .custom
+                    recordingShortcutManager.updateShortcutStatus()
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Picker(selection: $recordingShortcutManager.primaryRecordingShortcutMode) {
+                        ForEach(RecordingShortcutManager.Mode.allCases, id: \.self) { mode in
+                            Text(mode.displayName).tag(mode)
+                        }
+                    } label: {
+                        EmptyView()
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+
+                    Text(modeDescription(recordingShortcutManager.primaryRecordingShortcutMode))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .padding(.vertical, 4)
 
             // The main shortcut carries no mode of its own: it runs the
             // "default" mode unless an app or website trigger matches.
