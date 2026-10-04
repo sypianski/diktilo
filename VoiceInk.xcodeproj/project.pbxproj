@@ -518,7 +518,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
-				MARKETING_VERSION = 2.8.9;
+				MARKETING_VERSION = 2.8.10;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.sypianski.diktilo;
 				PRODUCT_NAME = Diktilo;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
@@ -552,7 +552,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
-				MARKETING_VERSION = 2.8.9;
+				MARKETING_VERSION = 2.8.10;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.sypianski.diktilo;
 				PRODUCT_NAME = Diktilo;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
