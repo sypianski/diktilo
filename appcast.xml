@@ -10,6 +10,21 @@
         <link>https://sypian.ski/diktilo/appcast.xml</link>
         <language>en</language>
         <item>
+            <title>2.8.10</title>
+            <description><![CDATA[
+                <ul>
+                    <li>Czytelniejszy kafelek głównego skrótu: duże klawisze, opisany stan przechwytywania, tryb działania pod spodem.</li>
+                    <li>Esc podczas ustawiania głównego skrótu przywraca poprzedni skrót.</li>
+                    <li>Przycisk Fn nie wygląda już jak część skrótu; puste pole mówi „Ustaw skrót”.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Sun, 04 Oct 2026 13:56:41 +0200</pubDate>
+            <sparkle:version>1635</sparkle:version>
+            <sparkle:shortVersionString>2.8.10</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.4</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/sypianski/diktilo/releases/download/v2.8.10/Diktilo.dmg" sparkle:edSignature="a6wMj/XFAymlscyukxDU2e4/db0JvZruelI1HPMb8Ce62wGBFpN4CFgBym4PAMPN4FaaAivP5ZsKJukViN7QDw==" length="35493879" type="application/octet-stream"/>
+        </item>
+        <item>
             <title>2.8.9</title>
             <description><![CDATA[
                 <ul>
