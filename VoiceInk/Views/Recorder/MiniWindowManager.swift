@@ -30,8 +30,12 @@ class MiniWindowManager {
         }
     }
 
+    /// Builds a fresh panel for every presentation. A panel kept across
+    /// recordings can lose its all-Spaces membership in the window server
+    /// (seen after hours of uptime with an external display) and then opens
+    /// on a Space the user is not looking at, e.g. behind a full-screen app.
     func show() {
-        if panel == nil { initializeWindow() }
+        initializeWindow()
         panel?.show()
     }
 
