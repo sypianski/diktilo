@@ -10,6 +10,19 @@
         <link>https://sypian.ski/diktilo/appcast.xml</link>
         <language>en</language>
         <item>
+            <title>2.8.9</title>
+            <description><![CDATA[
+                <ul>
+                    <li>Maintenance release to verify automatic updates. No functional changes.</li>
+                </ul>
+            ]]></description>
+            <pubDate>Sun, 04 Oct 2026 13:42:47 +0200</pubDate>
+            <sparkle:version>1632</sparkle:version>
+            <sparkle:shortVersionString>2.8.9</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.4</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/sypianski/diktilo/releases/download/v2.8.9/Diktilo.dmg" sparkle:edSignature="FmdKRLMMhj9Cve9asSxp5KvEwO82rwT8yWOq8PP09WNjwcRPqU9gExt4XGtRXBmNJ48WTH1FZILtZyZCJgS6Cw==" length="35436781" type="application/octet-stream"/>
+        </item>
+        <item>
             <title>2.8.7</title>
             <description><![CDATA[
                 <ul>
