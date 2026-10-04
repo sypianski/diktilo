@@ -103,3 +103,5 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk 
+# Release host (private; see Scripts/release.sh header)
+Scripts/release.env

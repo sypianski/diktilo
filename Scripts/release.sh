@@ -10,11 +10,18 @@
 #
 # Run directly in Terminal.app on the Mac (notarytool needs the GUI-unlocked
 # login keychain), on a clean `main` checkout. gh is not logged in on the Mac,
-# so the GitHub Release is created from ibn-masawayh over ssh, which also
+# so the GitHub Release is created over ssh from the Linux host, which also
 # hosts the appcast (~/www/sypian.ski/diktilo/appcast.xml).
+#
+# That host is not named here, to keep this public repo free of private
+# infrastructure. Set it either in your shell (`export DIKTILO_VPS=<ssh-host>`)
+# or in Scripts/release.env, which is gitignored:
+#
+#   DIKTILO_VPS=<ssh-host>
 set -euo pipefail
 
-VPS=ibn-masawayh
+[ -f "$(dirname "$0")/release.env" ] && . "$(dirname "$0")/release.env"
+VPS="${DIKTILO_VPS:?set DIKTILO_VPS (shell env or Scripts/release.env) to the ssh host that cuts the release}"
 REPO=sypianski/diktilo
 FEED_URL=https://sypian.ski/diktilo/appcast.xml
 KEY_FILE="$HOME/.config/diktilo/sparkle_ed_private.txt"
@@ -137,4 +144,4 @@ LOCAL_LEN=$(stat -f %z "$DMG")
 [ "$REMOTE_LEN" = "$LOCAL_LEN" ] || die "DMG size mismatch: remote $REMOTE_LEN, local $LOCAL_LEN"
 
 echo ""
-echo "Released Diktilo $VERSION. Pull on ibn-masawayh: cd ~/utensili/diktilo/macos && git pull"
+echo "Released Diktilo $VERSION. Pull on $VPS: cd ~/utensili/diktilo/macos && git pull"
