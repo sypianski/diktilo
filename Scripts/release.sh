@@ -112,6 +112,7 @@ This will:
   1. git push origin main + tag v$VERSION
   2. create GitHub Release v$VERSION on $REPO with Diktilo.dmg (via $VPS)
   3. publish appcast.xml to $FEED_URL  -> every installed Diktilo sees it
+  4. set version + date in app.json on $VPS (shown on the app page)
 ===========================================================
 EOF
 read -r -p "Publish? Type 'yes': " ANSWER
@@ -135,6 +136,27 @@ ssh -n "$VPS" "gh release create v$VERSION $STAGE/Diktilo.dmg -R $REPO \
 # Only after the DMG is downloadable — the feed must never point at a 404.
 echo "==> Publishing appcast"
 scp -q appcast.xml "$VPS:www/sypian.ski/diktilo/appcast.xml"
+
+# The app page reads version + date from app.json next to the appcast. Edit the
+# two values in place (text substitution, so the rest of the file keeps its
+# layout and key order) over the same ssh as above. No -n: the script comes in
+# on stdin. The remote command is a plain `python3 - args`, valid in any login
+# shell (the host's is fish).
+echo "==> Updating app.json (version and date shown on the page)"
+ssh "$VPS" python3 - "$VERSION" "$(date +%F)" <<'PY' || die "app.json update failed (release itself is published; fix app.json by hand)"
+import json, os, re, sys
+version, updated = sys.argv[1:]
+p = os.path.expanduser("~/www/sypian.ski/diktilo/app.json")
+s = open(p, encoding="utf-8").read()
+for key, val in (("version", version), ("updated", updated)):
+    s, n = re.subn(r'("%s"\s*:\s*)"[^"]*"' % key, lambda m: m.group(1) + json.dumps(val), s, count=1)
+    if n != 1:
+        sys.exit("app.json: no %r field" % key)
+d = json.loads(s)
+assert d["version"] == version and d["updated"] == updated
+open(p + ".tmp", "w", encoding="utf-8").write(s)
+os.replace(p + ".tmp", p)
+PY
 
 echo "==> Verifying"
 curl -fsS "$FEED_URL" | xmllint --noout - || die "published feed is not valid XML"
