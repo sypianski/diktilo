@@ -17,7 +17,6 @@ enum ViewType: String, CaseIterable, Identifiable {
 struct ContentView: View {
     private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "ContentView")
     @State private var selectedView: ViewType = .dashboard
-    @AppStorage(AppTour.hasSeenKey) private var hasSeenTour = false
     @State private var isTourPresented = false
 
     var body: some View {
@@ -30,12 +29,6 @@ struct ContentView: View {
         .frame(minHeight: AppWindowLayout.minimumHeight)
         .onAppear {
             logger.notice("ContentView appeared")
-            if !hasSeenTour {
-                // Let the window settle before the sheet slides in.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                    isTourPresented = true
-                }
-            }
         }
         .onDisappear {
             logger.notice("ContentView disappeared")
@@ -50,7 +43,7 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: AppTour.showRequested)) { _ in
             isTourPresented = true
         }
-        .sheet(isPresented: $isTourPresented, onDismiss: { hasSeenTour = true }) {
+        .sheet(isPresented: $isTourPresented) {
             AppTourView { isTourPresented = false }
         }
     }

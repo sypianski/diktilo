@@ -10,11 +10,10 @@ import Carbon.HIToolbox
 // because most of what needs explaining — the recording bar, global shortcuts,
 // the clipboard — lives outside the main window.
 //
-// Shown once after onboarding (`hasSeenAppTourV1`), and on demand from
-// Settings and Help → Diktilo Tour.
+// Never opens by itself: the onboarding summary offers it, and it stays
+// available from Settings and Help → Diktilo Tour.
 
 enum AppTour {
-    static let hasSeenKey = "hasSeenAppTourV1"
     static let showRequested = Notification.Name("AppTourShowRequested")
 
     /// Brings the main window forward (it hosts the sheet), then asks it to
@@ -30,9 +29,7 @@ enum AppTour {
 
 enum AppTourStep: Int, CaseIterable, Identifiable {
     case record
-    case recorderBar
     case modes
-    case models
     case history
     case settings
 
@@ -54,13 +51,18 @@ struct AppTourView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            progressHeader
+                .padding(.horizontal, 20)
+                .padding(.top, 14)
+                .padding(.bottom, 10)
+
             AppTourStage(step: step)
                 .id(step)
                 .transition(.asymmetric(
                     insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
                     removal: .move(edge: forward ? .leading : .trailing).combined(with: .opacity)
                 ))
-                .frame(height: 230)
+                .frame(height: 250)
                 .frame(maxWidth: .infinity)
                 .clipped()
                 .background(AppTheme.Surface.subtle)
@@ -70,7 +72,7 @@ struct AppTourView: View {
             AppTourCaption(step: step, onOpenSettings: openSettings)
                 .padding(.horizontal, 28)
                 .padding(.top, 20)
-                .frame(maxWidth: .infinity, minHeight: 128, alignment: .topLeading)
+                .frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
 
             footer
                 .padding(.horizontal, 20)
@@ -80,32 +82,45 @@ struct AppTourView: View {
         .background(AppTheme.Surface.window)
     }
 
-    private var footer: some View {
+    /// "Step 2 of 4", one segment per step, and the close button. The close
+    /// button is on every step (Esc too), so the last step can be dismissed
+    /// like the others.
+    private var progressHeader: some View {
         HStack(spacing: 12) {
-            Button("Skip Tour", action: onClose)
-                .focusEffectDisabled()
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-                .keyboardShortcut(.cancelAction)
-                .opacity(isLast ? 0 : 1)
-                .disabled(isLast)
-
-            Spacer()
-
-            HStack(spacing: 6) {
-                ForEach(AppTourStep.allCases) { item in
-                    Circle()
-                        .fill(item == step ? AppTheme.Accent.primary : Color.secondary.opacity(0.3))
-                        .frame(width: 6, height: 6)
-                }
-            }
-            .accessibilityElement()
-            .accessibilityLabel(Text(String(
+            Text(String(
                 format: String(localized: "Step %lld of %lld"),
                 step.rawValue + 1,
                 AppTourStep.allCases.count
-            )))
+            ))
+            .font(.system(size: 11, design: .monospaced))
+            .foregroundStyle(.secondary)
 
+            HStack(spacing: 4) {
+                ForEach(AppTourStep.allCases) { item in
+                    Capsule()
+                        .fill(item.rawValue <= step.rawValue ? AppTheme.Accent.primary : Color.secondary.opacity(0.25))
+                        .frame(height: 4)
+                }
+            }
+            .accessibilityHidden(true)
+
+            Button(action: onClose) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .focusEffectDisabled()
+            .keyboardShortcut(.cancelAction)
+            .help("Close")
+            .accessibilityLabel(Text("Close"))
+        }
+    }
+
+    private var footer: some View {
+        HStack(spacing: 12) {
             Spacer()
 
             if step != AppTourStep.allCases.first {
@@ -188,6 +203,7 @@ private enum TourFacts {
     static var modes: [OutputProfile] {
         Array(OutputProfileManager.shared.enabledConfigurations.prefix(4))
     }
+
 }
 
 // MARK: - Caption
@@ -213,21 +229,13 @@ private struct AppTourCaption: View {
                     .padding(.top, 2)
             }
 
-            // The full explainer, not a link away: this choice decides where
-            // recordings go, so the tour shows it in whole.
-            if step == .models {
-                LocalOrKeyExplainer()
-                    .padding(.top, 4)
-            }
         }
     }
 
     private var title: LocalizedStringKey {
         switch step {
         case .record: return "Record in any app"
-        case .recorderBar: return "The recording bar"
         case .modes: return "Modes"
-        case .models: return "Local model or API key"
         case .history: return "History and clipboard"
         case .settings: return "Where to change things"
         }
@@ -249,26 +257,23 @@ private struct AppTourCaption: View {
             case .hybrid:
                 how = String(format: String(localized: "Tap %@ to start and tap again to finish, or hold it while you speak."), keys)
             }
-            return how + " " + TourFacts.activeOutputSentence
-        case .recorderBar:
             let place = TourFacts.isNotchRecorder
                 ? String(localized: "at the top of the screen, by the notch")
                 : String(localized: "at the bottom of the screen")
-            return String(
-                format: String(localized: "While you record, this bar appears %@. The round button on the left finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place."),
+            let bar = String(
+                format: String(localized: "While you record, this bar appears %@. The round button on the left finishes, %@."),
                 place,
                 TourFacts.cancelPhrase
             )
+            return how + " " + TourFacts.activeOutputSentence + " " + bar
         case .modes:
-            return String(localized: "A mode sets whether AI rewrites the text and where the result goes: pasted, copied or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.")
-        case .models:
-            return String(localized: "Diktilo transcribes with a local model or through an outside provider with an API key.")
+            return String(localized: "A mode sets whether AI rewrites the text and where the result goes. Finish with a mode's shortcut to use that mode.")
         case .history:
             return TourFacts.isAutoCopyEnabled
-                ? String(localized: "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
-                : String(localized: "Every transcription is saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.")
+                ? String(localized: "Every recording is saved in History and copied to the clipboard. The copy button on a transcript copies it again.")
+                : String(localized: "Every recording is saved in History. The copy button on a transcript copies it again.")
         case .settings:
-            return String(localized: "The recording shortcut and modes are in Keyboard Shortcuts; the microphone, dictation languages and the bar's look in Recording; the app's language and appearance in App. To see this tour again, choose Help → Diktilo Tour.")
+            return String(localized: "Everything is in the sidebar. To see this guide again, choose Help → Diktilo Tour.")
         }
     }
 }
@@ -282,9 +287,7 @@ private struct AppTourStage: View {
         ZStack {
             switch step {
             case .record: RecordStage()
-            case .recorderBar: RecorderBarStage()
             case .modes: ModesStage()
-            case .models: ModelsStage()
             case .history: HistoryStage()
             case .settings: SettingsStage()
             }
@@ -293,17 +296,21 @@ private struct AppTourStage: View {
     }
 }
 
-/// The user's actual recording shortcut as big keycaps.
+/// The user's actual recording shortcut as keycaps, with the recording bar
+/// it opens right underneath.
 private struct RecordStage: View {
     var body: some View {
-        VStack(spacing: 16) {
-            ShortcutPreviewView(shortcut: TourFacts.primaryShortcut)
-            Text(TourFacts.recordingMode.displayName)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(Capsule().fill(AppTheme.Surface.controlActive))
+        VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                ShortcutPreviewView(shortcut: TourFacts.primaryShortcut)
+                Text(TourFacts.recordingMode.displayName)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(AppTheme.Surface.controlActive))
+            }
+            RecorderBarStage()
         }
     }
 }
@@ -359,7 +366,8 @@ private struct RecorderBarStage: View {
                 .strokeBorder(surface == .panel ? AppTheme.Palette.rule : .clear, lineWidth: 1)
         )
         .environment(\.colorScheme, surface == .notch ? .dark : colorScheme)
-        .scaleEffect(1.35)
+        .scaleEffect(1.1)
+        .frame(height: 40 + RecorderHUDMetrics.bandHeight + 8)
         .accessibilityElement()
         .accessibilityLabel(Text("Recording bar"))
     }
@@ -418,7 +426,8 @@ private struct ModesStage: View {
     }
 }
 
-/// A sample dashboard card and the clipboard it lands on. Example text only.
+/// A sample transcript and where it lands: History, and the clipboard when
+/// auto-copy is on. Example text only.
 private struct HistoryStage: View {
     var body: some View {
         HStack(spacing: 18) {
@@ -443,60 +452,66 @@ private struct HistoryStage: View {
             Image(systemName: "arrow.right")
                 .foregroundStyle(.secondary)
 
-            VStack(spacing: 6) {
-                Image(systemName: "list.clipboard.fill")
-                    .font(.system(size: 34))
-                    .foregroundStyle(AppTheme.Accent.primary)
-                Text("Clipboard")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.secondary)
+            VStack(spacing: 14) {
+                target(icon: ViewType.history.icon, title: ViewType.history.title)
+                if TourFacts.isAutoCopyEnabled {
+                    target(icon: "list.clipboard.fill", title: "Clipboard")
+                }
             }
+        }
+    }
+
+    private func target(icon: String, title: LocalizedStringKey) -> some View {
+        VStack(spacing: 5) {
+            Image(systemName: icon)
+                .font(.system(size: 26))
+                .foregroundStyle(AppTheme.Accent.primary)
+            Text(title)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
         }
     }
 }
 
-/// The model the advisor picks for this Mac; the local-vs-key explainer
-/// itself sits in the caption, where it has room to grow.
-private struct ModelsStage: View {
-    private let recommendation = ModelAdvisor.currentRecommendation()
-
+/// The whole sidebar, one sentence per item, so the guide covers the app.
+private struct SettingsStage: View {
     var body: some View {
-        ModelAdvisorSummary(recommendation: recommendation)
-            .padding(16)
-            .background(AppCardBackground(cornerRadius: 12))
-            .padding(.horizontal, 28)
+        VStack(alignment: .leading, spacing: 5) {
+            ForEach(ViewType.primaryItems + ViewType.secondaryItems) { item in
+                HStack(spacing: 10) {
+                    Image(systemName: item.icon)
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppTheme.Accent.primary)
+                        .frame(width: 18)
+
+                    Text(item.title)
+                        .font(.system(size: 12, weight: .semibold))
+                        .lineLimit(1)
+                        .frame(width: 150, alignment: .leading)
+
+                    Text(item.tourSentence)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+        }
+        .padding(.horizontal, 28)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-/// The real sidebar rows where things are changed, plus where the tour lives.
-private struct SettingsStage: View {
-    var body: some View {
-        HStack(alignment: .top, spacing: 24) {
-            VStack(spacing: 3) {
-                ForEach([ViewType.modes, .audio, .settings]) { item in
-                    SidebarItemButton(viewType: item, isSelected: item == .modes, action: {})
-                        .allowsHitTesting(false)
-                }
-            }
-            .frame(width: 190)
-            .padding(8)
-            .background(AppCardBackground(cornerRadius: 12))
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Help")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                Text("Diktilo Tour")
-                    .font(.system(size: 13))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(
-                        RoundedRectangle(cornerRadius: 5, style: .continuous)
-                            .fill(Color(nsColor: .selectedContentBackgroundColor))
-                    )
-                    .foregroundStyle(Color(nsColor: .alternateSelectedControlTextColor))
-            }
-            .padding(.top, 6)
+private extension ViewType {
+    var tourSentence: LocalizedStringKey {
+        switch self {
+        case .dashboard: return "Latest transcripts and first steps."
+        case .modes: return "Recording shortcut and modes: what happens to the text."
+        case .transcribeAudio: return "Transcribe a ready audio file."
+        case .history: return "Every recording, ready to copy again."
+        case .dictionary: return "Your words and replacements."
+        case .models: return "Speech recognition and text improvement."
+        case .audio: return "Microphone, languages and recording bar."
+        case .settings: return "Language, appearance and help."
         }
     }
 }

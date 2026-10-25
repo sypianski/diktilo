@@ -2196,50 +2196,6 @@
         }
       }
     },
-    "Every transcription is copied to the clipboard and saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Każda transkrypcja trafia do schowka i do Historii. Ostatnie widać w zakładce Dashboard; przycisk kopiowania na karcie kopiuje ją ponownie."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ĉiu transskribo iras al la tondujo kaj al la Historio. La lastajn vi vidas en la langeto Panelo; la kopia butono sur karto kopias ĝin denove."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cada transcripció es copia al porta-retalls i es desa a l'Historial. El tauler mostra les més recents; el botó de copiar d'una targeta la torna a copiar."
-          }
-        }
-      }
-    },
-    "Every transcription is saved in History. The dashboard shows the latest ones; the copy button on a card copies it again.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Każda transkrypcja trafia do Historii. Ostatnie widać w zakładce Dashboard; przycisk kopiowania na karcie kopiuje ją ponownie."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ĉiu transskribo iras al la Historio. La lastajn vi vidas en la langeto Panelo; la kopia butono sur karto kopias ĝin denove."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cada transcripció es desa a l'Historial. El tauler mostra les més recents; el botó de copiar d'una targeta la torna a copiar."
-          }
-        }
-      }
-    },
     "Example: the meeting moves to Thursday at ten, please bring the draft.": {
       "localizations": {
         "pl": {
@@ -2566,28 +2522,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Format"
-          }
-        }
-      }
-    },
-    "Help": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pomoc"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Helpo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajuda"
           }
         }
       }
@@ -3868,28 +3802,6 @@
         }
       }
     },
-    "Skip Tour": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pomiń przewodnik"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preterlasi gvidturon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ometre la visita guiada"
-          }
-        }
-      }
-    },
     "Split Into Paragraphs": {
       "localizations": {
         "pl": {
@@ -4084,28 +3996,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "El mode actiu decideix on va el text."
-          }
-        }
-      }
-    },
-    "The recording bar": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pasek nagrywania"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La registra breto"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La barra d'enregistrament"
           }
         }
       }
@@ -39102,28 +38992,6 @@
         }
       }
     },
-    "While you record, this bar appears %@. The round button on the left finishes, %@. The shortcuts underneath finish the recording and send the text to a specific place.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Podczas nagrywania ten pasek pojawia się %@. Okrągły przycisk po lewej kończy nagranie, %@. Skróty pod spodem kończą nagranie i wysyłają tekst w konkretne miejsce."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dum vi registras, ĉi tiu breto aperas %@. La ronda butono maldekstre finas, %@. La klavkombinoj sube finas la registradon kaj sendas la tekston al specifa loko."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mentre enregistres, aquesta barra apareix %@. El botó rodó de l'esquerra acaba l'enregistrament, %@. Les dreceres de sota acaben l'enregistrament i envien el text a un lloc concret."
-          }
-        }
-      }
-    },
     "Transcribe File": {
       "localizations": {
         "de": {
@@ -41232,40 +41100,6 @@
         }
       }
     },
-    "Local model or API key": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Model lokalny czy klucz API"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lokales Modell oder API-Schlüssel"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本地模型还是 API 密钥"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loka modelo aŭ API-ŝlosilo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Model local o clau d'API"
-          }
-        }
-      }
-    },
     "Diktilo transcribes with a local model or through an outside provider. A local model keeps your recordings on this Mac and works offline. With an API key, recordings go to the provider (e.g. Groq), which sends back the text: you create an account there, paste the key into AI Models and pay for use, often with a free allowance.": {
       "localizations": {
         "pl": {
@@ -41772,40 +41606,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Informació del sistema"
-          }
-        }
-      }
-    },
-    "Diktilo transcribes with a local model or through an outside provider with an API key.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diktilo transkribiert mit einem lokalen Modell oder über einen externen Anbieter mit API-Schlüssel."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diktilo transkrybuje modelem lokalnym albo przez zewnętrznego dostawcę z kluczem API."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diktilo 使用本地模型，或通过带 API 密钥的外部提供商进行转写。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diktilo transskribas per loka modelo aŭ per ekstera provizanto kun API-ŝlosilo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diktilo transcriu amb un model local o mitjançant un proveïdor extern amb clau d'API."
           }
         }
       }
@@ -43714,40 +43514,6 @@
         }
       }
     },
-    "The recording shortcut and modes are in Keyboard Shortcuts; the microphone, dictation languages and the bar's look in Recording; the app's language and appearance in App. To see this tour again, choose Help → Diktilo Tour.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skrót nagrywania i tryby są w panelu Skróty klawiszowe, a mikrofon, języki dyktowania i wygląd paska w Nagrywaniu. Język i wygląd samej aplikacji zmienisz w Aplikacji. Przewodnik otworzysz ponownie z menu Pomoc → Przewodnik po Diktilo."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aufnahme-Kurzbefehl und Modi findest du unter Tastaturkurzbefehle; Mikrofon, Diktiersprachen und das Aussehen der Leiste unter Aufnahme; Sprache und Erscheinungsbild der App unter App. Die Tour öffnest du erneut über Hilfe → Diktilo-Tour."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "录音快捷键和模式在“键盘快捷键”中；麦克风、听写语言和录音条外观在“录音”中；应用的语言和外观在“应用”中。要再次查看导览，请选择“帮助 → Diktilo 导览”。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La registra klavkombino kaj la reĝimoj estas en Klavkombinoj; la mikrofono, la diktadaj lingvoj kaj la aspekto de la breto en Registrado; la lingvo kaj aspekto de la aplikaĵo en Aplikaĵo. Por revidi ĉi tiun gvidadon, elektu Helpo → Gvidado tra Diktilo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La drecera d'enregistrament i els modes són a Dreceres de teclat; el micròfon, els idiomes de dictat i l'aspecte de la barra, a Enregistrament, i l'idioma i l'aspecte de l'app, a App. Per tornar a veure aquesta visita guiada, tria Ajuda → Visita guiada per Diktilo."
-          }
-        }
-      }
-    },
     "Dictation Languages": {
       "localizations": {
         "pl": {
@@ -44326,28 +44092,6 @@
         }
       }
     },
-    "A mode sets whether AI rewrites the text and where the result goes: pasted, copied or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tryb ustala, czy AI przeredaguje tekst i dokąd trafi wynik: wklejenie, schowek albo zapis do pliku. Zakończ nagranie skrótem trybu, żeby go użyć. Przy otwartym pasku ⌥1…⌥0 przełącza tryby."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reĝimo difinas, ĉu AI reverkas la tekston kaj kien iras la rezulto: algluo, tondujo aŭ konservo al dosiero. Finu la registradon per la klavkombino de reĝimo por uzi ĝin. Dum la breto estas malfermita, ⌥1…⌥0 ŝanĝas la reĝimon."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un mode determina si la IA reescriu el text i on va a parar el resultat: s'enganxa, es copia o es desa en un fitxer. Acaba l'enregistrament amb la drecera d'un mode per fer servir aquell mode. Mentre la barra és oberta, ⌥1…⌥0 canvia de mode."
-          }
-        }
-      }
-    },
     "Add a target to save transcripts to a file, URL scheme or shell command.": {
       "localizations": {
         "pl": {
@@ -44534,6 +44278,149 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skróty wymagają dostępu ułatwień."
+          }
+        }
+      }
+    },
+    "While you record, this bar appears %@. The round button on the left finishes, %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas nagrywania pojawia się ten pasek %@. Okrągły przycisk po lewej kończy nagrywanie, %@."
+          }
+        }
+      }
+    },
+    "A mode sets whether AI rewrites the text and where the result goes. Finish with a mode's shortcut to use that mode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb ustala, czy AI przepisuje tekst i gdzie trafia wynik. Zakończ nagrywanie skrótem trybu, aby go użyć."
+          }
+        }
+      }
+    },
+    "Every recording is saved in History and copied to the clipboard. The copy button on a transcript copies it again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każde nagranie trafia do Historii i do schowka. Przycisk kopiowania przy transkrypcji kopiuje ją ponownie."
+          }
+        }
+      }
+    },
+    "Every recording is saved in History. The copy button on a transcript copies it again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każde nagranie trafia do Historii. Przycisk kopiowania przy transkrypcji kopiuje ją ponownie."
+          }
+        }
+      }
+    },
+    "Everything is in the sidebar. To see this guide again, choose Help → Diktilo Tour.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystko jest w pasku bocznym. Aby zobaczyć ten przewodnik ponownie, wybierz Pomoc → Przewodnik po Diktilo."
+          }
+        }
+      }
+    },
+    "Latest transcripts and first steps.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostatnie transkrypcje i pierwsze kroki."
+          }
+        }
+      }
+    },
+    "Recording shortcut and modes: what happens to the text.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót nagrywania i tryby: co dzieje się z tekstem."
+          }
+        }
+      }
+    },
+    "Transcribe a ready audio file.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja gotowego pliku audio."
+          }
+        }
+      }
+    },
+    "Every recording, ready to copy again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każde nagranie, gotowe do ponownego skopiowania."
+          }
+        }
+      }
+    },
+    "Your words and replacements.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje słowa i zamiany."
+          }
+        }
+      }
+    },
+    "Speech recognition and text improvement.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpoznawanie mowy i poprawianie tekstu."
+          }
+        }
+      }
+    },
+    "Microphone, languages and recording bar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon, języki i pasek nagrywania."
+          }
+        }
+      }
+    },
+    "Language, appearance and help.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Język, wygląd i pomoc."
           }
         }
       }
