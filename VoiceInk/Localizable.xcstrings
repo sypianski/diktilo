@@ -2680,28 +2680,6 @@
         }
       }
     },
-    "Onboarding": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wprowadzenie"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enkonduko"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introducció"
-          }
-        }
-      }
-    },
     "Open target app": {
       "localizations": {
         "pl": {
@@ -3340,28 +3318,6 @@
         }
       }
     },
-    "SF Symbol name": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nazwa symbolu SF"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nomo de SF-simbolo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nom del símbol SF"
-          }
-        }
-      }
-    },
     "Shell Command": {
       "localizations": {
         "pl": {
@@ -3754,50 +3710,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avui, 10:42"
-          }
-        }
-      }
-    },
-    "Tokens: {date} {time} {datetime} {slug}": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zmienne: {date} {time} {datetime} {slug}"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Variabloj: {date} {time} {datetime} {slug}"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Variables: {date} {time} {datetime} {slug}"
-          }
-        }
-      }
-    },
-    "Type": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Typ"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tipo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tipus"
           }
         }
       }
@@ -26696,74 +26608,6 @@
         }
       }
     },
-    "Reset": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zurücksetzen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resetuj"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restarigi"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restablir"
-          }
-        }
-      }
-    },
-    "Reset Onboarding": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einführung zurücksetzen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重置新手引导"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resetuj wprowadzenie"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restarigi enkondukon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restablir la introducció"
-          }
-        }
-      }
-    },
     "Reset to default": {
       "localizations": {
         "de": {
@@ -35264,40 +35108,6 @@
         }
       }
     },
-    "Restart Diktilo to Apply Language": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diktilo neu starten, um die Sprache anzuwenden"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重新启动 Diktilo 以应用语言"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uruchom Diktilo ponownie, aby zastosować język"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rekomenci Diktilon por apliki la lingvon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reinicia Diktilo per aplicar l'idioma"
-          }
-        }
-      }
-    },
     "Select the text on the screen, tell Diktilo the changes you want, and Diktilo will rewrite the text for you.": {
       "extractionState": "stale",
       "localizations": {
@@ -36106,40 +35916,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Diktilo baixarà el model Parakeet de NVIDIA per configurar la transcripció local ràpida."
-          }
-        }
-      }
-    },
-    "Your language change will take full effect after you quit and reopen Diktilo.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Sprachänderung wird vollständig wirksam, nachdem du Diktilo beendet und erneut geöffnet hast."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出并重新打开 Diktilo 后，语言更改才会完全生效。"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zmiana języka zacznie w pełni obowiązywać po ponownym uruchomieniu Diktilo."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La lingvoŝanĝo plene efikos post kiam vi ĉesigos kaj remalfermos Diktilon."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El canvi d'idioma s'aplicarà del tot quan surtis de Diktilo i el tornis a obrir."
           }
         }
       }
@@ -38636,40 +38412,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "La drecera d'enregistrament i els modes són a Dreceres de teclat; el micròfon i l'aspecte de la barra, a Enregistrament, i l'idioma i l'aspecte, a App. Per tornar a veure aquesta visita guiada, tria Ajuda → Visita guiada per Diktilo."
-          }
-        }
-      }
-    },
-    "System Info": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Systeminformationen"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Informacje o systemie"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统信息"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sistemaj informoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Informació del sistema"
           }
         }
       }
@@ -42379,6 +42121,237 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ukryj rozmowę"
+          }
+        }
+      }
+    },
+    "Language & Appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Język i wygląd"
+          }
+        }
+      }
+    },
+    "Startup": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamianie"
+          }
+        }
+      }
+    },
+    "Help": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomoc"
+          }
+        }
+      }
+    },
+    "Data": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dane"
+          }
+        }
+      }
+    },
+    "Show Introduction Again": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż wprowadzenie od nowa"
+          }
+        }
+      }
+    },
+    "Show Again": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż od nowa"
+          }
+        }
+      }
+    },
+    "Introduction": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wprowadzenie"
+          }
+        }
+      }
+    },
+    "Replay the first-launch screens.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekrany z pierwszego uruchomienia pokażą się jeszcze raz."
+          }
+        }
+      }
+    },
+    "Language change takes effect after restart.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmiana języka zadziała po ponownym uruchomieniu."
+          }
+        }
+      }
+    },
+    "Restart": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchom ponownie"
+          }
+        }
+      }
+    },
+    "Bug Report": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zgłoszenie błędu"
+          }
+        }
+      }
+    },
+    "Copy Info": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiuj informacje"
+          }
+        }
+      }
+    },
+    "Copy the system info and export the logs to attach to a report.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skopiuj informacje o systemie i wyeksportuj logi, aby dołączyć je do zgłoszenia."
+          }
+        }
+      }
+    },
+    "Report a Bug…": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zgłoś błąd…"
+          }
+        }
+      }
+    },
+    "Writes the text to a file in a folder.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisuje tekst do pliku w wybranym katalogu."
+          }
+        }
+      }
+    },
+    "Opens another app with the text in a link.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera inną aplikację, przekazując tekst w linku."
+          }
+        }
+      }
+    },
+    "Runs a command and passes it the text.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamia polecenie i przekazuje mu tekst."
+          }
+        }
+      }
+    },
+    "Choose…": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz…"
+          }
+        }
+      }
+    },
+    "Variables: {date} {time} {datetime} {slug}": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmienne: {date} {time} {datetime} {slug}"
+          }
+        }
+      }
+    },
+    "File created: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Powstanie plik: %@"
+          }
+        }
+      }
+    },
+    "Example note": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przykładowa notatka"
           }
         }
       }

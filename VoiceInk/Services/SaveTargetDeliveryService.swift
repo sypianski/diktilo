@@ -163,6 +163,12 @@ enum SaveTargetDeliveryService {
 
     // MARK: - Helpers
 
+    /// The file name a template would produce right now, for the editor's preview.
+    static func previewFilename(template: String, format: SaveTargetFileFormat) -> String {
+        let resolved = template.isEmpty ? "{date}-{slug}" : template
+        return "\(expandedFilename(template: resolved, text: String(localized: "Example note"))).\(format.fileExtension)"
+    }
+
     /// Expands filename template tokens into a concrete base name (no extension).
     private static func expandedFilename(template: String, text: String) -> String {
         let now = Date()

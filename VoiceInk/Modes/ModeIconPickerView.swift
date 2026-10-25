@@ -24,6 +24,8 @@ struct ModeIconPickerView: View {
     @StateObject private var emojiManager = EmojiManager.shared
     @Binding var selectedIcon: ModeIcon
     @Binding var isPresented: Bool
+    /// Symbols only, for places whose icon model is an SF Symbol name (save targets).
+    var allowsEmoji = true
 
     @State private var newEmojiText: String = ""
     @State private var isAddingCustomEmoji = false
@@ -73,7 +75,7 @@ struct ModeIconPickerView: View {
                         }
                     }
 
-                    ForEach(emojiOptions, id: \.self) { emoji in
+                    ForEach(allowsEmoji ? emojiOptions : [], id: \.self) { emoji in
                         ModeIconButton(
                             icon: .emoji(emoji),
                             isSelected: selectedIcon == .emoji(emoji),
@@ -88,13 +90,15 @@ struct ModeIconPickerView: View {
                         }
                     }
 
-                    AddEmojiButton {
-                        isAddingCustomEmoji.toggle()
-                        newEmojiText = ""
-                        inputFeedbackMessage = ""
-                        if isAddingCustomEmoji {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                isEmojiTextFieldFocused = true
+                    if allowsEmoji {
+                        AddEmojiButton {
+                            isAddingCustomEmoji.toggle()
+                            newEmojiText = ""
+                            inputFeedbackMessage = ""
+                            if isAddingCustomEmoji {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    isEmojiTextFieldFocused = true
+                                }
                             }
                         }
                     }

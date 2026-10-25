@@ -8,19 +8,17 @@ struct DiagnosticsSettingsView: View {
     @State private var isSystemInfoCopied = false
 
     var body: some View {
-        // For bug reports: macOS, chip, model and settings summary.
-        LabeledContent("System Info") {
-            Button(isSystemInfoCopied ? LocalizedStringKey("Copied!") : LocalizedStringKey("Copy")) {
-                SystemInfoService.shared.copySystemInfoToClipboard()
-                isSystemInfoCopied = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    isSystemInfoCopied = false
-                }
-            }
-        }
-
+        // For bug reports: macOS, chip, model and settings summary, plus the logs.
         LabeledContent {
             HStack(spacing: 8) {
+                Button(isSystemInfoCopied ? LocalizedStringKey("Copied!") : LocalizedStringKey("Copy Info")) {
+                    SystemInfoService.shared.copySystemInfoToClipboard()
+                    isSystemInfoCopied = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        isSystemInfoCopied = false
+                    }
+                }
+
                 if let url = exportedLogURL {
                     Button("Show in Finder") {
                         NSWorkspace.shared.activateFileViewerSelecting([url])
@@ -30,19 +28,22 @@ struct DiagnosticsSettingsView: View {
                         .foregroundColor(AppTheme.Status.positive)
                 }
 
-                Button("Export") {
+                Button {
                     exportDiagnosticLogs()
+                } label: {
+                    HStack(spacing: 4) {
+                        if isExportingLogs {
+                            ProgressView()
+                                .controlSize(.small)
+                        }
+                        Text("Export Logs")
+                    }
                 }
                 .disabled(isExportingLogs)
             }
         } label: {
-            HStack(spacing: 4) {
-                if isExportingLogs {
-                    ProgressView()
-                        .controlSize(.small)
-                }
-                Text("Export Logs")
-            }
+            Text("Bug Report")
+            Text("Copy the system info and export the logs to attach to a report.")
         }
         .alert("Export Failed", isPresented: $showLogExportError) {
             Button("OK", role: .cancel) { }

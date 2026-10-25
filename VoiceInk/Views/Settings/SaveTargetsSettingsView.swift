@@ -103,39 +103,43 @@ private struct SaveTargetRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: target.icon)
-                .font(.system(size: 16))
-                .foregroundColor(AppTheme.Accent.text)
-                .frame(width: 24)
+            // Clicking the name side edits; the shortcut chip records its own key.
+            HStack(spacing: 12) {
+                Image(systemName: target.icon)
+                    .font(.system(size: 16))
+                    .foregroundColor(AppTheme.Accent.text)
+                    .frame(width: 24)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(target.name)
-                    .fontWeight(.medium)
-                Text(target.strategyDisplayName)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(target.name)
+                        .fontWeight(.medium)
+                    Text(target.strategyDisplayName)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer(minLength: 0)
             }
+            .contentShape(Rectangle())
+            .onTapGesture { onEdit() }
 
-            Spacer()
+            ShortcutRecorder(action: .finishWithSaveTarget(target.id))
+                .controlSize(.small)
+                .help("Finish shortcut")
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("Finish shortcut")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                ShortcutRecorder(action: .finishWithSaveTarget(target.id))
-                    .controlSize(.small)
+            Menu {
+                Button("Edit") { onEdit() }
+                Button("Delete", role: .destructive) { onDelete() }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
             }
-
-            Button("Edit") { onEdit() }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
-            Button("Delete", role: .destructive) { onDelete() }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
         }
         .padding(.vertical, 4)
-        .contentShape(Rectangle())
     }
 }
 
@@ -151,6 +155,7 @@ struct SaveTargetEditorView: View {
     @State private var name: String
     @State private var icon: String
     @State private var strategyKind: StrategyKind
+    @State private var isShowingIconPicker = false
 
     // File strategy fields
     @State private var directoryPath: String
@@ -177,6 +182,22 @@ struct SaveTargetEditorView: View {
             case .file: return String(localized: "File")
             case .urlScheme: return String(localized: "URL Scheme")
             case .shellCommand: return String(localized: "Shell Command")
+            }
+        }
+
+        var summary: String {
+            switch self {
+            case .file: return String(localized: "Writes the text to a file in a folder.")
+            case .urlScheme: return String(localized: "Opens another app with the text in a link.")
+            case .shellCommand: return String(localized: "Runs a command and passes it the text.")
+            }
+        }
+
+        var symbol: String {
+            switch self {
+            case .file: return "doc.text"
+            case .urlScheme: return "link"
+            case .shellCommand: return "terminal"
             }
         }
     }
@@ -236,23 +257,31 @@ struct SaveTargetEditorView: View {
                     TextField("Name", text: $name)
 
                     LabeledContent("Icon") {
-                        HStack {
+                        HStack(spacing: 10) {
                             Image(systemName: icon.isEmpty ? "questionmark" : icon)
-                                .frame(width: 20)
-                            TextField("SF Symbol name", text: $icon)
-                                .textFieldStyle(.roundedBorder)
-                                .frame(maxWidth: 180)
+                                .font(.system(size: 16))
+                                .foregroundColor(AppTheme.Accent.text)
+                                .frame(width: 24)
+
+                            Button("Change…") {
+                                isShowingIconPicker.toggle()
+                            }
+                            .popover(isPresented: $isShowingIconPicker, arrowEdge: .bottom) {
+                                ModeIconPickerView(
+                                    selectedIcon: Binding(
+                                        get: { .symbol(icon) },
+                                        set: { icon = $0.value }
+                                    ),
+                                    isPresented: $isShowingIconPicker,
+                                    allowsEmoji: false
+                                )
+                            }
                         }
                     }
                 }
 
                 Section("Strategy") {
-                    Picker("Type", selection: $strategyKind) {
-                        ForEach(StrategyKind.allCases) { kind in
-                            Text(kind.displayName).tag(kind)
-                        }
-                    }
-                    .pickerStyle(.segmented)
+                    kindTiles
 
                     strategyFields
                 }
@@ -275,6 +304,35 @@ struct SaveTargetEditorView: View {
         .frame(minWidth: 440, minHeight: 400)
     }
 
+    private var kindTiles: some View {
+        HStack(alignment: .top, spacing: 8) {
+            ForEach(StrategyKind.allCases) { kind in
+                Button {
+                    strategyKind = kind
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Image(systemName: kind.symbol)
+                            .font(.system(size: 14))
+                            .foregroundColor(strategyKind == kind ? AppTheme.Accent.text : .secondary)
+                        Text(kind.displayName)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.primary)
+                        Text(kind.summary)
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 84, alignment: .topLeading)
+                    .padding(10)
+                    .background(AppCardBackground(isSelected: strategyKind == kind, cornerRadius: 10))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(strategyKind == kind ? .isSelected : [])
+            }
+        }
+    }
+
     @ViewBuilder
     private var strategyFields: some View {
         switch strategyKind {
@@ -289,16 +347,46 @@ struct SaveTargetEditorView: View {
 
     private var fileStrategyFields: some View {
         Group {
-            TextField("Directory", text: $directoryPath, prompt: Text("~/Documents"))
+            LabeledContent("Directory") {
+                HStack(spacing: 8) {
+                    TextField("", text: $directoryPath, prompt: Text("~/Documents"))
+                        .labelsHidden()
+                        .textFieldStyle(.roundedBorder)
+
+                    Button("Choose…") {
+                        chooseDirectory()
+                    }
+                }
+            }
             TextField("Filename Template", text: $filenameTemplate, prompt: Text("{date}-{slug}"))
-                .help("Tokens: {date} {time} {datetime} {slug}")
+            Text("Variables: {date} {time} {datetime} {slug}")
+                .settingsDescription()
             Picker("Format", selection: $fileFormat) {
                 ForEach(SaveTargetFileFormat.allCases, id: \.self) { format in
                     Text(format.displayName).tag(format)
                 }
             }
             Toggle("Append to existing file", isOn: $appendToExisting)
+            Text(String(
+                format: String(localized: "File created: %@"),
+                SaveTargetDeliveryService.previewFilename(template: filenameTemplate, format: fileFormat)
+            ))
+            .settingsDescription()
         }
+    }
+
+    private func chooseDirectory() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        let expanded = (directoryPath as NSString).expandingTildeInPath
+        if FileManager.default.fileExists(atPath: expanded) {
+            panel.directoryURL = URL(fileURLWithPath: expanded, isDirectory: true)
+        }
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        directoryPath = (url.path as NSString).abbreviatingWithTildeInPath
     }
 
     private var urlSchemeFields: some View {

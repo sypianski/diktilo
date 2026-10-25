@@ -338,6 +338,10 @@ struct VoiceInkApp: App {
                 Button("Diktilo Tour") {
                     AppTour.show()
                 }
+
+                Button("Report a Bug…") {
+                    SettingsAnchor.request(.diagnostics)
+                }
             }
         }
 
