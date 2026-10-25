@@ -42,7 +42,7 @@ enum AppDefaults {
             "RecorderDestinationHUDEnabled": true,
 
             // Dashboard
-            "dashboardRecentTranscriptCount": 5,
+            "dashboardRecentTranscriptCount": 8,
 
             // Cleanup
             CleanupSettingsKeys.isTranscriptionCleanupEnabled: false,

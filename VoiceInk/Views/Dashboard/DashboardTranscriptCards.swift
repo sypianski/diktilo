@@ -7,7 +7,7 @@ struct DashboardTranscriptCards: View {
     var onViewAll: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("Recent Transcripts")
                     .font(.system(size: 16, weight: .bold))
@@ -45,14 +45,12 @@ struct DashboardTranscriptCards: View {
 }
 
 private struct DashboardTranscriptCardRow: View {
-    private static let metaColumnWidth: CGFloat = 96
-    private static let rowSpacing: CGFloat = 16
+    private static let timeColumnWidth: CGFloat = 78
+    private static let dayColumnWidth: CGFloat = 70
+    private static let rowSpacing: CGFloat = 12
     private static let copyButtonSize: CGFloat = 28
-    private static let copyButtonTopInset: CGFloat = 12
-    private static let copyButtonTrailingInset: CGFloat = 6
 
     let transcription: Transcription
-    @State private var isHovering = false
     @State private var isExpanded = false
 
     private var previewText: String {
@@ -98,11 +96,9 @@ private struct DashboardTranscriptCardRow: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        HStack(alignment: .top, spacing: Self.rowSpacing) {
             rowContent
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 4)
                 .contentShape(Rectangle())
                 .onTapGesture {
                     isExpanded.toggle()
@@ -111,49 +107,42 @@ private struct DashboardTranscriptCardRow: View {
 
             CopyIconButton(textToCopy: copyText, accessibilityLabel: "Copy transcript")
                 .frame(width: Self.copyButtonSize, height: Self.copyButtonSize)
-                .opacity(isHovering ? 1 : 0)
-                .allowsHitTesting(isHovering)
-                .padding(.top, Self.copyButtonTopInset)
-                .padding(.trailing, Self.copyButtonTrailingInset)
         }
-        .contentShape(Rectangle())
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovering = hovering
-            }
-        }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 4)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Transcript from \(metadataText)")
         .accessibilityValue(isExpanded ? copyText : previewText)
     }
 
     private var rowContent: some View {
-        HStack(alignment: .top, spacing: Self.rowSpacing) {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(transcription.timestamp.formatted(date: .omitted, time: .shortened))
-                        .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(AppTheme.Text.primary)
+        HStack(alignment: .firstTextBaseline, spacing: Self.rowSpacing) {
+            HStack(spacing: 6) {
+                Text(transcription.timestamp.formatted(date: .omitted, time: .shortened))
+                    .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(AppTheme.Text.primary)
 
-                    ModeIconView(
-                        icon: modeIcon,
-                        size: modeIcon.kind == .emoji ? 12 : 11,
-                        color: AppTheme.Text.secondary
-                    )
-                }
-
-                Text(Self.dayFormatter.string(from: transcription.timestamp))
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(AppTheme.Text.secondary)
+                ModeIconView(
+                    icon: modeIcon,
+                    size: modeIcon.kind == .emoji ? 12 : 11,
+                    color: AppTheme.Text.secondary
+                )
             }
             .lineLimit(1)
-            .frame(width: Self.metaColumnWidth, alignment: .leading)
+            .frame(width: Self.timeColumnWidth, alignment: .leading)
+
+            Text(Self.dayFormatter.string(from: transcription.timestamp))
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundStyle(AppTheme.Text.secondary)
+                .lineLimit(1)
+                .frame(width: Self.dayColumnWidth, alignment: .leading)
 
             Text(isExpanded ? copyText : previewText)
                 .font(.system(size: 14, weight: .regular))
                 .foregroundStyle(AppTheme.Text.primary)
                 .lineSpacing(2)
-                .lineLimit(isExpanded ? nil : 2)
+                .lineLimit(isExpanded ? nil : 1)
+                .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .layoutPriority(1)
         }

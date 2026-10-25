@@ -1,33 +1,13 @@
 import SwiftUI
 import SwiftData
-import Foundation
-import os
 
+/// Dashboard: what to do first (new users) or the latest transcripts. No
+/// numbers and no statistics — those were dropped in the TASK-60.1 redesign.
 struct DashboardContent: View {
-    private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "DashboardContent")
-    private static let fallbackDisplayName = String(localized: "there")
-    private static let displayNameFontSize: CGFloat = 28
-    private static let displayNameFontWeight: NSFont.Weight = .bold
-    private static let displayNameMinWidth: CGFloat = 72
-    private static let displayNameMaxWidth: CGFloat = 280
-    private static let displayNameHorizontalPadding: CGFloat = 8
-    private static let insightsUnlockDuration: TimeInterval = 30 * 60
-    private static let peakHoursUnlockDuration: TimeInterval = 30 * 60
     let modelContext: ModelContext
 
-    @State private var statsSummary: DashboardStatsSummary = .empty
-    @State private var hasLoadedStatsSnapshot: Bool = false
-    @State private var dashboardStatsTask: Task<Void, Never>?
-    @State private var isModelStatsPanelPresented = false
-    @State private var isInsightsViewPresented = false
-    @State private var selectedProductivityPeriod: DashboardProductivityPeriod = .lastSevenDays
     @State private var isAccessibilityEnabled = AXIsProcessTrusted()
-    @State private var isEditingDisplayName = false
-    @State private var displayNameDraft = ""
-    @AppStorage("dashboardDisplayName") private var dashboardDisplayName: String = ""
-    @AppStorage("dashboardRecentTranscriptCount") private var recentTranscriptCount: Int = 5
-    @AppStorage(DashboardProductivityPeriod.modelPerformanceStorageKey) private var modelPerformanceFilterRaw: String = DashboardProductivityPeriod.lastSevenDays.modelPerformanceStorageValue
-    @FocusState private var isNameFieldFocused: Bool
+    @AppStorage("dashboardRecentTranscriptCount") private var recentTranscriptCount: Int = 8
     @Query(Self.recentTranscriptionsDescriptor()) private var recentTranscriptionCandidates: [Transcription]
 
     private static func recentTranscriptionsDescriptor() -> FetchDescriptor<Transcription> {
@@ -40,27 +20,14 @@ struct DashboardContent: View {
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-
-        let cachedSummary = DashboardStatsCache.shared.currentSummary()
-        _statsSummary = State(initialValue: cachedSummary ?? .empty)
-        _hasLoadedStatsSnapshot = State(initialValue: cachedSummary != nil)
     }
 
     var body: some View {
         GeometryReader { geometry in
             let contentWidth = DashboardLayout.contentWidth(for: geometry.size.width)
 
-            ZStack(alignment: .top) {
-                DashboardAmbientBackground()
-
-                ScrollView {
-                    Group {
-                        if isInsightsViewPresented && canViewInsights {
-                            dashboardInsightsView
-                        } else {
-                            dashboardMainContent(availableWidth: contentWidth)
-                        }
-                    }
+            ScrollView {
+                dashboardMainContent(availableWidth: contentWidth)
                     .frame(width: contentWidth, alignment: .top)
                     .frame(
                         minHeight: max(0, geometry.size.height - DashboardLayout.contentBottomOffset),
@@ -68,165 +35,50 @@ struct DashboardContent: View {
                     )
                     .padding(.vertical, DashboardLayout.pageVerticalPadding)
                     .padding(.horizontal, DashboardLayout.pageHorizontalPadding)
-                }
             }
-        }
-        .task {
-            await loadDashboardStatsEfficiently()
         }
         .onAppear(perform: refreshAccessibilityStatus)
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             refreshAccessibilityStatus()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .sessionMetricsDidChange)) { _ in
-            dashboardStatsTask?.cancel()
-            dashboardStatsTask = Task {
-                await loadDashboardStatsEfficiently()
-            }
-        }
-        .onDisappear {
-            dashboardStatsTask?.cancel()
-        }
-        .sidePanel(isPresented: $isModelStatsPanelPresented) {
-            ModelPerformancePanel {
-                isModelStatsPanelPresented = false
-            }
-        }
     }
 
     private func dashboardMainContent(availableWidth: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: DashboardLayout.sectionSpacing) {
-            if !isAccessibilityEnabled {
-                nameEditorDismissArea {
-                    accessibilityReminder
-                }
-            }
-
-            nameEditorDismissArea {
-                greetingHeader
-            }
-
-            // Adaptive: a short how-to for newcomers, otherwise the stats entry.
             if isNewUser {
-                nameEditorDismissArea {
-                    gettingStartedCard
-                }
+                DashboardFirstSteps(
+                    shortcut: ShortcutStore.shortcut(for: .primaryRecording),
+                    isAccessibilityEnabled: isAccessibilityEnabled,
+                    hasFirstSession: !recentDashboardTranscriptions.isEmpty,
+                    onChangeShortcut: { navigate(to: .modes) },
+                    onOpenAccessibilitySettings: openAccessibilitySettings
+                )
             } else {
-                nameEditorDismissArea {
-                    heroSection
+                if !isAccessibilityEnabled {
+                    DashboardAccessibilityBar(onOpenSettings: openAccessibilitySettings)
                 }
-            }
 
-            // Prominent history section — the primary daily surface.
-            if !recentDashboardTranscriptions.isEmpty {
-                nameEditorDismissArea {
-                    DashboardTranscriptCards(
-                        transcriptions: recentDashboardTranscriptions,
-                        onViewAll: navigateToHistory
-                    )
-                }
+                DashboardTranscriptCards(
+                    transcriptions: recentDashboardTranscriptions,
+                    onViewAll: { navigate(to: .history) }
+                )
             }
         }
         .frame(width: availableWidth, alignment: .topLeading)
     }
 
-    /// A user with no completed sessions yet — show the getting-started guide
-    /// instead of stats. Kept false while stats are still loading so the guide
-    /// never flashes for a returning user.
+    /// No displayable session yet: show the checklist instead of an empty list.
     private var isNewUser: Bool {
-        hasLoadedStatsSnapshot && statsSummary.totalCount == 0
+        recentDashboardTranscriptions.isEmpty
     }
 
     private var recentDashboardTranscriptions: [Transcription] {
         let count = min(max(recentTranscriptCount, 1), 25)
         return Array(
             recentTranscriptionCandidates
-                .filter { transcription in
-                    isRecentDashboardTranscription(transcription)
-                }
+                .filter(isRecentDashboardTranscription)
                 .prefix(count)
         )
-    }
-
-    private func navigateToHistory() {
-        NotificationCenter.default.post(
-            name: .navigateToDestination,
-            object: nil,
-            userInfo: ["destination": ViewType.history.rawValue]
-        )
-    }
-
-    private var gettingStartedCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Getting started")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.Text.primary)
-
-            VStack(alignment: .leading, spacing: 14) {
-                gettingStartedStep(
-                    icon: "keyboard",
-                    title: "Set a recording shortcut",
-                    detail: "Open Settings to choose the shortcut that starts and stops dictation."
-                )
-                gettingStartedStep(
-                    icon: "mic.fill",
-                    title: "Speak, then finish",
-                    detail: "Press the shortcut, dictate, and press it again. Diktilo transcribes in the background."
-                )
-                gettingStartedStep(
-                    icon: "doc.on.clipboard",
-                    title: "Pasted and copied",
-                    detail: "Your text is inserted at the cursor and kept on the clipboard for your clipboard history."
-                )
-            }
-
-            Button {
-                NotificationCenter.default.post(
-                    name: .navigateToDestination,
-                    object: nil,
-                    userInfo: ["destination": ViewType.modes.rawValue]
-                )
-            } label: {
-                footerActionLabel(
-                    icon: "keyboard",
-                    title: "Set Recording Shortcut",
-                    color: AppTheme.Accent.primary
-                )
-            }
-            .buttonStyle(.plain)
-            .fixedSize(horizontal: true, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(18)
-        .background(AppCardBackground(cornerRadius: 16))
-    }
-
-    private func gettingStartedStep(icon: String, title: LocalizedStringKey, detail: LocalizedStringKey) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(AppTheme.Accent.fill)
-                    .frame(width: 28, height: 28)
-
-                Image(systemName: icon)
-                    .font(.system(size: 13, weight: .semibold))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(AppTheme.Accent.text)
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AppTheme.Text.primary)
-
-                Text(detail)
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.Text.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            Spacer(minLength: 0)
-        }
     }
 
     private func isRecentDashboardTranscription(_ transcription: Transcription) -> Bool {
@@ -243,154 +95,12 @@ struct DashboardContent: View {
         return text.range(of: "Transcription Failed:", options: [.caseInsensitive, .anchored]) == nil
     }
 
-    private var selectedProductivityPoints: [DashboardProductivityPoint] {
-        statsSummary.productivity(for: selectedProductivityPeriod)
-    }
-
-    private var selectedModelUsage: [DashboardModelUsageSummary] {
-        statsSummary.modelUsage(for: selectedProductivityPeriod)
-    }
-
-    private var selectedPeakHours: DashboardPeakHoursSummary {
-        statsSummary.peakHours(for: selectedProductivityPeriod)
-    }
-
-    private var selectedTotals: DashboardMetricTotals {
-        statsSummary.totals(for: selectedProductivityPeriod)
-    }
-
-    private var selectedTimeSavedSummary: DashboardTimeSavedSummary {
-        return DashboardTimeSavedSummary(
-            timeSaved: DashboardTimeSaving.timeSaved(words: selectedTotals.words, duration: selectedTotals.duration),
-            wordCount: selectedTotals.words,
-            sessionCount: selectedTotals.count
+    private func navigate(to destination: ViewType) {
+        NotificationCenter.default.post(
+            name: .navigateToDestination,
+            object: nil,
+            userInfo: ["destination": destination.rawValue]
         )
-    }
-
-    private var canViewInsights: Bool {
-        hasLoadedStatsSnapshot && statsSummary.totalDuration >= Self.insightsUnlockDuration
-    }
-
-    private var shouldShowLockedInsightsState: Bool {
-        hasLoadedStatsSnapshot && !canViewInsights
-    }
-
-    private var canViewPeakHours: Bool {
-        hasLoadedStatsSnapshot &&
-            selectedTotals.duration >= Self.peakHoursUnlockDuration &&
-            selectedPeakHours.hasData
-    }
-
-    private var shouldLockPeakHours: Bool {
-        hasLoadedStatsSnapshot && !canViewPeakHours
-    }
-
-    private var insightsActionTitle: LocalizedStringKey {
-        canViewInsights ? "View Insights" : "Insights Locked"
-    }
-
-    private var insightsActionIcon: String {
-        canViewInsights ? "chart.line.uptrend.xyaxis" : "lock.fill"
-    }
-
-    private var insightsActionHelp: String {
-        if canViewInsights {
-            return String(localized: "View dashboard insights")
-        }
-
-        return String(localized: "Continue using Diktilo to unlock these stats.")
-    }
-
-    private var insightsActionAccessibilityLabel: String {
-        canViewInsights ? "View insights" : "Insights locked"
-    }
-
-    private var accessibilityReminder: some View {
-        DashboardAccessibilityReminder(onOpenSettings: openAccessibilitySettings)
-    }
-
-    private var greetingHeader: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(greetingEmoji)
-                    .font(.system(size: 25))
-                    .accessibilityHidden(true)
-
-                Text("\(greetingText),")
-                    .font(displayNameFont)
-                    .foregroundStyle(AppTheme.Text.primary)
-                    .onTapGesture(perform: dismissDisplayNameEditorIfNeeded)
-
-                displayNameView
-
-                dismissingSpacer
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .lineLimit(1)
-            .minimumScaleFactor(0.72)
-
-            HStack(alignment: .top, spacing: 0) {
-                Text(headerSubtitle)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(AppTheme.Text.secondary)
-                    .lineLimit(2)
-
-                Spacer(minLength: 0)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture(perform: dismissDisplayNameEditorIfNeeded)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    @ViewBuilder
-    private var displayNameView: some View {
-        if isEditingDisplayName {
-            TextField("your name", text: displayNameBinding)
-                .textFieldStyle(.plain)
-                .font(displayNameFont)
-                .foregroundStyle(AppTheme.Text.primary)
-                .focused($isNameFieldFocused)
-                .frame(width: displayNameFieldWidth, alignment: .leading)
-                .padding(.horizontal, Self.displayNameHorizontalPadding)
-                .padding(.vertical, 3)
-                .background(AppTheme.Accent.fill)
-                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .stroke(AppTheme.Accent.border, lineWidth: 1)
-                )
-                .onSubmit(finishEditingDisplayName)
-                .onChange(of: isNameFieldFocused) { isFocused in
-                    if !isFocused {
-                        finishEditingDisplayName()
-                    }
-                }
-        } else {
-            Text(defaultedDisplayName)
-                .font(displayNameFont)
-                .foregroundStyle(AppTheme.Text.primary)
-                .lineLimit(1)
-                .frame(width: displayNameFieldWidth, alignment: .leading)
-                .help("Click to edit dashboard name")
-                .contentShape(Rectangle())
-                .onTapGesture(perform: beginEditingDisplayName)
-        }
-    }
-
-    private var displayNameFont: Font {
-        .system(size: Self.displayNameFontSize, weight: .bold, design: .rounded)
-    }
-
-    private var dismissingSpacer: some View {
-        Spacer(minLength: 0)
-            .contentShape(Rectangle())
-            .onTapGesture(perform: dismissDisplayNameEditorIfNeeded)
-    }
-
-    private func nameEditorDismissArea<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        content()
-            .onTapGesture(perform: dismissDisplayNameEditorIfNeeded)
     }
 
     private func refreshAccessibilityStatus() {
@@ -402,336 +112,130 @@ struct DashboardContent: View {
             NSWorkspace.shared.open(url)
         }
     }
+}
 
-    private func openInsightsIfAvailable() {
-        guard canViewInsights else {
-            return
-        }
+/// Checklist for a user without any session: shortcut, Accessibility, first
+/// recording. The state comes from the live system, not stored flags.
+private struct DashboardFirstSteps: View {
+    let shortcut: Shortcut?
+    let isAccessibilityEnabled: Bool
+    let hasFirstSession: Bool
+    let onChangeShortcut: () -> Void
+    let onOpenAccessibilitySettings: () -> Void
 
-        isInsightsViewPresented = true
+    private var doneCount: Int {
+        [shortcut != nil, isAccessibilityEnabled, hasFirstSession].filter { $0 }.count
     }
 
-    private func openModelPerformancePanel() {
-        modelPerformanceFilterRaw = selectedProductivityPeriod.modelPerformanceStorageValue
-        isModelStatsPanelPresented = true
-    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("First steps")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppTheme.Text.primary)
 
-    private func loadDashboardStatsEfficiently() async {
-        do {
-            let summary = try await DashboardStatsLoader.load(from: modelContext.container)
+                Spacer(minLength: 0)
 
-            guard !Task.isCancelled else {
-                return
+                Text("\(doneCount) of 3")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundStyle(AppTheme.Text.secondary)
             }
 
-            let shouldAcceptSummary = summary.totalCount > 0 || !SessionMetricMigrationService.shared.isRunning
+            VStack(alignment: .leading, spacing: 14) {
+                step(
+                    title: "Recording shortcut set",
+                    detail: shortcut?.displayString ?? String(localized: "Choose the shortcut that starts and stops dictation."),
+                    isDone: shortcut != nil,
+                    actionTitle: "Set Shortcut",
+                    action: onChangeShortcut
+                )
+                step(
+                    title: "Accessibility access enabled",
+                    detail: String(localized: "Required for shortcuts and typing into other apps."),
+                    isDone: isAccessibilityEnabled,
+                    actionTitle: "Open Settings",
+                    action: onOpenAccessibilitySettings
+                )
+                step(
+                    title: "First session",
+                    detail: String(localized: "Press the shortcut, say a sentence, press it again."),
+                    isDone: hasFirstSession,
+                    actionTitle: nil,
+                    action: {}
+                )
+            }
 
-            await MainActor.run {
-                guard shouldAcceptSummary else {
-                    return
+            if shortcut != nil {
+                Button(action: onChangeShortcut) {
+                    HStack(spacing: 4) {
+                        Text("Change Shortcut")
+                        Image(systemName: "arrow.right")
+                    }
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppTheme.Text.primary)
                 }
-
-                self.statsSummary = summary
-                DashboardStatsCache.shared.update(summary)
-                self.hasLoadedStatsSnapshot = true
+                .buttonStyle(.plain)
             }
-        } catch is CancellationError {
-        } catch {
-            logger.error("Error loading dashboard stats: \(error, privacy: .public)")
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(18)
+        .background(AppCardBackground(cornerRadius: 16))
     }
 
-    // MARK: - Sections
+    private func step(
+        title: LocalizedStringKey,
+        detail: String,
+        isDone: Bool,
+        actionTitle: LocalizedStringKey?,
+        action: @escaping () -> Void
+    ) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(isDone ? AppTheme.Selection.fill : AppTheme.Surface.controlActive)
+                    .frame(width: 28, height: 28)
 
-    private var dashboardInsightsView: some View {
-        DashboardInsightsView(
-            selectedPeriod: $selectedProductivityPeriod,
-            productivityPoints: selectedProductivityPoints,
-            peakHoursSummary: selectedPeakHours,
-            isPeakHoursLocked: shouldLockPeakHours,
-            timeSavedSummary: selectedTimeSavedSummary,
-            modelUsageSummaries: selectedModelUsage,
-            onBack: { isInsightsViewPresented = false },
-            onViewModelPerformance: openModelPerformancePanel
-        )
-    }
-
-    private var heroSection: some View {
-        DashboardHeroCard(
-            isLocked: shouldShowLockedInsightsState,
-            headline: momentumHeadline,
-            subtext: momentumSubtext,
-            actionTitle: insightsActionTitle,
-            actionIcon: insightsActionIcon,
-            canViewInsights: canViewInsights,
-            actionHelp: insightsActionHelp,
-            actionAccessibilityLabel: insightsActionAccessibilityLabel,
-            onViewInsights: openInsightsIfAvailable
-        )
-    }
-
-    @ViewBuilder
-    private func footerActionLabel(icon: String, title: LocalizedStringKey, color: Color) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            DashboardIconGlyph(systemName: icon, color: color, size: 13, frameSize: 16)
-
-            Text(title)
-                .font(.system(size: 13, weight: .medium))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-        }
-        .padding(.horizontal, 14)
-        .frame(height: 36)
-        .background(AppCardBackground(cornerRadius: 18))
-    }
-
-    private var displayNameBinding: Binding<String> {
-        Binding(
-            get: {
-                isEditingDisplayName ? displayNameDraft : defaultedDisplayName
-            },
-            set: { newValue in
-                displayNameDraft = String(newValue.prefix(32))
-            }
-        )
-    }
-
-    private var displayNameFieldWidth: CGFloat {
-        let name = isEditingDisplayName ? displayNameDraft : defaultedDisplayName
-        let measuredWidth = (name as NSString).size(
-            withAttributes: [.font: NSFont.systemFont(ofSize: Self.displayNameFontSize, weight: Self.displayNameFontWeight)]
-        ).width
-        return min(
-            max(measuredWidth + (Self.displayNameHorizontalPadding * 2) + 6, Self.displayNameMinWidth),
-            Self.displayNameMaxWidth
-        )
-    }
-
-    private var defaultedDisplayName: String {
-        let storedName = sanitizedDisplayName(dashboardDisplayName)
-        return storedName.isEmpty ? systemDisplayName : storedName
-    }
-
-    private var systemDisplayName: String {
-        Self.systemAccountFirstName() ?? Self.fallbackDisplayName
-    }
-
-    private func beginEditingDisplayName() {
-        displayNameDraft = defaultedDisplayName
-        isEditingDisplayName = true
-        DispatchQueue.main.async {
-            isNameFieldFocused = true
-        }
-    }
-
-    private func finishEditingDisplayName() {
-        dashboardDisplayName = String(sanitizedDisplayName(displayNameDraft).prefix(32))
-        isEditingDisplayName = false
-        isNameFieldFocused = false
-
-        if sanitizedDisplayName(dashboardDisplayName).isEmpty {
-            dashboardDisplayName = ""
-        }
-    }
-
-    private func dismissDisplayNameEditorIfNeeded() {
-        if isEditingDisplayName {
-            finishEditingDisplayName()
-        }
-    }
-
-    private func sanitizedDisplayName(_ name: String) -> String {
-        name.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    private static func systemAccountFirstName() -> String? {
-        let fullName = sanitizedSystemName(NSFullUserName())
-
-        if let fullName,
-           let givenName = PersonNameComponentsFormatter().personNameComponents(from: fullName)?.givenName,
-           !givenName.isEmpty {
-            return givenName
-        }
-
-        if let fullName,
-           let firstName = fullName.split(whereSeparator: \.isWhitespace).first {
-            return String(firstName)
-        }
-
-        if let shortName = sanitizedSystemName(NSUserName()) {
-            return shortName
-                .split(separator: ".")
-                .first
-                .map(String.init) ?? shortName
-        }
-
-        return nil
-    }
-
-    private static func sanitizedSystemName(_ name: String) -> String? {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-    }
-
-    private var greetingText: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-
-        switch hour {
-        case 5..<12:
-            return String(localized: "Good morning")
-        case 12..<17:
-            return String(localized: "Good afternoon")
-        case 17..<24:
-            return String(localized: "Good evening")
-        default:
-            return String(localized: "Hi")
-        }
-    }
-
-    private var greetingEmoji: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-
-        switch hour {
-        case 5..<12:
-            return "☀️"
-        case 12..<17:
-            return "👋"
-        case 17..<24:
-            return "🌙"
-        default:
-            return "👋"
-        }
-    }
-
-    private var headerSubtitle: String {
-        guard hasLoadedStatsSnapshot else {
-            return String(localized: "Pulling together your Diktilo activity.")
-        }
-
-        guard statsSummary.totalCount > 0 else {
-            return String(localized: "Record your first session to start building momentum.")
-        }
-
-        if statsSummary.recentSevenDayCount >= 5 {
-            return String(localized: "You’re on a roll this week. Keep the momentum going.")
-        }
-
-        if statsSummary.recentSevenDayCount > 0 {
-            return String(localized: "You’re building momentum this week. Keep it going.")
-        }
-
-        return String(localized: "Your data is not ready yet. Keep the momentum going.")
-    }
-
-    private var momentumHeadline: DashboardHeroHeadline {
-        guard hasLoadedStatsSnapshot else {
-            return .calculatingProgress
-        }
-
-        guard statsSummary.totalCount > 0 else {
-            return .startRecordingProgress
-        }
-
-        return .savedTime(formattedAllTimeSaved)
-    }
-
-    private var momentumSubtext: String {
-        guard hasLoadedStatsSnapshot else {
-            return String(localized: "Your word count and benchmark will appear here.")
-        }
-
-        guard statsSummary.totalCount > 0 else {
-            return String(localized: "Your first milestone appears after one session.")
-        }
-
-        return formattedProgressBenchmarkText
-    }
-
-    // MARK: - Computed Metrics
-
-    private var allTimeSaved: TimeInterval {
-        DashboardTimeSaving.timeSaved(words: statsSummary.totalWords, duration: statsSummary.totalDuration)
-    }
-
-    private var formattedAllTimeSaved: String {
-        Formatters.formattedCompactHoursAndMinutes(allTimeSaved)
-    }
-
-    private var isPolishLocale: Bool {
-        // Match how String(localized:) resolves elsewhere so the benchmark
-        // sentence never ends up in a different language than the rest of UI.
-        (Bundle.main.preferredLocalizations.first ?? "en").hasPrefix("pl")
-    }
-
-    private var formattedAllTimeWords: String {
-        Formatters.spelledWordCount(statsSummary.totalWords)
-    }
-
-    // Built directly (not via String(localized:)) so Polish grammar stays
-    // correct: the title rides in quotes (nominative) while a generic noun
-    // carries the case — "do książki «Lalka»" — avoiding per-title declension.
-    private var formattedProgressBenchmarkText: String {
-        let dictated = formattedAllTimeWords
-        switch DashboardProgressBenchmark.equivalence(for: statsSummary.totalWords) {
-        case .matched(let title, let author):
-            return isPolishLocale
-                ? "Podyktowano \(dictated) — tyle co «\(title)» \(author)."
-                : "Dictated \(dictated) — as much as \(title) by \(author)."
-        case .repeated(let title, let author, let count):
-            let multiple = formattedBenchmarkMultiple(count)
-            return isPolishLocale
-                ? "Podyktowano \(dictated) — tyle co «\(title)» \(author), i to \(multiple)."
-                : "Dictated \(dictated) — as much as \(title) by \(author) \(multiple)."
-        case .remaining(let words, let title, let author):
-            guard words > 0, !title.isEmpty else {
-                return isPolishLocale
-                    ? "Podyktowano \(dictated)."
-                    : "Dictated \(dictated)."
+                Image(systemName: isDone ? "checkmark" : "circle")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(isDone ? AppTheme.Text.primary : AppTheme.Text.muted)
             }
 
-            let remaining = Formatters.spelledWordCount(words)
-            return isPolishLocale
-                ? "Podyktowano \(dictated) — jeszcze \(remaining) do książki «\(title)» \(author)."
-                : "Dictated \(dictated) — \(remaining) to reach \(title) by \(author)."
-        }
-    }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppTheme.Text.primary)
 
-    private func formattedBenchmarkMultiple(_ count: Int) -> String {
-        if isPolishLocale {
-            return count == 2 ? "dwukrotnie" : "\(Formatters.formattedNumber(count)) razy"
-        }
+                Text(detail)
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.Text.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
-        return count == 2 ? "twice" : "\(Formatters.formattedNumber(count)) times"
+            Spacer(minLength: 10)
+
+            if !isDone, let actionTitle {
+                Button(actionTitle, action: action)
+                    .controlSize(.small)
+            }
+        }
     }
 }
 
-private struct DashboardAccessibilityReminder: View {
+/// One-line warning for a user who already has sessions but lost Accessibility
+/// access (the shortcuts stop working without it).
+private struct DashboardAccessibilityBar: View {
     let onOpenSettings: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(AppTheme.Accent.fill)
+        HStack(spacing: 10) {
+            Image(systemName: "hand.raised")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(AppTheme.Accent.text)
 
-                Image(systemName: "hand.raised")
-                    .font(.system(size: 15, weight: .medium))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(AppTheme.Accent.text)
-            }
-            .frame(width: 34, height: 34)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Enable Accessibility Access")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-
-                Text("Required for Diktilo shortcuts and app-wide controls to work properly.")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
+            Text("Shortcuts need Accessibility access.")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(AppTheme.Text.primary)
+                .lineLimit(1)
 
             Spacer(minLength: 12)
 
@@ -739,16 +243,12 @@ private struct DashboardAccessibilityReminder: View {
                 .controlSize(.small)
                 .help("Open Accessibility settings")
         }
-        .padding(16)
+        .padding(.horizontal, 14)
+        .frame(height: 36)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppCardBackground(cornerRadius: 16))
-    }
-}
-
-private struct DashboardAmbientBackground: View {
-    var body: some View {
-        Color.clear
-        .ignoresSafeArea()
-        .allowsHitTesting(false)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(AppTheme.Accent.fill)
+        )
     }
 }
