@@ -1,5 +1,4 @@
 import SwiftUI
-import LaunchAtLogin
 
 struct MenuBarView: View {
     @EnvironmentObject var engine: VoiceInkEngine
@@ -14,7 +13,6 @@ struct MenuBarView: View {
     @ObservedObject private var modeManager = OutputProfileManager.shared
     @ObservedObject var audioDeviceManager = AudioDeviceManager.shared
     @AppStorage("hasCompletedOnboardingV2") private var hasCompletedOnboardingV2 = false
-    @State private var launchAtLoginEnabled = LaunchAtLogin.isEnabled
     
     var body: some View {
         VStack {
@@ -26,9 +24,25 @@ struct MenuBarView: View {
         }
     }
 
+    /// "Start recording ⌃⌥␣" or, while a recording runs, "Stop recording".
+    private var recordingToggleTitle: String {
+        if engine.recordingState == .recording {
+            return String(localized: "Stop Recording")
+        }
+        let title = String(localized: "Start Recording")
+        guard let shortcut = ShortcutStore.shortcut(for: .primaryRecording) else { return title }
+        return "\(title)  \(shortcut.displayString)"
+    }
+
+    private var currentMicrophoneName: String {
+        let currentID = audioDeviceManager.getCurrentDevice()
+        return audioDeviceManager.availableDevices.first { $0.id == currentID }?.name
+            ?? String(localized: "None")
+    }
+
     private var onboardingMenu: some View {
         Group {
-            Button("Complete Onboarding") {
+            Button("Continue Onboarding") {
                 menuBarManager.focusMainWindow()
             }
 
@@ -42,7 +56,7 @@ struct MenuBarView: View {
 
     private var completedOnboardingMenu: some View {
         Group {
-            Button("Toggle Recorder") {
+            Button(recordingToggleTitle) {
                 recorderUIManager.handleToggleRecorderPanelNotification()
             }
 
@@ -67,10 +81,6 @@ struct MenuBarView: View {
 
                 Button("Manage Modes") {
                     menuBarManager.openMainWindowAndNavigate(to: "Modes")
-                }
-
-                Button("Manage Models") {
-                    menuBarManager.openMainWindowAndNavigate(to: "AI Models")
                 }
             } label: {
                 HStack {
@@ -101,7 +111,7 @@ struct MenuBarView: View {
                 HStack {
                     Image(systemName: "mic.fill")
                         .font(.system(size: 11, weight: .medium))
-                    Text("Audio Input")
+                    Text(String(format: String(localized: "Microphone: %@"), currentMicrophoneName))
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.system(size: 10))
                 }
@@ -109,36 +119,32 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Retry Last Transcription") {
-                LastTranscriptionService.retryLastTranscription(
-                    from: engine.modelContext,
-                    transcriptionModelManager: transcriptionModelManager,
-                    serviceRegistry: engine.serviceRegistry,
-                    enhancementService: enhancementService
-                )
+            Menu("Last Transcription") {
+                Button("Copy") {
+                    LastTranscriptionService.copyLastTranscription(from: engine.modelContext)
+                }
+                .keyboardShortcut("c", modifiers: [.command, .shift])
+
+                Button("Retry") {
+                    LastTranscriptionService.retryLastTranscription(
+                        from: engine.modelContext,
+                        transcriptionModelManager: transcriptionModelManager,
+                        serviceRegistry: engine.serviceRegistry,
+                        enhancementService: enhancementService
+                    )
+                }
             }
 
-            Button("Copy Last Transcription") {
-                LastTranscriptionService.copyLastTranscription(from: engine.modelContext)
-            }
-            .keyboardShortcut("c", modifiers: [.command, .shift])
-            
             Button("History") {
                 menuBarManager.openHistoryWindow()
             }
             .keyboardShortcut("h", modifiers: [.command, .shift])
             
-            Button(menuBarManager.isMenuBarOnly ? "Show Dock Icon" : "Hide Dock Icon") {
-                menuBarManager.toggleMenuBarOnly()
-            }
-            .keyboardShortcut("d", modifiers: [.command, .shift])
-
-            Toggle("Launch at Login", isOn: $launchAtLoginEnabled)
-                .onChange(of: launchAtLoginEnabled) { oldValue, newValue in
-                    LaunchAtLogin.isEnabled = newValue
-                }
-
             Divider()
+
+            Button("Open Diktilo") {
+                menuBarManager.focusMainWindow()
+            }
 
             Button("Settings") {
                 menuBarManager.openMainWindowAndNavigate(to: "Settings")

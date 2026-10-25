@@ -11550,40 +11550,6 @@
         }
       }
     },
-    "Complete Onboarding": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einführung abschließen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "完成新手引导"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zakończ wdrożenie"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fini enkondukon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Completar la introducció"
-          }
-        }
-      }
-    },
     "Configure": {
       "localizations": {
         "de": {
@@ -12177,40 +12143,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copiar la clau d'API"
-          }
-        }
-      }
-    },
-    "Copy Last Transcription": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Letzte Transkription kopieren"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "拷贝上次转写"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiuj ostatnią transkrypcję"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopii lastan transskribon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copiar l'última transcripció"
           }
         }
       }
@@ -22140,40 +22072,6 @@
         }
       }
     },
-    "Manage Models": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modelle verwalten"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模型目录"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zarządzaj modelami"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Administri modelojn"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestionar els models"
-          }
-        }
-      }
-    },
     "Manage Modes": {
       "localizations": {
         "de": {
@@ -31874,40 +31772,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mostrar la clau d'API"
-          }
-        }
-      }
-    },
-    "Show Dock Icon": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dock-Symbol anzeigen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示程序坞图标"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pokaż ikonę w Docku"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Montri piktogramon en Doko"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar la icona al Dock"
           }
         }
       }
@@ -46694,6 +46558,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pliki, schematy URL albo polecenia powłoki — każdy może mieć własny skrót kończący."
+          }
+        }
+      }
+    },
+    "Continue Onboarding": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokończ wprowadzenie"
+          }
+        }
+      }
+    },
+    "Start Recording": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij nagrywanie"
+          }
+        }
+      }
+    },
+    "Stop Recording": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zatrzymaj nagrywanie"
+          }
+        }
+      }
+    },
+    "Microphone: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon: %@"
+          }
+        }
+      }
+    },
+    "Last Transcription": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostatnia transkrypcja"
+          }
+        }
+      }
+    },
+    "Open Diktilo": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz Diktilo"
           }
         }
       }
