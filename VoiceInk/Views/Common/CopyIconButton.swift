@@ -3,22 +3,32 @@ import SwiftUI
 struct CopyIconButton: View {
     let textToCopy: String
     var accessibilityLabel: LocalizedStringResource = "Copy"
+    /// Shows the word "Copy" next to the icon instead of a bare icon.
+    var showsTitle = false
     @State private var copied = false
 
     var body: some View {
         Button(action: copy) {
-            Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(copied ? AppTheme.Status.positive : AppTheme.Selection.foreground)
-                .frame(width: 28, height: 28)
-                .background(
-                    RoundedRectangle(cornerRadius: AppTheme.Radius.control, style: .continuous)
-                        .fill(AppTheme.Surface.window.opacity(0.92))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: AppTheme.Radius.control, style: .continuous)
-                                .strokeBorder(AppTheme.Border.card, lineWidth: 1)
-                        }
-                )
+            HStack(spacing: 5) {
+                Image(systemName: copied ? "checkmark" : "doc.on.doc")
+                    .font(.system(size: 12, weight: .semibold))
+
+                if showsTitle {
+                    Text(accessibilityLabel)
+                        .font(.system(size: 12, weight: .medium))
+                }
+            }
+            .foregroundColor(copied ? AppTheme.Status.positive : AppTheme.Selection.foreground)
+            .padding(.horizontal, showsTitle ? 10 : 0)
+            .frame(minWidth: 28, minHeight: 28)
+            .background(
+                RoundedRectangle(cornerRadius: AppTheme.Radius.control, style: .continuous)
+                    .fill(AppTheme.Surface.window.opacity(0.92))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: AppTheme.Radius.control, style: .continuous)
+                            .strokeBorder(AppTheme.Border.card, lineWidth: 1)
+                    }
+            )
         }
         .buttonStyle(.plain)
         .help(accessibilityLabel)

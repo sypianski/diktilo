@@ -3,6 +3,9 @@ import SwiftData
 import UniformTypeIdentifiers
 
 struct AudioTranscribeView: View {
+    /// The mode used for files is remembered separately from the active recording mode.
+    private static let fileModeKey = "fileTranscriptionModeID"
+
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var engine: VoiceInkEngine
     @ObservedObject private var modeManager = OutputProfileManager.shared
@@ -16,12 +19,21 @@ struct AudioTranscribeView: View {
         modeManager.resolvedEnabledConfiguration(preferredId: selectedModeId)
     }
 
+    private var hasListContent: Bool {
+        !transcriptionManager.queue.isEmpty || !transcriptionManager.skipped.isEmpty
+    }
+
     var body: some View {
-        Group {
-            if transcriptionManager.queue.isEmpty {
-                emptyStateView
-            } else {
+        VStack(spacing: 0) {
+            header
+
+            if hasListContent {
+                Divider()
                 queueFormView
+                Divider()
+                bottomBar
+            } else {
+                emptyStateView
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -30,7 +42,7 @@ struct AudioTranscribeView: View {
             return true
         }
         .overlay {
-            if isDropTargeted && !transcriptionManager.queue.isEmpty {
+            if isDropTargeted && hasListContent {
                 dropOverlay
             }
         }
@@ -48,10 +60,31 @@ struct AudioTranscribeView: View {
         }
     }
 
+    // MARK: - Header
+
+    private var header: some View {
+        HStack(spacing: 10) {
+            Text("Transcribe File")
+                .font(.title3.weight(.semibold))
+
+            Spacer()
+
+            modePicker
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 14)
+    }
+
     // MARK: - Empty State
 
     private var emptyStateView: some View {
         VStack(spacing: 0) {
+            Text("The result is saved in History.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+
             Spacer()
 
             ZStack {
@@ -93,99 +126,103 @@ struct AudioTranscribeView: View {
 
             Spacer()
         }
-        .padding()
+        .padding(.bottom)
     }
 
     // MARK: - Queue Form View
 
     private var queueFormView: some View {
-        VStack(spacing: 0) {
-            topBar
-            Divider()
-
-            Form {
-                ForEach(transcriptionManager.queue) { item in
-                    Section {
-                        AudioFileRow(
-                            item: item,
-                            isExpanded: expandedItemId == item.id,
-                            onToggleExpand: {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    expandedItemId = expandedItemId == item.id ? nil : item.id
-                                }
-                            },
-                            onRemove: {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    transcriptionManager.removeFromQueue(id: item.id)
-                                    if expandedItemId == item.id { expandedItemId = nil }
-                                }
-                            },
-                            onRetry: {
-                                transcriptionManager.retryItem(id: item.id)
-                                startProcessing()
+        Form {
+            ForEach(transcriptionManager.queue) { item in
+                Section {
+                    AudioFileRow(
+                        item: item,
+                        isExpanded: expandedItemId == item.id,
+                        onToggleExpand: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                expandedItemId = expandedItemId == item.id ? nil : item.id
                             }
-                        )
+                        },
+                        onRemove: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                transcriptionManager.removeFromQueue(id: item.id)
+                                if expandedItemId == item.id { expandedItemId = nil }
+                            }
+                        },
+                        onRetry: {
+                            transcriptionManager.retryItem(id: item.id)
+                            startProcessing()
+                        },
+                        onShowInHistory: { navigate(to: .history) },
+                        onChooseModel: { navigate(to: .models) }
+                    )
+                }
+            }
+
+            ForEach(transcriptionManager.skipped) { file in
+                Section {
+                    SkippedFileRow(file: file) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            transcriptionManager.removeSkipped(id: file.id)
+                        }
                     }
                 }
             }
-            .formStyle(.grouped)
-            .scrollContentBackground(.hidden)
-            .safeAreaInset(edge: .bottom) {
-                Text("Drop files anywhere to add more")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-            }
         }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
     }
 
-    // MARK: - Top Bar
+    // MARK: - Bottom Bar
 
-    private var topBar: some View {
-        HStack(spacing: 10) {
-            let count = transcriptionManager.queue.count
-            Text(String(localized: "\(count) files"))
-            .font(.subheadline)
-            .foregroundColor(.secondary)
+    private var bottomBar: some View {
+        let queued = transcriptionManager.queue.count
+        let pending = transcriptionManager.pendingCount
 
-            Button {
-                selectFiles()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 12, weight: .medium))
-                    Text("Add")
-                        .font(.system(size: 12, weight: .medium))
-                }
+        return HStack(spacing: 10) {
+            Text("\(queued) files")
+                .font(.subheadline)
                 .foregroundColor(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule()
-                        .fill(AppTheme.Surface.controlActive)
-                )
+
+            barButton(title: "Add", systemImage: "plus") {
+                selectFiles()
             }
-            .buttonStyle(.plain)
             .help("Add files")
 
-            Spacer()
+            if transcriptionManager.hasFinishedItems || !transcriptionManager.skipped.isEmpty {
+                barButton(title: "Clear finished", systemImage: "xmark.bin") {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        transcriptionManager.clearFinished()
+                        transcriptionManager.skipped.removeAll()
+                        expandedItemId = nil
+                    }
+                }
+                .help("Remove finished and skipped files; waiting ones stay")
+            } else if !transcriptionManager.isProcessingQueue {
+                barButton(title: "Clear", systemImage: "xmark.bin") {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        transcriptionManager.clearAll()
+                        expandedItemId = nil
+                    }
+                }
+                .help("Clear all items")
+            }
 
-            modePicker
+            Spacer()
 
             if transcriptionManager.isProcessingQueue {
                 Button {
                     transcriptionManager.cancelProcessing()
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 5) {
                         Image(systemName: "stop.fill")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: 11, weight: .medium))
                         Text("Cancel")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundColor(AppTheme.Status.error)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                     .background(
                         Capsule()
                             .fill(AppTheme.Status.error.opacity(0.12))
@@ -193,19 +230,19 @@ struct AudioTranscribeView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Cancel transcription")
-            } else if transcriptionManager.hasPendingItems {
+            } else if pending > 0 {
                 Button {
                     startProcessing()
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 5) {
                         Image(systemName: "play.fill")
-                            .font(.system(size: 10, weight: .medium))
-                        Text("Start")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.system(size: 11, weight: .medium))
+                        Text("Start (\(pending) files)")
+                            .font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
                     .background(
                         Capsule()
                             .fill(AppTheme.Accent.primary)
@@ -217,37 +254,35 @@ struct AudioTranscribeView: View {
                 .opacity(selectedMode == nil ? 0.5 : 1.0)
                 .help(selectedMode == nil ? "Select an enabled mode to start" : "Start transcription")
             }
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    transcriptionManager.clearAll()
-                    expandedItemId = nil
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "xmark.bin")
-                        .font(.system(size: 12, weight: .medium))
-                    Text("Clear")
-                        .font(.system(size: 12, weight: .medium))
-                }
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule()
-                        .fill(AppTheme.Surface.controlActive)
-                )
-            }
-            .buttonStyle(.plain)
-            .help("Clear all items")
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 10)
     }
 
+    private func barButton(title: LocalizedStringKey, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 12, weight: .medium))
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+            }
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule()
+                    .fill(AppTheme.Surface.controlActive)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Mode
+
     private var modePicker: some View {
         HStack(spacing: 6) {
-            Text("Mode")
+            Text("Mode for files")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(.secondary)
                 .lineLimit(1)
@@ -289,7 +324,7 @@ struct AudioTranscribeView: View {
                 }
                 .buttonStyle(.plain)
                 .popover(isPresented: $showOutputProfilePopover, arrowEdge: .bottom) {
-                    OutputProfilePopover(selectedModeId: selectedMode.id) { mode in
+                    OutputProfilePopover(selectedModeId: selectedMode.id, detail: modeDetail) { mode in
                         selectMode(mode)
                     }
                 }
@@ -297,9 +332,7 @@ struct AudioTranscribeView: View {
         }
         .fixedSize(horizontal: true, vertical: false)
         .onAppear {
-            syncSelectedMode()
-        }
-        .onChange(of: modeManager.currentEffectiveConfiguration?.id) { _, _ in
+            restoreSavedMode()
             syncSelectedMode()
         }
         .onChange(of: modeManager.enabledConfigurations.map(\.id)) { _, _ in
@@ -307,19 +340,44 @@ struct AudioTranscribeView: View {
         }
     }
 
+    /// Second line under a mode's name: the speech model and whether text improvement runs.
+    private func modeDetail(_ mode: OutputProfile) -> String? {
+        let model = engine.transcriptionModelManager.usableModelsInChainOrder().first?.displayName
+        let improvement = mode.isAIEnhancementEnabled
+            ? String(localized: "Text improvement")
+            : String(localized: "No text improvement")
+        return [model, improvement].compactMap { $0 }.joined(separator: " · ")
+    }
+
+    private func restoreSavedMode() {
+        guard selectedModeId == nil,
+              let raw = UserDefaults.standard.string(forKey: Self.fileModeKey),
+              let id = UUID(uuidString: raw) else { return }
+        selectedModeId = id
+    }
+
     private func syncSelectedMode() {
         selectedModeId = modeManager.resolvedEnabledConfigurationId(preferredId: selectedModeId)
     }
 
+    /// Picking a mode here only affects file transcription; the recording mode is untouched.
     private func selectMode(_ mode: OutputProfile) {
         selectedModeId = mode.id
-        modeManager.setActiveConfiguration(mode)
+        UserDefaults.standard.set(mode.id.uuidString, forKey: Self.fileModeKey)
         showOutputProfilePopover = false
     }
 
     private func startProcessing() {
         guard let selectedMode else { return }
         transcriptionManager.startProcessing(modelContext: modelContext, engine: engine, mode: selectedMode)
+    }
+
+    private func navigate(to view: ViewType) {
+        NotificationCenter.default.post(
+            name: .navigateToDestination,
+            object: nil,
+            userInfo: ["destination": view.rawValue]
+        )
     }
 
     // MARK: - Drop Overlay

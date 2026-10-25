@@ -4,9 +4,16 @@ struct OutputProfilePopover: View {
     @ObservedObject var modeManager = OutputProfileManager.shared
     let selectedModeId: UUID?
     let onSelect: ((OutputProfile) -> Void)?
+    /// Optional second line under a mode's name (e.g. model and enhancement).
+    let detail: ((OutputProfile) -> String?)?
 
-    init(selectedModeId: UUID? = nil, onSelect: ((OutputProfile) -> Void)? = nil) {
+    init(
+        selectedModeId: UUID? = nil,
+        detail: ((OutputProfile) -> String?)? = nil,
+        onSelect: ((OutputProfile) -> Void)? = nil
+    ) {
         self.selectedModeId = selectedModeId
+        self.detail = detail
         self.onSelect = onSelect
     }
 
@@ -45,6 +52,7 @@ struct OutputProfilePopover: View {
                         ForEach(enabledConfigs) { config in
                             ModeRow(
                                 config: config,
+                                detail: detail?(config),
                                 isSelected: effectiveSelectedModeId == config.id,
                                 action: {
                                     if let onSelect {
@@ -60,7 +68,7 @@ struct OutputProfilePopover: View {
                 .padding(.horizontal)
             }
         }
-        .frame(width: 180)
+        .frame(width: detail == nil ? 180 : 260)
         .frame(maxHeight: 340)
         .padding(.vertical, 8)
         .background(Color.black)
@@ -70,6 +78,7 @@ struct OutputProfilePopover: View {
 
 struct ModeRow: View {
     let config: OutputProfile
+    var detail: String? = nil
     let isSelected: Bool
     let action: () -> Void
     
@@ -79,10 +88,19 @@ struct ModeRow: View {
                 ModeIconView(icon: config.icon, size: config.icon.kind == .emoji ? 14 : 12, color: .white.opacity(0.9))
                     .frame(width: 16)
 
-                Text(config.name)
-                    .foregroundColor(.white.opacity(0.9))
-                    .font(.system(size: 13))
-                    .lineLimit(1)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(config.name)
+                        .foregroundColor(.white.opacity(0.9))
+                        .font(.system(size: 13))
+                        .lineLimit(1)
+
+                    if let detail {
+                        Text(detail)
+                            .foregroundColor(.white.opacity(0.55))
+                            .font(.system(size: 11))
+                            .lineLimit(1)
+                    }
+                }
 
                 if isSelected {
                     Spacer()

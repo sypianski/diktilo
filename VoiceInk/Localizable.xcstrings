@@ -14769,40 +14769,6 @@
         }
       }
     },
-    "Drop files anywhere to add more": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dateien irgendwo ablegen, um weitere hinzuzufügen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "将文件拖放到任意位置以添加更多"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upuść pliki w dowolnym miejscu, aby dodać więcej"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Demetu dosierojn ie ajn por aldoni pliajn"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deixa anar fitxers a qualsevol lloc per afegir-ne més"
-          }
-        }
-      }
-    },
     "Drop to add files": {
       "localizations": {
         "de": {
@@ -43172,6 +43138,202 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld wpisów · %@ nagrań"
+          }
+        }
+      }
+    },
+    "The result is saved in History.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wynik zapisze się w Historii."
+          }
+        }
+      }
+    },
+    "Mode for files": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb dla plików"
+          }
+        }
+      }
+    },
+    "Clear finished": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyczyść zakończone"
+          }
+        }
+      }
+    },
+    "Remove finished and skipped files; waiting ones stay": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuwa zakończone i pominięte pliki; oczekujące zostają"
+          }
+        }
+      }
+    },
+    "No text improvement": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bez poprawiania tekstu"
+          }
+        }
+      }
+    },
+    "Remove from list": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń z listy"
+          }
+        }
+      }
+    },
+    "Show in History": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż w Historii"
+          }
+        }
+      }
+    },
+    "Saved in History": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisano w Historii"
+          }
+        }
+      }
+    },
+    "Choose a model in AI Models": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz model w Modelach AI"
+          }
+        }
+      }
+    },
+    "Unsupported format": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieobsługiwany format"
+          }
+        }
+      }
+    },
+    "Already in the list": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Już na liście"
+          }
+        }
+      }
+    },
+    "File not found": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie znaleziono pliku"
+          }
+        }
+      }
+    },
+    "Save…": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisz…"
+          }
+        }
+      }
+    },
+    "Start (%lld files)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Start (%lld file)"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Start (%lld files)"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Rozpocznij (%lld plik)"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Rozpocznij (%lld pliki)"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Rozpocznij (%lld plików)"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Rozpocznij (%lld pliku)"
+                }
+              }
+            }
           }
         }
       }

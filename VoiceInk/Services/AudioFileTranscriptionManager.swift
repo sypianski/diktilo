@@ -13,6 +13,7 @@ class AudioTranscriptionManager: ObservableObject {
     @Published var queue: [AudioFileQueueItem] = []
     @Published var isProcessingQueue = false
     @Published var lastCompletedItemId: UUID?
+    @Published var skipped: [SkippedQueueFile] = []
 
     // MARK: - Private
 
@@ -25,38 +26,73 @@ class AudioTranscriptionManager: ObservableObject {
 
     // MARK: - Queue Management
 
-    /// Add one or more audio file URLs to the queue. Invalid files are silently skipped.
+    /// Add one or more audio file URLs to the queue. Files that cannot be queued
+    /// are listed in `skipped` with the reason.
     func addToQueue(urls: [URL]) {
         for url in urls {
-            guard FileManager.default.fileExists(atPath: url.path) else { continue }
-            guard SupportedMedia.isSupported(url: url) else { continue }
+            guard FileManager.default.fileExists(atPath: url.path) else {
+                skipped.append(SkippedQueueFile(filename: url.lastPathComponent, reason: .missing))
+                continue
+            }
+            guard SupportedMedia.isSupported(url: url) else {
+                skipped.append(SkippedQueueFile(filename: url.lastPathComponent, reason: .unsupportedFormat))
+                continue
+            }
 
             // Avoid adding the same file path twice if it's already pending/processing
             let path = url.standardizedFileURL.path
             if queue.contains(where: { $0.url.standardizedFileURL.path == path && !$0.status.isTerminal }) {
+                skipped.append(SkippedQueueFile(filename: url.lastPathComponent, reason: .alreadyQueued))
                 continue
             }
 
             let item = AudioFileQueueItem(url: url)
             queue.append(item)
+
+            Task { [weak item] in
+                let asset = AVURLAsset(url: url)
+                if let length = try? await asset.load(.duration) {
+                    let seconds = CMTimeGetSeconds(length)
+                    if seconds.isFinite { item?.duration = seconds }
+                }
+            }
         }
     }
 
-    /// Remove a pending item from the queue.
+    func removeSkipped(id: UUID) {
+        skipped.removeAll { $0.id == id }
+    }
+
+    /// Remove a pending or finished item from the queue (never one being processed).
     func removeFromQueue(id: UUID) {
         guard let index = queue.firstIndex(where: { $0.id == id }) else { return }
-        let item = queue[index]
 
-        // Only allow removing pending items
-        guard case .pending = item.status else { return }
+        if case .processing = queue[index].status { return }
 
         queue.remove(at: index)
+    }
+
+    /// Drop completed and failed items; waiting and running ones stay.
+    func clearFinished() {
+        queue.removeAll { $0.status.isTerminal }
+        if let id = lastCompletedItemId, !queue.contains(where: { $0.id == id }) {
+            lastCompletedItemId = nil
+        }
+    }
+
+    var hasFinishedItems: Bool {
+        queue.contains { $0.status.isTerminal }
+    }
+
+    var pendingCount: Int {
+        queue.filter { if case .pending = $0.status { return true }; return false }.count
     }
 
     /// Clear all items from the queue, cancelling any in-progress work.
     func clearAll() {
         cancelProcessing()
         queue.removeAll()
+        skipped.removeAll()
         lastCompletedItemId = nil
     }
 

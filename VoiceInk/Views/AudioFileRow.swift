@@ -6,6 +6,8 @@ struct AudioFileRow: View {
     let onToggleExpand: () -> Void
     let onRemove: () -> Void
     let onRetry: () -> Void
+    let onShowInHistory: () -> Void
+    let onChooseModel: () -> Void
 
     @State private var selectedTab: TranscriptionTab = .original
 
@@ -26,6 +28,18 @@ struct AudioFileRow: View {
         return item.transcription?.enhancedText ?? item.transcription?.text ?? ""
     }
 
+    /// "3:21 · 4.2 MB", whichever parts are known.
+    private var metaLine: String? {
+        var parts: [String] = []
+        if let duration = item.duration, duration > 0 {
+            parts.append(formatDuration(duration))
+        }
+        if let size = item.fileSize {
+            parts.append(ByteCountFormatter.string(fromByteCount: size, countStyle: .file))
+        }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
     var body: some View {
         switch item.status {
         case .pending:
@@ -39,6 +53,33 @@ struct AudioFileRow: View {
         }
     }
 
+    private var removeButton: some View {
+        Button {
+            onRemove()
+        } label: {
+            Image(systemName: "xmark.circle.fill")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundColor(.secondary)
+        }
+        .buttonStyle(.plain)
+        .help("Remove from list")
+    }
+
+    private func nameAndMeta(nameColor: Color = .primary) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(item.filename)
+                .foregroundColor(nameColor)
+                .lineLimit(1)
+                .truncationMode(.middle)
+
+            if let metaLine {
+                Text(metaLine)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
     // MARK: - Pending
 
     private var pendingRow: some View {
@@ -46,9 +87,7 @@ struct AudioFileRow: View {
             Image(systemName: "clock")
                 .foregroundColor(.secondary)
 
-            Text(item.filename)
-                .lineLimit(1)
-                .truncationMode(.middle)
+            nameAndMeta()
 
             Spacer()
 
@@ -56,14 +95,7 @@ struct AudioFileRow: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            Button {
-                onRemove()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.secondary)
-            }
-            .buttonStyle(.plain)
+            removeButton
         }
     }
 
@@ -75,16 +107,36 @@ struct AudioFileRow: View {
                 .scaleEffect(0.5)
                 .frame(width: 16, height: 16)
 
-            Text(item.filename)
-                .lineLimit(1)
-                .truncationMode(.middle)
+            nameAndMeta()
 
             Spacer()
 
-            Text(LocalizedStringKey(phase.rawValue))
-                .font(.caption)
-                .foregroundColor(AppTheme.Accent.text)
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(LocalizedStringKey(phase.rawValue))
+                    .font(.caption)
+                    .foregroundColor(AppTheme.Accent.text)
+
+                stepTrack
+            }
         }
+    }
+
+    /// Four segments for loading, audio, transcription and enhancement;
+    /// everything up to the running step is filled.
+    private var stepTrack: some View {
+        let current = item.status.stepNumber ?? 0
+
+        return HStack(spacing: 3) {
+            ForEach(1...QueueItemStatus.stepCount, id: \.self) { step in
+                Capsule()
+                    .fill(step <= current ? AppTheme.Accent.primary : AppTheme.Accent.fillSubtle)
+                    .frame(width: 16, height: 3)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            String(format: String(localized: "Step %lld of %lld"), current, QueueItemStatus.stepCount)
+        )
     }
 
     // MARK: - Completed
@@ -109,9 +161,11 @@ struct AudioFileRow: View {
             Spacer()
 
             if let transcription = item.transcription {
-                HStack(spacing: 2) {
-                    CopyIconButton(textToCopy: actionText)
-                    SaveIconButton(textToSave: actionText)
+                if !isExpanded {
+                    HStack(spacing: 2) {
+                        CopyIconButton(textToCopy: actionText)
+                        SaveIconButton(textToSave: actionText)
+                    }
                 }
 
                 if transcription.duration > 0 {
@@ -161,6 +215,38 @@ struct AudioFileRow: View {
                 }
                 Spacer()
             }
+
+            resultActions
+        }
+    }
+
+    /// Footer of an expanded result: what can be done with the text, and where it already lives.
+    private var resultActions: some View {
+        HStack(spacing: 8) {
+            CopyIconButton(textToCopy: actionText, showsTitle: true)
+            SaveIconButton(textToSave: actionText, showsTitle: true)
+
+            Button {
+                onShowInHistory()
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.system(size: 12, weight: .semibold))
+                    Text("Show in History")
+                        .font(.system(size: 12, weight: .medium))
+                }
+                .foregroundColor(AppTheme.Accent.text)
+                .padding(.horizontal, 10)
+                .frame(minHeight: 28)
+                .background(Capsule().fill(AppTheme.Accent.fillSubtle))
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Text("Saved in History")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
     }
 
@@ -184,7 +270,9 @@ struct AudioFileRow: View {
     // MARK: - Failed
 
     private func failedRow(message: String) -> some View {
-        HStack {
+        let needsModel = message == TranscriptionError.noModelSelected.errorDescription
+
+        return HStack {
             Image(systemName: "exclamationmark.circle.fill")
                 .foregroundColor(AppTheme.Status.error)
 
@@ -197,6 +285,20 @@ struct AudioFileRow: View {
                     .font(.caption)
                     .foregroundColor(AppTheme.Status.error.opacity(0.80))
                     .lineLimit(2)
+
+                if needsModel {
+                    Button {
+                        onChooseModel()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Choose a model in AI Models")
+                            Image(systemName: "arrow.right")
+                        }
+                        .font(.caption.weight(.semibold))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(AppTheme.Accent.text)
+                }
             }
 
             Spacer()
@@ -204,10 +306,12 @@ struct AudioFileRow: View {
             Button {
                 onRetry()
             } label: {
-                Image(systemName: "arrow.counterclockwise")
+                Label("Retry", systemImage: "arrow.counterclockwise")
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
+
+            removeButton
         }
     }
 
@@ -217,5 +321,50 @@ struct AudioFileRow: View {
         let minutes = Int(duration) / 60
         let seconds = Int(duration) % 60
         return String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
+/// A file that was dropped or chosen but never entered the queue, with the reason.
+struct SkippedFileRow: View {
+    let file: SkippedQueueFile
+    let onRemove: () -> Void
+
+    private var reason: LocalizedStringKey {
+        switch file.reason {
+        case .unsupportedFormat: return "Unsupported format"
+        case .alreadyQueued: return "Already in the list"
+        case .missing: return "File not found"
+        }
+    }
+
+    var body: some View {
+        HStack {
+            Image(systemName: "minus.circle")
+                .foregroundColor(.secondary)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(file.filename)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+
+                Text(reason)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            Button {
+                onRemove()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundColor(.secondary)
+            }
+            .buttonStyle(.plain)
+            .help("Remove from list")
+        }
+        .opacity(0.8)
     }
 }

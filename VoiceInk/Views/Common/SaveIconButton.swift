@@ -3,6 +3,8 @@ import UniformTypeIdentifiers
 
 struct SaveIconButton: View {
     let textToSave: String
+    /// Shows the word "Save…" next to the icon instead of a bare icon.
+    var showsTitle = false
     @State private var saved = false
 
     var body: some View {
@@ -14,12 +16,20 @@ struct SaveIconButton: View {
                 saveFile(as: .text, extension: "md")
             }
         } label: {
-            Image(systemName: saved ? "checkmark" : "square.and.arrow.down")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(saved ? AppTheme.Status.positive : .secondary)
-                .frame(width: 28, height: 28)
-                .background(AppTheme.Surface.control.opacity(0.9))
-                .clipShape(Circle())
+            HStack(spacing: 5) {
+                Image(systemName: saved ? "checkmark" : "square.and.arrow.down")
+                    .font(.system(size: 12, weight: .semibold))
+
+                if showsTitle {
+                    Text("Save…")
+                        .font(.system(size: 12, weight: .medium))
+                }
+            }
+            .foregroundColor(saved ? AppTheme.Status.positive : .secondary)
+            .padding(.horizontal, showsTitle ? 10 : 0)
+            .frame(minWidth: 28, minHeight: 28)
+            .background(AppTheme.Surface.control.opacity(0.9))
+            .clipShape(showsTitle ? AnyShape(Capsule()) : AnyShape(Circle()))
         }
         .buttonStyle(.plain)
         .help("Save to file")
