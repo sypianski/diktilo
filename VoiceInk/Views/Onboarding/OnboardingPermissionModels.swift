@@ -93,7 +93,6 @@ enum OnboardingStage: String, CaseIterable {
 enum OnboardingPermissionKind: String, CaseIterable, Identifiable {
     case microphone
     case accessibility
-    case screenRecording
 
     var id: String { rawValue }
 
@@ -117,12 +116,6 @@ enum OnboardingPermissionKind: String, CaseIterable, Identifiable {
             return OnboardingPermissionDescriptor(
                 title: String(localized: "Accessibility"),
                 subtitle: String(localized: "Diktilo uses Accessibility to type transcriptions directly into any app.")
-            )
-
-        case .screenRecording:
-            return OnboardingPermissionDescriptor(
-                title: String(localized: "Screen Recording"),
-                subtitle: String(localized: "Diktilo reads visible screen content to improve the accuracy of transcripts.")
             )
         }
     }
@@ -180,7 +173,6 @@ enum OnboardingPermissionStatus: Equatable {
 enum PrivacySettingsPane {
     case microphone
     case accessibility
-    case screenRecording
 
     var urlString: String {
         switch self {
@@ -188,8 +180,6 @@ enum PrivacySettingsPane {
             return "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone"
         case .accessibility:
             return "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
-        case .screenRecording:
-            return "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"
         }
     }
 }

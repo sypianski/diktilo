@@ -350,13 +350,6 @@ struct OutputProfileFormView: View {
                     InfoTip("Use clipboard text as context for this profile.")
                 }
             }
-
-            Toggle(isOn: $draft.useScreenCapture) {
-                HStack(spacing: 4) {
-                    Text("Screen")
-                    InfoTip("Use captured on-screen text as context for this profile.")
-                }
-            }
         }
     }
 

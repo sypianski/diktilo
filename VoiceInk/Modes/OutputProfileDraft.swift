@@ -43,7 +43,7 @@ struct OutputProfileDraft {
             selectedPromptId = inheritedConfig?.selectedPrompt.flatMap { UUID(uuidString: $0) }
             useClipboardContext = false
             useSelectedTextContext = false
-            useScreenCapture = true
+            useScreenCapture = false
             selectedAIProvider = inheritedConfig?.selectedAIProvider
             selectedAIModel = inheritedConfig?.selectedAIModel
             outputMode = .paste
@@ -69,7 +69,8 @@ struct OutputProfileDraft {
             selectedPromptId = latestConfig.selectedPrompt.flatMap { UUID(uuidString: $0) }
             useClipboardContext = latestConfig.useClipboardContext
             useSelectedTextContext = latestConfig.useSelectedTextContext
-            useScreenCapture = latestConfig.useScreenCapture
+            // Screen context is phased out (TASK-62): saving a mode clears it.
+            useScreenCapture = false
             selectedAIProvider = latestConfig.selectedAIProvider
             selectedAIModel = latestConfig.selectedAIModel
             outputMode = latestConfig.outputMode

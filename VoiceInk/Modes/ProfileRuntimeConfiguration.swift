@@ -156,7 +156,8 @@ enum ProfileRuntimeResolver {
             modelName: modelName,
             useClipboardContext: profile?.useClipboardContext ?? false,
             useSelectedTextContext: profile?.useSelectedTextContext ?? true,
-            useScreenCaptureContext: profile?.useScreenCapture ?? false
+            // Phased out (TASK-62): the stored flag and ScreenCaptureService stay dormant.
+            useScreenCaptureContext: false
         )
     }
 

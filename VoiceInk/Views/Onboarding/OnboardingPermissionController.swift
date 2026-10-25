@@ -82,7 +82,7 @@ final class OnboardingPermissionController {
         switch permission {
         case .microphone:
             return permissionStatus.requiresSettings ? String(localized: "Open Settings") : String(localized: "Allow")
-        case .accessibility, .screenRecording:
+        case .accessibility:
             return String(localized: "Allow")
         }
     }
@@ -102,8 +102,6 @@ final class OnboardingPermissionController {
             handleMicrophoneAction()
         case .accessibility:
             requestAccessibility()
-        case .screenRecording:
-            requestScreenRecording()
         }
     }
 
@@ -130,9 +128,6 @@ final class OnboardingPermissionController {
 
         case .accessibility:
             return AXIsProcessTrusted() ? .granted : .needsAccess
-
-        case .screenRecording:
-            return CGPreflightScreenCaptureAccess() ? .granted : .needsAccess
         }
     }
 
@@ -158,22 +153,6 @@ final class OnboardingPermissionController {
         AXIsProcessTrustedWithOptions(options)
         openPrivacySettings(.accessibility)
         startPollingPermissionStatus()
-    }
-
-    private func requestScreenRecording() {
-        coordinator.hasRequestedScreenRecording = true
-        startPollingPermissionStatus()
-
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-
-            let isGranted = await ScreenCaptureService.requestScreenCapturePermissionRegistration()
-            refreshPermissionStatuses()
-
-            if !isGranted {
-                openPrivacySettings(.screenRecording)
-            }
-        }
     }
 
     private func advanceFrom(_ permission: OnboardingPermissionKind) {

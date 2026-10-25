@@ -6,11 +6,9 @@ struct PermissionStepRow: View {
     let status: OnboardingPermissionStatus
     let isActive: Bool
     let isLocked: Bool
-    let showsRestartHint: Bool
     let actionTitle: String
     let onSelect: () -> Void
     let onAction: () -> Void
-    let onQuit: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -35,11 +33,6 @@ struct PermissionStepRow: View {
                 } else {
                     actionButton
                 }
-            }
-
-            if isActive && !isLocked && showsRestartHint {
-                restartHint
-                    .padding(.leading, 44)
             }
         }
         .padding(14)
@@ -107,22 +100,6 @@ struct PermissionStepRow: View {
             return AppTheme.Status.error
         default:
             return AppTheme.Text.secondary
-        }
-    }
-
-    private var restartHint: some View {
-        HStack(spacing: 8) {
-            Text("Restart Diktilo after enabling Screen Recording.")
-                .font(.system(size: 12))
-                .foregroundColor(AppTheme.Text.muted)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Button("Quit") {
-                onQuit()
-            }
-            .font(.system(size: 12, weight: .semibold))
-            .buttonStyle(.plain)
-            .foregroundColor(AppTheme.Action.secondaryForeground)
         }
     }
 }
