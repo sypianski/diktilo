@@ -13,6 +13,7 @@ struct VocabularyView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var sortMode: VocabularySortMode = .wordAsc
+    @State private var searchText = ""
 
     init() {
         if let savedSort = UserDefaults.standard.string(forKey: "vocabularySortMode"),
@@ -22,21 +23,28 @@ struct VocabularyView: View {
     }
 
     private var sortedItems: [VocabularyWord] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let matching = query.isEmpty
+            ? Array(vocabularyWords)
+            : vocabularyWords.filter { $0.word.localizedCaseInsensitiveContains(query) }
+
         switch sortMode {
         case .wordAsc:
-            return vocabularyWords.sorted { $0.word.localizedCaseInsensitiveCompare($1.word) == .orderedAscending }
+            return matching.sorted { $0.word.localizedCaseInsensitiveCompare($1.word) == .orderedAscending }
         case .wordDesc:
-            return vocabularyWords.sorted { $0.word.localizedCaseInsensitiveCompare($1.word) == .orderedDescending }
+            return matching.sorted { $0.word.localizedCaseInsensitiveCompare($1.word) == .orderedDescending }
         }
+    }
+
+    private var countText: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "\(vocabularyWords.count)"
+            : "\(sortedItems.count) / \(vocabularyWords.count)"
     }
 
     private func toggleSort() {
         sortMode = (sortMode == .wordAsc) ? .wordDesc : .wordAsc
         UserDefaults.standard.set(sortMode.rawValue, forKey: "vocabularySortMode")
-    }
-
-    private var shouldShowAddButton: Bool {
-        !newWord.isEmpty
     }
 
     var body: some View {
@@ -48,31 +56,39 @@ struct VocabularyView: View {
                     .onSubmit { addWords() }
                     .labelsHidden()
 
-                if shouldShowAddButton {
-                    AddIconButton(
-                        helpText: "Add word",
-                        isDisabled: newWord.isEmpty,
-                        action: addWords
-                    )
-                }
+                AddIconButton(
+                    helpText: "Add word",
+                    isDisabled: newWord.isEmpty,
+                    action: addWords
+                )
             }
-            .animation(.easeInOut(duration: 0.2), value: shouldShowAddButton)
+
+            Text("Separate several words with commas.")
+                .font(.system(size: 11))
+                .foregroundStyle(AppTheme.Text.secondary)
 
             if !vocabularyWords.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    Button(action: toggleSort) {
-                        HStack(spacing: 4) {
-                            Text(String(localized: "Vocabulary Words (\(vocabularyWords.count))"))
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.secondary)
+                    HStack(spacing: 8) {
+                        TextField("", text: $searchText, prompt: Text("Search vocabulary"))
+                            .textFieldStyle(.roundedBorder)
+                            .font(.system(size: 13))
+                            .labelsHidden()
 
-                            Image(systemName: sortMode == .wordAsc ? "chevron.up" : "chevron.down")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        Button(action: toggleSort) {
+                            HStack(spacing: 4) {
+                                Text(countText)
+                                    .font(.system(size: 12, design: .monospaced))
+                                    .foregroundColor(.secondary)
+
+                                Image(systemName: sortMode == .wordAsc ? "chevron.up" : "chevron.down")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
+                        .buttonStyle(.plain)
+                        .help("Sort alphabetically")
                     }
-                    .buttonStyle(.plain)
-                    .help("Sort alphabetically")
 
                     FlowLayout(spacing: 8) {
                         ForEach(sortedItems) { item in
@@ -123,6 +139,7 @@ struct VocabularyWordView: View {
     let item: VocabularyWord
     let onDelete: () -> Void
     @State private var isDeleteHovered = false
+    @State private var isHovered = false
 
     var body: some View {
         HStack(spacing: 6) {
@@ -138,6 +155,7 @@ struct VocabularyWordView: View {
                     .contentTransition(.symbolEffect(.replace))
             }
             .buttonStyle(.borderless)
+            .opacity(isHovered ? 1 : 0)
             .help("Remove word")
             .onHover { hover in
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -146,7 +164,8 @@ struct VocabularyWordView: View {
             }
         }
         .padding(.horizontal, 8)
-        .padding(.vertical, 6)
+        .padding(.vertical, 4)
+        .onHover { isHovered = $0 }
         .background {
             RoundedRectangle(cornerRadius: 6)
                 .fill(AppTheme.Surface.window.opacity(0.4))

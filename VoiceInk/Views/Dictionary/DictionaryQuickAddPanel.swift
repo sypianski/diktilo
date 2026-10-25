@@ -154,6 +154,8 @@ struct DictionaryQuickAddView: View {
     @State private var originalInput = ""
     @State private var replacementInput = ""
     @State private var errorMessage: String?
+    /// Shown after an add: the panel stays open for the next entry.
+    @State private var confirmationMessage: String?
     @FocusState private var focusedField: Field?
 
     enum Field: Hashable { case word, original, replacement }
@@ -170,6 +172,14 @@ struct DictionaryQuickAddView: View {
                 Text(errorMessage)
                     .font(.caption)
                     .foregroundColor(AppTheme.Status.error)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 6)
+            } else if let confirmationMessage {
+                Text(confirmationMessage)
+                    .font(.caption)
+                    .foregroundColor(AppTheme.Text.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 6)
             }
@@ -195,15 +205,14 @@ struct DictionaryQuickAddView: View {
             originalInput = ""
             replacementInput = ""
             errorMessage = nil
+            confirmationMessage = nil
             DispatchQueue.main.async {
                 focusedField = newMode == .vocabulary ? .word : .original
             }
             onResize(newMode.panelHeight)
         }
-        .onChange(of: errorMessage) { _, newError in
-            let height = mode.panelHeight + (newError != nil ? 24 : 0)
-            onResize(height)
-        }
+        .onChange(of: errorMessage) { _, _ in resizeForMessage() }
+        .onChange(of: confirmationMessage) { _, _ in resizeForMessage() }
     }
 
     // MARK: - Mode Bar
@@ -306,7 +315,7 @@ struct DictionaryQuickAddView: View {
                 }
                 HStack(spacing: 4) {
                     KeyHint("esc")
-                    Text("Dismiss")
+                    Text("Close")
                         .font(.system(size: 11))
                         .foregroundStyle(.tertiary)
                 }
@@ -318,14 +327,23 @@ struct DictionaryQuickAddView: View {
 
     // MARK: - Actions
 
+    private func resizeForMessage() {
+        let hasMessage = errorMessage != nil || confirmationMessage != nil
+        onResize(mode.panelHeight + (hasMessage ? 24 : 0))
+    }
+
     private func submitVocabulary() {
         let input = wordInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty else { return }
         if let error = DictionaryService.addVocabularyWords(input, existing: Array(vocabularyWords), context: modelContext) {
             errorMessage = error
+            confirmationMessage = nil
             return
         }
-        onDismiss()
+        errorMessage = nil
+        confirmationMessage = String(format: String(localized: "Added: %@"), input)
+        wordInput = ""
+        focusedField = .word
     }
 
     private func submitReplacement() {
@@ -334,9 +352,14 @@ struct DictionaryQuickAddView: View {
         guard !original.isEmpty, !replacement.isEmpty else { return }
         if let error = DictionaryService.addWordReplacement(original: original, replacement: replacement, existing: Array(wordReplacements), context: modelContext) {
             errorMessage = error
+            confirmationMessage = nil
             return
         }
-        onDismiss()
+        errorMessage = nil
+        confirmationMessage = String(format: String(localized: "Added: %@ → %@"), original, replacement)
+        originalInput = ""
+        replacementInput = ""
+        focusedField = .original
     }
 }
 

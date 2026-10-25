@@ -1,41 +1,35 @@
 import SwiftUI
 
+/// Both dictionary sections on one page. The quick-add shortcut is a chip in
+/// the header; the vocabulary section warns only when no mode can use it.
 struct DictionarySettingsView: View {
-    @State private var selectedSection: DictionarySection = .replacements
-    @State private var isShowingSettings = false
-    private let dictionaryInfoMessage: LocalizedStringKey = "Word Replacements run after transcription. Vocabulary is used with AI enhancement to better understand names, technical terms, and unique spellings in your transcript."
-    
-    enum DictionarySection: String, CaseIterable, Hashable {
-        case replacements = "Word Replacements"
-        case spellings = "Vocabulary"
-        
-        var description: String {
-            switch self {
-            case .spellings:
-                return String(localized: "Vocabulary is used only with AI enhancement to preserve important names, technical terms, and unique spellings in the final output.")
-            case .replacements:
-                return String(localized: "Word Replacements run after transcription to replace misheard words, phrases, abbreviations, or boilerplate text.")
-            }
-        }
+    @State private var isShowingShortcutPopover = false
+    @ObservedObject private var modeManager = OutputProfileManager.shared
 
-        var systemImage: String {
-            switch self {
-            case .spellings:
-                return "character.book.closed"
-            case .replacements:
-                return "arrow.left.arrow.right"
-            }
-        }
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
-            headerSection
+            AppScreenHeader(title: "Personal Dictionary") {
+                shortcutChip
+            }
 
             ScrollView(.vertical) {
-                VStack(alignment: .leading, spacing: 18) {
-                    sectionSelector
-                    selectedSectionForm
+                VStack(alignment: .leading, spacing: 22) {
+                    section(
+                        title: "Word Replacements",
+                        detail: "Word Replacements run after transcription to replace misheard words, phrases, abbreviations, or boilerplate text."
+                    ) {
+                        WordReplacementView()
+                    }
+
+                    section(
+                        title: "Vocabulary",
+                        detail: "Vocabulary is used only with AI enhancement to preserve important names, technical terms, and unique spellings in the final output."
+                    ) {
+                        if !isVocabularyUsable {
+                            vocabularyWarning
+                        }
+                        VocabularyView()
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 18)
@@ -45,134 +39,110 @@ struct DictionarySettingsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(minWidth: 600, minHeight: 500)
-        .sidePanel(isPresented: $isShowingSettings) {
-            DictionarySettingsPanel {
-                isShowingSettings = false
+    }
+
+    /// Vocabulary goes to the AI model, so it does nothing while no mode
+    /// has AI enhancement switched on.
+    private var isVocabularyUsable: Bool {
+        modeManager.enabledConfigurations.contains { $0.isAIEnhancementEnabled }
+    }
+
+    private var shortcutChip: some View {
+        Button {
+            isShowingShortcutPopover.toggle()
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "keyboard")
+                    .font(.system(size: 11, weight: .medium))
+                Text("Quick Add")
+                    .font(.system(size: 12, weight: .medium))
+                Text(ShortcutStore.shortcut(for: .quickAddToDictionary)?.displayString ?? String(localized: "Not Set"))
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(AppTheme.Text.secondary)
             }
-        }
-    }
-
-    private var headerSection: some View {
-        AppScreenHeader(title: "Personal Dictionary", infoMessage: dictionaryInfoMessage) {
-            settingsButton
-        }
-    }
-
-    private var settingsButton: some View {
-        AppIconButton(
-            systemName: "gearshape.fill",
-            help: "Dictionary Settings"
-        ) {
-            isShowingSettings.toggle()
-        }
-    }
-
-    private var sectionSelector: some View {
-        DictionarySectionSwitcher(selection: $selectedSection)
-    }
-
-    private var selectedSectionForm: some View {
-        DictionaryGroupedSection {
-            selectedSectionContent
-        }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-    }
-    
-    @ViewBuilder
-    private var selectedSectionContent: some View {
-        switch selectedSection {
-        case .spellings:
-            VocabularyView()
-        case .replacements:
-            WordReplacementView()
-        }
-    }
-}
-
-private struct DictionaryGroupedSection<Content: View>: View {
-    @ViewBuilder let content: () -> Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            content()
-                .padding(16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .background(sectionBackground)
-        .overlay(sectionBorder)
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var sectionBackground: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(AppTheme.Surface.card)
-    }
-
-    private var sectionBorder: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .stroke(AppTheme.Border.control.opacity(0.16), lineWidth: 1)
-    }
-}
-
-private struct DictionarySectionSwitcher: View {
-    @Binding var selection: DictionarySettingsView.DictionarySection
-
-    var body: some View {
-        HStack(spacing: 10) {
-            ForEach(DictionarySettingsView.DictionarySection.allCases, id: \.self) { section in
-                DictionarySectionButton(
-                    section: section,
-                    isSelected: selection == section
-                ) {
-                    withAnimation(.easeInOut(duration: 0.16)) {
-                        selection = section
-                    }
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
-
-private struct DictionarySectionButton: View {
-    let section: DictionarySettingsView.DictionarySection
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            DictionarySectionButtonLabel(
-                title: LocalizedStringKey(section.rawValue),
-                icon: section.systemImage,
-                isSelected: isSelected
-            )
+            .foregroundStyle(AppTheme.Text.primary)
+            .padding(.horizontal, 10)
+            .frame(height: 26)
+            .background(Capsule().fill(AppTheme.Surface.controlActive))
         }
         .buttonStyle(.plain)
-        .help(section.description)
-    }
-}
-
-private struct DictionarySectionButtonLabel: View {
-    let title: LocalizedStringKey
-    let icon: String
-    let isSelected: Bool
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .semibold))
-                .symbolRenderingMode(.hierarchical)
-
-            Text(title)
-                .font(.system(size: 14, weight: isSelected ? .semibold : .medium))
+        .help("Quick Add to Dictionary")
+        .popover(isPresented: $isShowingShortcutPopover) {
+            LabeledContent("Quick Add to Dictionary") {
+                ShortcutRecorder(action: .quickAddToDictionary)
+                    .controlSize(.small)
+            }
+            .padding(14)
+            .frame(width: 340)
         }
-        .foregroundStyle(isSelected ? Color.primary : Color.secondary)
-        .frame(maxWidth: .infinity)
+    }
+
+    private var vocabularyWarning: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(AppTheme.Accent.text)
+
+            Text("No mode has AI enhancement on, so vocabulary has no effect yet.")
+                .font(.system(size: 12))
+                .foregroundStyle(AppTheme.Text.primary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Spacer(minLength: 8)
+
+            Button {
+                NotificationCenter.default.post(
+                    name: .navigateToDestination,
+                    object: nil,
+                    userInfo: ["destination": ViewType.modes.rawValue]
+                )
+            } label: {
+                HStack(spacing: 4) {
+                    Text("Modes")
+                    Image(systemName: "arrow.right")
+                }
+                .font(.system(size: 12, weight: .semibold))
+            }
+            .buttonStyle(.plain)
+        }
         .padding(.horizontal, 12)
-        .padding(.vertical, 9)
+        .padding(.vertical, 8)
         .background(
-            AppCardBackground(isSelected: isSelected, cornerRadius: 22)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(AppTheme.Accent.fill)
         )
-        .contentShape(Rectangle())
+    }
+
+    private func section<Content: View>(
+        title: LocalizedStringKey,
+        detail: LocalizedStringKey,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(AppTheme.Text.primary)
+
+                Text(detail)
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.Text.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                content()
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(AppTheme.Surface.card)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(AppTheme.Border.control.opacity(0.16), lineWidth: 1)
+            )
+        }
     }
 }

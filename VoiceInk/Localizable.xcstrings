@@ -13949,40 +13949,6 @@
         }
       }
     },
-    "Dictionary Settings": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wörterbuch-Einstellungen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "词典设置"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ustawienia słownika"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agordoj de vortaro"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Configuració del diccionari"
-          }
-        }
-      }
-    },
     "Disabled": {
       "localizations": {
         "de": {
@@ -15405,40 +15371,6 @@
         }
       }
     },
-    "Edit Word Replacement": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wortersetzung bearbeiten"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "编辑词语替换"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Edytuj zamiennik słowa"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Redakti vortanstataŭigon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Editar la substitució de paraules"
-          }
-        }
-      }
-    },
     "Email": {
       "extractionState": "manual",
       "localizations": {
@@ -16104,40 +16036,6 @@
         }
       }
     },
-    "Enter word or phrase to replace (use commas for multiple)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wort oder Ausdruck eingeben (mehrere mit Komma trennen)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "输入要替换的词语或短语（多个用逗号分隔）"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wpisz słowo lub frazę do zastąpienia (wiele oddziel przecinkami)"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enigu anstataŭigotan vorton aŭ frazon (apartigu plurajn per komoj)"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introdueix la paraula o frase que cal substituir (separa'n diverses amb comes)"
-          }
-        }
-      }
-    },
     "Enter your": {
       "extractionState": "manual",
       "localizations": {
@@ -16305,40 +16203,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "esc"
-          }
-        }
-      }
-    },
-    "Examples": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beispiele"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "示例"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przykłady"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ekzemploj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exemples"
           }
         }
       }
@@ -18696,40 +18560,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Odissea d'Homer"
-          }
-        }
-      }
-    },
-    "How to use Word Replacements": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verwendung von Wortersetzungen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "如何使用词语替换"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jak używać zastąpień słów"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kiel uzi vortanstataŭigojn"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com fer servir les substitucions de paraules"
           }
         }
       }
@@ -22355,40 +22185,6 @@
         }
       }
     },
-    "my website link": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "mein Website-Link"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "我的网站链接"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "link do mojej strony"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ligilo al mia retejo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "l'enllaç del meu lloc web"
-          }
-        }
-      }
-    },
     "Name cannot be empty": {
       "localizations": {
         "de": {
@@ -24802,40 +24598,6 @@
         }
       }
     },
-    "Original Text": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Originaltext"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "原文"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Oryginalny tekst"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Originala teksto"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Text original"
-          }
-        }
-      }
-    },
     "Original text (use commas for multiple)": {
       "localizations": {
         "de": {
@@ -24866,40 +24628,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Text original (separa'n diversos amb comes)"
-          }
-        }
-      }
-    },
-    "Original:": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Original:"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "原文："
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Oryginał:"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Originalo:"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Original:"
           }
         }
       }
@@ -27728,108 +27456,6 @@
         }
       }
     },
-    "Replacement text": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ersatztext"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "替换文本"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tekst zastępczy"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anstataŭa teksto"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Text de substitució"
-          }
-        }
-      }
-    },
-    "Replacement Text": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ersatztext"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "替换文本"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tekst zastępczy"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anstataŭa teksto"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Text de substitució"
-          }
-        }
-      }
-    },
-    "Replacement:": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ersetzung:"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "替换为："
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zastąpienie:"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anstataŭigo:"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Substitució:"
-          }
-        }
-      }
-    },
     "Report or Feedback": {
       "localizations": {
         "de": {
@@ -27894,40 +27520,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Temps d'espera de la sol·licitud"
-          }
-        }
-      }
-    },
-    "Required": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erforderlich"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "必需"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wymagane"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deviga"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Obligatori"
           }
         }
       }
@@ -29768,40 +29360,6 @@
         }
       }
     },
-    "Separate multiple originals with commas:": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mehrere Originale mit Komma trennen:"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "多个原文请用逗号分隔："
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Oddzielaj wiele oryginałów przecinkami:"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apartigu plurajn originalojn per komoj:"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Separa diversos originals amb comes:"
-          }
-        }
-      }
-    },
     "Server": {
       "localizations": {
         "de": {
@@ -30181,40 +29739,6 @@
         }
       }
     },
-    "Shortcut": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tastenkürzel"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "快捷键"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skrót"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klavkombino"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Drecera"
-          }
-        }
-      }
-    },
     "Shortcut already used by %@": {
       "localizations": {
         "de": {
@@ -30576,74 +30100,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ordenar alfabèticament"
-          }
-        }
-      }
-    },
-    "Sort by original": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach Original sortieren"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "按原文排序"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortuj według oryginału"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordigi laŭ originalo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordenar per original"
-          }
-        }
-      }
-    },
-    "Sort by replacement": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach Ersatz sortieren"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "按替换内容排序"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortuj według zamiennika"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordigi laŭ anstataŭaĵo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordenar per substitució"
           }
         }
       }
@@ -34375,40 +33831,6 @@
         }
       }
     },
-    "Update the word or phrase that should be automatically replaced.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Das Wort oder den Ausdruck aktualisieren, der automatisch ersetzt werden soll."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "更新需要被自动替换的词语或短语。"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zaktualizuj słowo lub frazę, która ma być automatycznie zastępowana."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ĝisdatigu la vorton aŭ frazon, kiu estu aŭtomate anstataŭigata."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Actualitza la paraula o frase que s'ha de substituir automàticament."
-          }
-        }
-      }
-    },
     "Use clipboard text as context for this mode.": {
       "extractionState": "manual",
       "localizations": {
@@ -35384,40 +34806,6 @@
         }
       }
     },
-    "Dyktylo, Diktylo, Dyktilo": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dyktylo, Diktylo, Dyktilo"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dyktylo, Diktylo, Dyktilo"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dyktylo, Diktylo, Dyktilo"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dyktylo, Diktylo, Dyktilo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dyktylo, Diktylo, Dyktilo"
-          }
-        }
-      }
-    },
     "Waiting": {
       "localizations": {
         "de": {
@@ -35627,40 +35015,6 @@
         }
       }
     },
-    "Word replacement examples": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beispiele für Wortersetzungen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "词语替换示例"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przykłady zastępowania słów"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ekzemploj de vortanstataŭigo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exemples de substitució de paraules"
-          }
-        }
-      }
-    },
     "Word Replacements": {
       "extractionState": "manual",
       "localizations": {
@@ -35726,40 +35080,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les substitucions de paraules s'apliquen després de la transcripció per substituir paraules mal enteses, frases, abreviatures o fragments de text predefinits."
-          }
-        }
-      }
-    },
-    "Word Replacements run after transcription. Vocabulary is used with AI enhancement to better understand names, technical terms, and unique spellings in your transcript.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wortersetzungen werden nach der Transkription angewendet. Das Vokabular wird mit KI-Verbesserung verwendet, um Namen, Fachbegriffe und besondere Schreibweisen in deiner Transkription besser zu verstehen."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "词语替换会在转写完成后运行。词汇则与 AI 润色配合使用，以便更好地理解转写记录中的人名、技术术语和特殊拼写。"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zastępowania słów działają po transkrypcji. Słownictwo jest używane z ulepszaniem AI, aby lepiej rozumieć nazwy, terminy techniczne i unikalne pisownie w transkrypcie."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vortanstataŭigoj ruliĝas post la transskribo. La vortprovizo estas uzata kun AI-plibonigo por pli bone kompreni nomojn, fakajn terminojn kaj unikajn literumojn en via transskribo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les substitucions de paraules s'apliquen després de la transcripció. El vocabulari s'utilitza amb la millora amb IA per entendre millor els noms, els termes tècnics i les grafies úniques de la transcripció."
           }
         }
       }
@@ -43724,6 +43044,94 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skrót nagrywania"
+          }
+        }
+      }
+    },
+    "Quick Add": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybkie dodanie"
+          }
+        }
+      }
+    },
+    "No mode has AI enhancement on, so vocabulary has no effect yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Żaden tryb nie ma włączonego ulepszania AI, więc słownictwo nic jeszcze nie daje."
+          }
+        }
+      }
+    },
+    "Search replacements": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj w zastąpieniach"
+          }
+        }
+      }
+    },
+    "Separate several originals with commas, e.g. Dyktylo, Diktylo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilka oryginałów oddziel przecinkami, np. Dyktylo, Diktylo."
+          }
+        }
+      }
+    },
+    "Search vocabulary": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj w słownictwie"
+          }
+        }
+      }
+    },
+    "Separate several words with commas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilka słów oddziel przecinkami."
+          }
+        }
+      }
+    },
+    "Added: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodano: %@"
+          }
+        }
+      }
+    },
+    "Added: %@ → %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodano: %@ → %@"
           }
         }
       }

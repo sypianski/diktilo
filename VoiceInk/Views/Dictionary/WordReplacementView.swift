@@ -17,12 +17,15 @@ struct WordReplacementView: View {
     @Query private var wordReplacements: [WordReplacement]
     @Environment(\.modelContext) private var modelContext
     @State private var showAlert = false
-    @State private var editingReplacement: WordReplacement? = nil
+    @State private var editingID: PersistentIdentifier?
     @State private var alertMessage = ""
     @State private var sortMode: SortMode = .originalAsc
     @State private var originalWord = ""
     @State private var replacementWord = ""
-    @State private var showInfoPopover = false
+    @State private var searchText = ""
+
+    /// Room for the row's edit and remove icons; the header and add row keep it too.
+    static let actionColumnWidth: CGFloat = 44
 
     init() {
         if let savedSort = UserDefaults.standard.string(forKey: "wordReplacementSortMode"),
@@ -43,7 +46,16 @@ struct WordReplacementView: View {
             return wordReplacements.sorted { $0.replacementText.localizedCaseInsensitiveCompare($1.replacementText) == .orderedDescending }
         }
     }
-    
+
+    private var visibleReplacements: [WordReplacement] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return sortedReplacements }
+        return sortedReplacements.filter {
+            $0.originalText.localizedCaseInsensitiveContains(query) ||
+                $0.replacementText.localizedCaseInsensitiveContains(query)
+        }
+    }
+
     private func toggleSort(for column: SortColumn) {
         switch column {
         case .original:
@@ -54,126 +66,139 @@ struct WordReplacementView: View {
         UserDefaults.standard.set(sortMode.rawValue, forKey: "wordReplacementSortMode")
     }
 
-    private var shouldShowAddButton: Bool {
-        !originalWord.isEmpty || !replacementWord.isEmpty
-    }
-    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                TextField("", text: $originalWord, prompt: Text("Original text (use commas for multiple)"))
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13))
-                    .labelsHidden()
-
-                Image(systemName: "arrow.right")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 10))
-                    .frame(width: 10)
-
-                TextField("", text: $replacementWord, prompt: Text("Replacement text"))
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13))
-                    .onSubmit { addReplacement() }
-                    .labelsHidden()
-
-                if shouldShowAddButton {
-                    AddIconButton(
-                        helpText: "Add word replacement",
-                        isDisabled: originalWord.isEmpty || replacementWord.isEmpty,
-                        action: addReplacement
-                    )
-                }
-
-                Button {
-                    showInfoPopover.toggle()
-                } label: {
-                    Image(systemName: "info.circle")
-                }
-                .buttonStyle(.borderless)
-                .help("Word replacement examples")
-                .popover(isPresented: $showInfoPopover) {
-                    WordReplacementInfoPopover()
-                }
-            }
-            .animation(.easeInOut(duration: 0.2), value: shouldShowAddButton)
-
+        VStack(alignment: .leading, spacing: 10) {
             if !wordReplacements.isEmpty {
-                VStack(spacing: 0) {
-                    HStack(spacing: 8) {
-                        Button(action: { toggleSort(for: .original) }) {
-                            HStack(spacing: 4) {
-                                Text("Original")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.secondary)
+                searchRow
+            }
 
-                                if sortMode == .originalAsc || sortMode == .originalDesc {
-                                    Image(systemName: sortMode == .originalAsc ? "chevron.up" : "chevron.down")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .buttonStyle(.plain)
-                        .help("Sort by original")
-
-                        Image(systemName: "arrow.right")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 10))
-                            .frame(width: 10)
-
-                        Button(action: { toggleSort(for: .replacement) }) {
-                            HStack(spacing: 4) {
-                                Text("Replacement")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.secondary)
-
-                                if sortMode == .replacementAsc || sortMode == .replacementDesc {
-                                    Image(systemName: sortMode == .replacementAsc ? "chevron.up" : "chevron.down")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .buttonStyle(.plain)
-                        .help("Sort by replacement")
-                    }
+            VStack(spacing: 0) {
+                columnHeader
+                Divider()
+                addRow
+                Text("Separate several originals with commas, e.g. Dyktylo, Diktylo.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(AppTheme.Text.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 4)
-                    .padding(.vertical, 8)
+                    .padding(.bottom, 8)
 
+                if !wordReplacements.isEmpty {
                     Divider()
-
                     LazyVStack(spacing: 0) {
-                        ForEach(sortedReplacements, id: \.persistentModelID) { replacement in
+                        ForEach(visibleReplacements, id: \.persistentModelID) { replacement in
                             ReplacementRow(
-                                original: replacement.originalText,
-                                replacement: replacement.replacementText,
-                                onDelete: { removeReplacement(replacement) },
-                                onEdit: { editingReplacement = replacement }
+                                replacement: replacement,
+                                isEditing: editingID == replacement.persistentModelID,
+                                onEdit: { editingID = replacement.persistentModelID },
+                                onCancelEdit: { editingID = nil },
+                                onSave: { original, text in save(replacement, original: original, text: text) },
+                                onDelete: { removeReplacement(replacement) }
                             )
 
-                            if replacement.persistentModelID != sortedReplacements.last?.persistentModelID {
+                            if replacement.persistentModelID != visibleReplacements.last?.persistentModelID {
                                 Divider()
                             }
                         }
                     }
                 }
-                .padding(.top, 4)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .sheet(isPresented: isEditingReplacement) {
-            if let editingReplacement {
-                EditReplacementSheet(replacement: editingReplacement, modelContext: modelContext)
-            }
-        }
         .alert("Word Replacement", isPresented: $showAlert) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(alertMessage)
         }
+    }
+
+    private var searchRow: some View {
+        HStack(spacing: 8) {
+            TextField("", text: $searchText, prompt: Text("Search replacements"))
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 13))
+                .labelsHidden()
+
+            Text(countText)
+                .font(.system(size: 12, design: .monospaced))
+                .foregroundStyle(AppTheme.Text.secondary)
+        }
+    }
+
+    private var countText: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "\(wordReplacements.count)"
+            : "\(visibleReplacements.count) / \(wordReplacements.count)"
+    }
+
+    private var columnHeader: some View {
+        HStack(spacing: 8) {
+            sortButton("Original", column: .original, ascending: .originalAsc, descending: .originalDesc)
+
+            Image(systemName: "arrow.right")
+                .foregroundColor(.secondary)
+                .font(.system(size: 10))
+                .frame(width: 10)
+
+            sortButton("Replacement", column: .replacement, ascending: .replacementAsc, descending: .replacementDesc)
+
+            Color.clear.frame(width: Self.actionColumnWidth, height: 1)
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 8)
+    }
+
+    private func sortButton(
+        _ title: LocalizedStringKey,
+        column: SortColumn,
+        ascending: SortMode,
+        descending: SortMode
+    ) -> some View {
+        Button(action: { toggleSort(for: column) }) {
+            HStack(spacing: 4) {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
+
+                if sortMode == ascending || sortMode == descending {
+                    Image(systemName: sortMode == ascending ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// The add fields are the first row of the table, in the same columns as the entries.
+    private var addRow: some View {
+        HStack(spacing: 8) {
+            TextField("", text: $originalWord, prompt: Text("Dyktylo, Diktylo"))
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 13))
+                .labelsHidden()
+
+            Image(systemName: "arrow.right")
+                .foregroundColor(.secondary)
+                .font(.system(size: 10))
+                .frame(width: 10)
+
+            TextField("", text: $replacementWord, prompt: Text("Diktilo"))
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 13))
+                .onSubmit { addReplacement() }
+                .labelsHidden()
+
+            AddIconButton(
+                helpText: "Add word replacement",
+                isDisabled: originalWord.isEmpty || replacementWord.isEmpty,
+                action: addReplacement
+            )
+            .frame(width: Self.actionColumnWidth, alignment: .center)
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 8)
     }
 
     private func addReplacement() {
@@ -201,113 +226,77 @@ struct WordReplacementView: View {
         }
     }
 
-    private var isEditingReplacement: Binding<Bool> {
-        Binding(
-            get: { editingReplacement != nil },
-            set: { isPresented in
-                if !isPresented {
-                    editingReplacement = nil
-                }
-            }
-        )
-    }
-}
+    /// Saves an inline edit, with the same duplicate check the sheet had.
+    private func save(_ replacement: WordReplacement, original: String, text: String) {
+        let newOriginal = original.trimmingCharacters(in: .whitespacesAndNewlines)
+        let tokens = newOriginal
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        guard !tokens.isEmpty, !text.isEmpty else { return }
 
-struct WordReplacementInfoPopover: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("How to use Word Replacements")
-                .font(.headline)
+        for other in wordReplacements where other.persistentModelID != replacement.persistentModelID {
+            let existingTokens = other.originalText
+                .split(separator: ",")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+                .filter { !$0.isEmpty }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Separate multiple originals with commas:")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-
-                Text("Dyktylo, Diktylo, Dyktilo")
-                    .font(.callout)
-                    .padding(8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.textBackgroundColor))
-                    .cornerRadius(6)
-            }
-
-            Divider()
-
-            Text("Examples")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-
-            VStack(spacing: 12) {
-                HStack(spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Original:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("my website link")
-                            .font(.callout)
-                    }
-
-                    Image(systemName: "arrow.right")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Replacement:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(verbatim: "https://sypianski.cc")
-                            .font(.callout)
-                    }
-                }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.textBackgroundColor))
-                .cornerRadius(6)
-
-                HStack(spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Original:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("Dyktylo, Diktylo")
-                            .font(.callout)
-                    }
-
-                    Image(systemName: "arrow.right")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Replacement:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("Diktilo")
-                            .font(.callout)
-                    }
-                }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.textBackgroundColor))
-                .cornerRadius(6)
+            if let clash = tokens.first(where: { existingTokens.contains($0.lowercased()) }) {
+                alertMessage = String(format: String(localized: "'%@' already exists in word replacements"), clash)
+                showAlert = true
+                return
             }
         }
-        .padding()
-        .frame(width: 380)
+
+        replacement.originalText = newOriginal
+        replacement.replacementText = text
+
+        do {
+            try modelContext.save()
+            editingID = nil
+        } catch {
+            modelContext.rollback()
+            alertMessage = String(format: String(localized: "Failed to save changes: %@"), error.localizedDescription)
+            showAlert = true
+        }
     }
 }
 
 struct ReplacementRow: View {
-    let original: String
-    let replacement: String
-    let onDelete: () -> Void
+    let replacement: WordReplacement
+    let isEditing: Bool
     let onEdit: () -> Void
-    @State private var isEditHovered = false
-    @State private var isDeleteHovered = false
+    let onCancelEdit: () -> Void
+    let onSave: (_ original: String, _ replacement: String) -> Void
+    let onDelete: () -> Void
+
+    @State private var isHovered = false
+    @State private var draftOriginal = ""
+    @State private var draftReplacement = ""
 
     var body: some View {
+        Group {
+            if isEditing {
+                editor
+            } else {
+                row
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 4)
+        .contentShape(Rectangle())
+        .onHover { isHovered = $0 }
+        .onChange(of: isEditing) { _, editing in
+            if editing {
+                draftOriginal = replacement.originalText
+                draftReplacement = replacement.replacementText
+            }
+        }
+    }
+
+    private var row: some View {
         HStack(spacing: 8) {
-            Text(original)
+            Text(replacement.originalText)
                 .font(.system(size: 13))
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -317,47 +306,68 @@ struct ReplacementRow: View {
                 .font(.system(size: 10))
                 .frame(width: 10)
 
-            ZStack(alignment: .trailing) {
-                Text(replacement)
-                    .font(.system(size: 13))
-                    .lineLimit(2)
-                    .truncationMode(.middle)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.trailing, 50)
+            Text(replacement.replacementText)
+                .font(.system(size: 13))
+                .lineLimit(2)
+                .truncationMode(.middle)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                HStack(spacing: 6) {
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundColor(isEditHovered ? AppTheme.Accent.primary : .secondary)
-                            .contentTransition(.symbolEffect(.replace))
-                    }
-                    .buttonStyle(.borderless)
-                    .help("Edit replacement")
-                    .onHover { hover in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isEditHovered = hover
-                        }
-                    }
-
-                    Button(action: onDelete) {
-                        Image(systemName: "xmark.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(isDeleteHovered ? AppTheme.Status.error : .secondary)
-                            .contentTransition(.symbolEffect(.replace))
-                    }
-                    .buttonStyle(.borderless)
-                    .help("Remove replacement")
-                    .onHover { hover in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isDeleteHovered = hover
-                        }
-                    }
+            // Icons appear on hover but keep their room, so text never reflows.
+            HStack(spacing: 6) {
+                Button(action: onEdit) {
+                    Image(systemName: "pencil.circle.fill")
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundColor(.secondary)
                 }
+                .buttonStyle(.borderless)
+                .help("Edit replacement")
+
+                Button(action: onDelete) {
+                    Image(systemName: "xmark.circle.fill")
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.borderless)
+                .help("Remove replacement")
             }
-            .frame(maxWidth: .infinity)
+            .opacity(isHovered ? 1 : 0)
+            .frame(width: WordReplacementView.actionColumnWidth, alignment: .trailing)
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 4)
+        .onTapGesture(perform: onEdit)
     }
-} 
+
+    private var editor: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("", text: $draftOriginal, prompt: Text("Original text (use commas for multiple)"))
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 13))
+                .labelsHidden()
+
+            TextEditor(text: $draftReplacement)
+                .font(.system(size: 13))
+                .frame(height: 70)
+                .padding(4)
+                .background(Color(.textBackgroundColor))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(AppTheme.Border.control, lineWidth: 1)
+                )
+
+            HStack {
+                Spacer()
+                Button("Cancel", role: .cancel, action: onCancelEdit)
+                    .keyboardShortcut(.escape, modifiers: [])
+                Button("Save") { onSave(draftOriginal, draftReplacement) }
+                    .buttonStyle(.amberProminent)
+                    .keyboardShortcut(.return, modifiers: .command)
+                    .disabled(draftOriginal.isEmpty || draftReplacement.isEmpty)
+            }
+            .controlSize(.small)
+        }
+        .onAppear {
+            draftOriginal = replacement.originalText
+            draftReplacement = replacement.replacementText
+        }
+    }
+}
