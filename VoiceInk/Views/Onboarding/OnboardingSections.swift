@@ -52,21 +52,35 @@ struct OnboardingHeroHeader: View {
     }
 }
 
-struct OnboardingProgressBadge: View {
+/// "Step 3 of 6" with one segment per step, centred at the top of the window.
+struct OnboardingProgressBar: View {
     let currentStep: Int
     let totalSteps: Int
 
-    private var progress: Double {
-        guard totalSteps > 0 else { return 0 }
-        return Double(currentStep) / Double(totalSteps)
-    }
-
     var body: some View {
-        SegmentedProgressRing(
-            totalSegments: totalSteps,
-            filledSegments: currentStep,
-            progress: progress
-        )
+        VStack(spacing: 6) {
+            Text(String(
+                format: String(localized: "Step %lld of %lld"),
+                currentStep,
+                totalSteps
+            ))
+            .font(.system(size: 11, design: .monospaced))
+            .foregroundColor(AppTheme.Text.secondary)
+
+            HStack(spacing: 4) {
+                ForEach(0..<totalSteps, id: \.self) { index in
+                    Capsule()
+                        .fill(index < currentStep ? AppTheme.Accent.primary : AppTheme.Surface.controlActive)
+                        .frame(width: 34, height: 4)
+                }
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(String(
+            format: String(localized: "Step %lld of %lld"),
+            currentStep,
+            totalSteps
+        )))
     }
 }
 
@@ -232,43 +246,5 @@ struct OnboardingStepScreen<Content: View, BottomBar: View>: View {
             }
             .padding(.horizontal, OnboardingLayout.horizontalPadding)
         }
-    }
-}
-
-private struct SegmentedProgressRing: View {
-    let totalSegments: Int
-    let filledSegments: Int
-    let progress: Double
-
-    private let segmentGap: Double = 0.035
-    private let lineWidth: CGFloat = 4
-
-    var body: some View {
-        ZStack {
-            ForEach(0..<totalSegments, id: \.self) { index in
-                Circle()
-                    .trim(from: segmentStart(index), to: segmentEnd(index))
-                    .stroke(
-                        index < filledSegments ? AppTheme.Accent.primary : AppTheme.Surface.controlActive,
-                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-            }
-
-            Text(progress, format: .percent.precision(.fractionLength(0)))
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(AppTheme.Text.primary)
-        }
-        .frame(width: 46, height: 46)
-    }
-
-    private func segmentStart(_ index: Int) -> CGFloat {
-        guard totalSegments > 0 else { return 0 }
-        return CGFloat(Double(index) / Double(totalSegments) + segmentGap / 2)
-    }
-
-    private func segmentEnd(_ index: Int) -> CGFloat {
-        guard totalSegments > 0 else { return 0 }
-        return CGFloat(Double(index + 1) / Double(totalSegments) - segmentGap / 2)
     }
 }

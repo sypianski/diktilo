@@ -1,10 +1,11 @@
 import CoreAudio
 import SwiftUI
 
-struct OnboardingMicrophoneScreen: View {
-    let contentMaxWidth: CGFloat
-    let onBack: () -> Void
-    let onContinue: () -> Void
+/// Microphone list under the permission rows. A choice is saved the moment it
+/// is made (and the system default is saved on first appearance), so the
+/// permissions screen needs no separate microphone step.
+struct OnboardingMicrophonePicker: View {
+    let onSelectionSaved: () -> Void
 
     @ObservedObject private var audioDeviceManager = AudioDeviceManager.shared
     @State private var selectedDeviceUID: String?
@@ -13,19 +14,22 @@ struct OnboardingMicrophoneScreen: View {
     private typealias MicrophoneDevice = (id: AudioDeviceID, uid: String, name: String)
 
     var body: some View {
-        OnboardingStepScreen(
-            stage: .microphone,
-            contentMaxWidth: contentMaxWidth
-        ) {
-            microphoneList
-        } bottomBar: {
-            OnboardingBottomBar(
-                leadingTitle: "Back",
-                primaryTitle: "Continue",
-                isPrimaryEnabled: selectedDevice != nil,
-                onLeading: onBack,
-                onPrimary: saveSelectionAndContinue
-            )
+        VStack(alignment: .leading, spacing: 8) {
+            if devices.isEmpty {
+                emptyState
+            } else {
+                listHeader
+
+                ScrollView {
+                    LazyVStack(spacing: 6) {
+                        ForEach(devices, id: \.uid) { device in
+                            microphoneRow(for: device)
+                        }
+                    }
+                }
+                .frame(maxHeight: 150)
+                .scrollIndicators(.automatic)
+            }
         }
         .onAppear {
             refreshMicrophones(selectingIfNeeded: true)
@@ -36,29 +40,9 @@ struct OnboardingMicrophoneScreen: View {
         }
     }
 
-    private var microphoneList: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if devices.isEmpty {
-                emptyState
-            } else {
-                listHeader
-
-                ScrollView {
-                    LazyVStack(spacing: 10) {
-                        ForEach(devices, id: \.uid) { device in
-                            microphoneRow(for: device)
-                        }
-                    }
-                }
-                .frame(maxHeight: 280)
-                .scrollIndicators(.automatic)
-            }
-        }
-    }
-
     private var listHeader: some View {
         HStack {
-            Text("Available Microphones")
+            Text("Microphone")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(AppTheme.Text.secondary)
 
@@ -73,26 +57,27 @@ struct OnboardingMicrophoneScreen: View {
         let isSelected = selectedDeviceUID == device.uid
 
         return Button {
-            selectedDeviceUID = device.uid
+            select(device)
         } label: {
-            HStack(spacing: 14) {
+            HStack(spacing: 12) {
                 Image(systemName: isSelected ? "checkmark" : "mic")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(isSelected ? AppTheme.Text.primary : AppTheme.Text.muted)
-                    .frame(width: 30, height: 30)
+                    .frame(width: 26, height: 26)
                     .background(
-                        RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
                             .fill(isSelected ? AppTheme.Selection.fill : AppTheme.Surface.controlActive)
                     )
 
                 Text(device.name)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(AppTheme.Text.primary)
                     .lineLimit(1)
 
                 Spacer(minLength: 12)
             }
-            .padding(14)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 AppMaterialCardBackground(
@@ -106,26 +91,27 @@ struct OnboardingMicrophoneScreen: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 14) {
+        HStack(spacing: 12) {
             Image(systemName: "mic.slash")
-                .font(.system(size: 22, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(AppTheme.Text.secondary)
 
-            VStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("No microphones found")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(AppTheme.Text.primary)
 
                 Text("Connect a microphone or allow microphone access, then refresh.")
-                    .font(.system(size: 13))
+                    .font(.system(size: 12))
                     .foregroundColor(AppTheme.Text.secondary)
-                    .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
 
+            Spacer(minLength: 8)
+
             refreshButton
         }
-        .padding(22)
+        .padding(14)
         .frame(maxWidth: .infinity)
         .background(AppMaterialCardBackground(cornerRadius: 10))
     }
@@ -176,23 +162,25 @@ struct OnboardingMicrophoneScreen: View {
 
         if let savedDeviceID = audioDeviceManager.selectedDeviceID,
            let savedDevice = devices.first(where: { $0.id == savedDeviceID }) {
-            selectedDeviceUID = savedDevice.uid
+            select(savedDevice)
             return
         }
 
         if let savedDeviceUID = UserDefaults.standard.selectedAudioDeviceUID,
            let savedDevice = devices.first(where: { $0.uid == savedDeviceUID }) {
-            selectedDeviceUID = savedDevice.uid
+            select(savedDevice)
             return
         }
 
         if let defaultDeviceID = audioDeviceManager.getSystemDefaultDevice(),
            let defaultDevice = devices.first(where: { $0.id == defaultDeviceID }) {
-            selectedDeviceUID = defaultDevice.uid
+            select(defaultDevice)
             return
         }
 
-        selectedDeviceUID = devices.first?.uid
+        if let first = devices.first {
+            select(first)
+        }
     }
 
     private func ensureSelectionIsAvailable() {
@@ -202,18 +190,9 @@ struct OnboardingMicrophoneScreen: View {
         }
     }
 
-    private func saveSelectionAndContinue() {
-        guard let selectedDevice else { return }
-        guard audioDeviceManager.availableDevices.contains(where: { $0.uid == selectedDevice.uid }) else {
-            selectedDeviceUID = nil
-            refreshMicrophones(selectingIfNeeded: true)
-            return
-        }
-
-        audioDeviceManager.selectDeviceAndSwitchToCustomMode(id: selectedDevice.id)
-
-        DispatchQueue.main.async {
-            onContinue()
-        }
+    private func select(_ device: MicrophoneDevice) {
+        selectedDeviceUID = device.uid
+        audioDeviceManager.selectDeviceAndSwitchToCustomMode(id: device.id)
+        onSelectionSaved()
     }
 }

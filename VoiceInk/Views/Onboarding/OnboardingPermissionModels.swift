@@ -1,38 +1,26 @@
 import SwiftUI
 
 enum OnboardingStage: String, CaseIterable {
+    case trust
     case permissions
-    case microphone
     case model
     case api
     case experience
-    case contextAwareness
-    case trust
+    case summary
 
     var stepNumber: Int {
-        switch self {
-        case .permissions:
-            return 1
-        case .microphone:
-            return 2
-        case .model:
-            return 3
-        case .api:
-            return 4
-        case .experience:
-            return 5
-        case .contextAwareness:
-            return 6
-        case .trust:
-            return 7
-        }
+        (Self.allCases.firstIndex(of: self) ?? 0) + 1
+    }
+
+    static var stepCount: Int {
+        allCases.count
     }
 
     var systemImage: String {
         switch self {
-        case .permissions:
+        case .trust:
             return "lock.shield"
-        case .microphone:
+        case .permissions:
             return "mic"
         case .model:
             return "captions.bubble"
@@ -40,53 +28,43 @@ enum OnboardingStage: String, CaseIterable {
             return "checkmark.seal"
         case .experience:
             return "square.grid.2x2.fill"
-        case .contextAwareness:
-            return "slider.horizontal.3"
-        case .trust:
-            return "lock.shield"
+        case .summary:
+            return "checkmark.circle"
         }
     }
 
     var title: String {
         switch self {
-        case .permissions:
-            return String(localized: "Allow Permissions")
-        case .microphone:
-            return String(localized: "Choose Microphone")
-        case .model:
-            return String(localized: "Configure Transcription Model")
-        case .api:
-            return String(localized: "Verify API Key")
-        case .experience:
-            return String(localized: "Experience Diktilo")
-        case .contextAwareness:
-            return String(localized: "Diktilo is Context-Aware")
         case .trust:
             return String(localized: "Diktilo is Open Source")
+        case .permissions:
+            return String(localized: "Allow Permissions")
+        case .model:
+            return String(localized: "Choose Speech Recognition")
+        case .api:
+            return String(localized: "Text Improvement (optional)")
+        case .experience:
+            return String(localized: "Experience Diktilo")
+        case .summary:
+            return String(localized: "All Set")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .permissions:
-            return String(localized: "Allow Diktilo to work across all your apps.")
-        case .microphone:
-            return String(localized: "Pick the microphone Diktilo should use for recordings.")
-        case .model:
-            return String(localized: "Use NVIDIA's Parakeet model locally, or connect a cloud transcription provider.")
-        case .api:
-            return String(localized: "Diktilo uses LLMs to enhance transcripts and perform AI actions. Set up an API key before continuing.")
-        case .experience:
-            return String(localized: "Try a few short samples and see how Diktilo works before you start.")
-        case .contextAwareness:
-            return String(localized: "Diktilo can select the right mode from the app you are using and the rules you configure.")
         case .trust:
             return UserAddressForm.localized("Diktilo is private by default. No data leaves your device unless you opt in.")
+        case .permissions:
+            return String(localized: "Allow Diktilo to work across all your apps, then pick the microphone for recordings.")
+        case .model:
+            return String(localized: "Speech recognition turns your voice into text. Run it on your Mac or connect a cloud provider.")
+        case .api:
+            return String(localized: "An AI model can improve the transcript: fix punctuation, rewrite, answer. Without a key this stays off.")
+        case .experience:
+            return String(localized: "Choose a shortcut and dictate a sample sentence.")
+        case .summary:
+            return String(localized: "Here is what you chose. Everything can be changed later in the app.")
         }
-    }
-
-    static var baseStepCount: Int {
-        4
     }
 }
 

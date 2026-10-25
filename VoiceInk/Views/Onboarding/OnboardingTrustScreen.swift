@@ -3,8 +3,7 @@ import SwiftUI
 
 struct OnboardingTrustScreen: View {
     let contentMaxWidth: CGFloat
-    let onBack: () -> Void
-    let onFinish: () -> Void
+    let onContinue: () -> Void
 
     var body: some View {
         OnboardingStepScreen(
@@ -18,11 +17,11 @@ struct OnboardingTrustScreen: View {
             OnboardingTrustContent()
         } bottomBar: {
             OnboardingBottomBar(
-                leadingTitle: "Back",
-                primaryTitle: "Finish",
+                leadingTitle: nil,
+                primaryTitle: "Continue",
                 isPrimaryEnabled: true,
-                onLeading: onBack,
-                onPrimary: onFinish
+                onLeading: nil,
+                onPrimary: onContinue
             )
         }
     }

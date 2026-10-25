@@ -36,16 +36,11 @@ enum OnboardingShortcutSource {
 
 struct OnboardingShortcutBehavior {
     let source: OnboardingShortcutSource
-    let skipsIntroWhenConfigured: Bool
     let clearsOnIntro: Bool
 
-    static func primaryRecording(
-        skipsIntroWhenConfigured: Bool,
-        clearsOnIntro: Bool
-    ) -> OnboardingShortcutBehavior {
+    static func primaryRecording(clearsOnIntro: Bool) -> OnboardingShortcutBehavior {
         OnboardingShortcutBehavior(
             source: .primaryRecording,
-            skipsIntroWhenConfigured: skipsIntroWhenConfigured,
             clearsOnIntro: clearsOnIntro
         )
     }
@@ -53,7 +48,6 @@ struct OnboardingShortcutBehavior {
     static func starterMode(clearsOnIntro: Bool) -> OnboardingShortcutBehavior {
         OnboardingShortcutBehavior(
             source: .starterMode,
-            skipsIntroWhenConfigured: false,
             clearsOnIntro: clearsOnIntro
         )
     }
@@ -72,7 +66,6 @@ struct OnboardingExperienceStep: Identifiable {
     let layout: OnboardingExperienceLayout
     let requiresTextChangeForCompletion: Bool
     let requiresVerifiedAPIProvider: Bool
-    let showsContextAwarenessAfterCompletion: Bool
     let systemImage: String
     let title: String
     let subtitle: String
@@ -80,8 +73,6 @@ struct OnboardingExperienceStep: Identifiable {
     let sampleText: String
     let fieldPlaceholder: String
     let initialFieldText: String
-    let shortcutIntroTitle: String?
-    let showsShortcutControl: Bool
     let configuredInstruction: String
 
     var id: OnboardingExperienceKind { kind }
@@ -102,7 +93,6 @@ struct OnboardingExperienceStep: Identifiable {
         layout: OnboardingExperienceLayout = .transform,
         requiresTextChangeForCompletion: Bool = true,
         requiresVerifiedAPIProvider: Bool = true,
-        showsContextAwarenessAfterCompletion: Bool = false,
         systemImage: String,
         title: String,
         subtitle: String,
@@ -110,8 +100,6 @@ struct OnboardingExperienceStep: Identifiable {
         sampleText: String,
         fieldPlaceholder: String,
         initialFieldText: String = "",
-        shortcutIntroTitle: String? = nil,
-        showsShortcutControl: Bool = true,
         configuredInstruction: String = "Press your shortcut, read the sample text, then press it again."
     ) {
         self.kind = kind
@@ -121,7 +109,6 @@ struct OnboardingExperienceStep: Identifiable {
         self.layout = layout
         self.requiresTextChangeForCompletion = requiresTextChangeForCompletion
         self.requiresVerifiedAPIProvider = requiresVerifiedAPIProvider
-        self.showsContextAwarenessAfterCompletion = showsContextAwarenessAfterCompletion
         self.systemImage = systemImage
         self.title = title
         self.subtitle = subtitle
@@ -129,17 +116,11 @@ struct OnboardingExperienceStep: Identifiable {
         self.sampleText = sampleText
         self.fieldPlaceholder = fieldPlaceholder
         self.initialFieldText = initialFieldText
-        self.shortcutIntroTitle = shortcutIntroTitle
-        self.showsShortcutControl = showsShortcutControl
         self.configuredInstruction = configuredInstruction
     }
 
     func shortcutAction(modeTemplate: StarterModeTemplate) -> ShortcutAction {
         shortcutBehavior.source.action(modeTemplate: modeTemplate)
-    }
-
-    func shouldSkipShortcutIntro(hasConfiguredShortcut: Bool) -> Bool {
-        shortcutBehavior.skipsIntroWhenConfigured && hasConfiguredShortcut
     }
 }
 
@@ -153,10 +134,7 @@ enum OnboardingExperienceCatalog {
             kind: .dictation,
             starterModeKind: .clean,
             defaultModeKind: .clean,
-            shortcutBehavior: .primaryRecording(
-                skipsIntroWhenConfigured: false,
-                clearsOnIntro: true
-            ),
+            shortcutBehavior: .primaryRecording(clearsOnIntro: true),
             requiresVerifiedAPIProvider: false,
             systemImage: "text.cursor",
             title: "Try a Simple Dictation",

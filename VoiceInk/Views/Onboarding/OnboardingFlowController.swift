@@ -8,13 +8,12 @@ final class OnboardingFlowController {
         self.coordinator = coordinator
     }
 
-    func goToPermissionsStep() {
-        coordinator.storedStage = OnboardingStage.permissions.rawValue
+    func goToTrustStep() {
+        coordinator.storedStage = OnboardingStage.trust.rawValue
     }
 
-    func goToMicrophoneStep() {
-        guard coordinator.requiredPermissionsGranted else { return }
-        coordinator.storedStage = OnboardingStage.microphone.rawValue
+    func goToPermissionsStep() {
+        coordinator.storedStage = OnboardingStage.permissions.rawValue
     }
 
     func goToModelStep() {
@@ -44,6 +43,21 @@ final class OnboardingFlowController {
         coordinator.storedStage = OnboardingStage.model.rawValue
     }
 
+    /// The API step is optional: moving on without a verified key is a skip,
+    /// not a warning.
+    func continueFromAPIStep(
+        isTranscriptionSetupReady: Bool,
+        enhancementService: AIEnhancementService
+    ) {
+        if !coordinator.isSelectedAPIProviderVerified {
+            coordinator.hasSkippedAPISetup = true
+        }
+        goToExperienceStep(
+            isTranscriptionSetupReady: isTranscriptionSetupReady,
+            enhancementService: enhancementService
+        )
+    }
+
     func goToExperienceStep(
         isTranscriptionSetupReady: Bool,
         enhancementService: AIEnhancementService
@@ -53,67 +67,13 @@ final class OnboardingFlowController {
         moveToExperienceStep(0, enhancementService: enhancementService)
     }
 
-    func goToContextAwarenessStep(isTranscriptionSetupReady: Bool) {
-        guard coordinator.isReadyForExperience(isTranscriptionSetupReady: isTranscriptionSetupReady),
-              coordinator.shouldShowContextAwarenessAfterCurrentExperience else {
-            return
-        }
-
-        activateCleanTranscriptionMode()
-        coordinator.storedStage = OnboardingStage.contextAwareness.rawValue
-    }
-
-    func goToTrustStep(isTranscriptionSetupReady: Bool) {
+    func goToSummaryStep(isTranscriptionSetupReady: Bool) {
         guard coordinator.isReadyForExperience(isTranscriptionSetupReady: isTranscriptionSetupReady) else { return }
-        coordinator.storedStage = OnboardingStage.trust.rawValue
-    }
-
-    func requestSkipAPISetup() {
-        coordinator.isShowingSkipAPISetupWarning = true
-    }
-
-    func skipAPISetupAndContinue(
-        isTranscriptionSetupReady: Bool,
-        enhancementService: AIEnhancementService
-    ) {
-        coordinator.hasSkippedAPISetup = true
-        coordinator.isSelectedAPIProviderVerified = false
-        goToExperienceStep(
-            isTranscriptionSetupReady: isTranscriptionSetupReady,
-            enhancementService: enhancementService
-        )
-    }
-
-    func goToExperiencePracticePhase() {
-        withAnimation(.easeInOut(duration: 0.28)) {
-            coordinator.isExperienceInIntroPhase = false
-        }
-    }
-
-    func goToExperienceIntroPhase() {
-        guard !coordinator.shouldSkipCurrentExperienceIntro else { return }
-
-        withAnimation(.easeInOut(duration: 0.28)) {
-            coordinator.isExperienceInIntroPhase = true
-        }
-    }
-
-    func goBackFromExperiencePractice(enhancementService: AIEnhancementService) {
-        if coordinator.shouldSkipCurrentExperienceIntro {
-            goToPreviousExperienceStep(enhancementService: enhancementService)
-        } else {
-            goToExperienceIntroPhase()
-        }
+        activateCleanTranscriptionMode()
+        coordinator.storedStage = OnboardingStage.summary.rawValue
     }
 
     func goToPreviousExperienceStep(enhancementService: AIEnhancementService) {
-        if coordinator.shouldShowContextAwarenessBeforeCurrentExperience {
-            coordinator.experienceStepIndex = coordinator.normalizedExperienceStepIndex - 1
-            activateCleanTranscriptionMode()
-            coordinator.storedStage = OnboardingStage.contextAwareness.rawValue
-            return
-        }
-
         if coordinator.normalizedExperienceStepIndex > 0 {
             moveToExperienceStep(
                 coordinator.normalizedExperienceStepIndex - 1,
@@ -124,25 +84,7 @@ final class OnboardingFlowController {
         }
     }
 
-    func goToPreviousContextAwarenessStep(enhancementService: AIEnhancementService) {
-        coordinator.storedStage = OnboardingStage.experience.rawValue
-        coordinator.isExperienceInIntroPhase = false
-        installCurrentExperienceMode(enhancementService: enhancementService)
-        activateExperienceModeForDemo()
-        refreshExperienceModeState(enhancementService: enhancementService)
-    }
-
-    func continueFromContextAwarenessStep(enhancementService: AIEnhancementService) {
-        let nextIndex = coordinator.normalizedExperienceStepIndex + 1
-        guard coordinator.activeExperienceSteps.indices.contains(nextIndex) else {
-            return
-        }
-
-        coordinator.storedStage = OnboardingStage.experience.rawValue
-        moveToExperienceStep(nextIndex, enhancementService: enhancementService)
-    }
-
-    func goToPreviousTrustStep(
+    func goToPreviousSummaryStep(
         isTranscriptionSetupReady: Bool,
         enhancementService: AIEnhancementService
     ) {
@@ -154,7 +96,6 @@ final class OnboardingFlowController {
         let previousIndex = max(coordinator.activeExperienceSteps.count - 1, 0)
         coordinator.storedStage = OnboardingStage.experience.rawValue
         coordinator.experienceStepIndex = previousIndex
-        coordinator.isExperienceInIntroPhase = false
         installExperienceMode(at: previousIndex, enhancementService: enhancementService)
         activateExperienceModeForDemo()
         refreshExperienceModeState(enhancementService: enhancementService)
@@ -168,10 +109,8 @@ final class OnboardingFlowController {
             return
         }
 
-        if coordinator.shouldShowContextAwarenessAfterCurrentExperience {
-            goToContextAwarenessStep(isTranscriptionSetupReady: isTranscriptionSetupReady)
-        } else if coordinator.isLastExperienceStep {
-            goToTrustStep(isTranscriptionSetupReady: isTranscriptionSetupReady)
+        if coordinator.isLastExperienceStep {
+            goToSummaryStep(isTranscriptionSetupReady: isTranscriptionSetupReady)
         } else {
             moveToExperienceStep(
                 coordinator.normalizedExperienceStepIndex + 1,
@@ -184,10 +123,6 @@ final class OnboardingFlowController {
         isTranscriptionSetupReady: Bool,
         enhancementService: AIEnhancementService
     ) {
-        if coordinator.stage == .microphone && !coordinator.requiredPermissionsGranted {
-            goToPermissionsStep()
-        }
-
         if coordinator.stage == .model &&
             (!coordinator.requiredPermissionsGranted || !coordinator.hasSelectedOnboardingMicrophone) {
             goToFirstIncompleteSetupStep(isTranscriptionSetupReady: isTranscriptionSetupReady)
@@ -200,9 +135,7 @@ final class OnboardingFlowController {
             goToFirstIncompleteSetupStep(isTranscriptionSetupReady: isTranscriptionSetupReady)
         }
 
-        if (coordinator.stage == .experience ||
-            coordinator.stage == .contextAwareness ||
-            coordinator.stage == .trust) &&
+        if (coordinator.stage == .experience || coordinator.stage == .summary) &&
             !coordinator.isReadyForExperience(isTranscriptionSetupReady: isTranscriptionSetupReady) {
             goToFirstIncompleteSetupStep(isTranscriptionSetupReady: isTranscriptionSetupReady)
         }
@@ -212,18 +145,11 @@ final class OnboardingFlowController {
             !coordinator.isExperienceModeInstalled {
             installCurrentExperienceMode(enhancementService: enhancementService)
         }
-
-        if coordinator.stage == .contextAwareness &&
-            coordinator.isReadyForExperience(isTranscriptionSetupReady: isTranscriptionSetupReady) {
-            activateCleanTranscriptionMode()
-        }
     }
 
     func goToFirstIncompleteSetupStep(isTranscriptionSetupReady: Bool) {
-        if !coordinator.requiredPermissionsGranted {
+        if !coordinator.requiredPermissionsGranted || !coordinator.hasSelectedOnboardingMicrophone {
             coordinator.storedStage = OnboardingStage.permissions.rawValue
-        } else if !coordinator.hasSelectedOnboardingMicrophone {
-            coordinator.storedStage = OnboardingStage.microphone.rawValue
         } else if !isTranscriptionSetupReady {
             coordinator.storedStage = OnboardingStage.model.rawValue
         } else {
@@ -256,9 +182,6 @@ final class OnboardingFlowController {
         }
 
         coordinator.experienceStepIndex = index
-        coordinator.isExperienceInIntroPhase = shouldStartExperienceInIntroPhase(
-            for: coordinator.activeExperienceSteps[index]
-        )
         resetExperienceText(at: index)
         installExperienceMode(at: index, enhancementService: enhancementService)
         activateExperienceModeForDemo()
@@ -270,8 +193,8 @@ final class OnboardingFlowController {
         isTranscriptionSetupReady: Bool,
         onComplete: () -> Void
     ) {
-        guard coordinator.stage == .trust ||
-                coordinator.isCurrentExperienceReady(isTranscriptionSetupReady: isTranscriptionSetupReady) else {
+        guard coordinator.stage == .summary,
+              coordinator.isReadyForExperience(isTranscriptionSetupReady: isTranscriptionSetupReady) else {
             return
         }
 
@@ -280,14 +203,6 @@ final class OnboardingFlowController {
         }
         DefaultModeSeeder.seedIfEmpty()
         activateCleanTranscriptionMode()
-        onComplete()
-    }
-
-    func skipOnboarding(onComplete: () -> Void) {
-        OnboardingStorageKeys.onboardingKeys.forEach {
-            coordinator.defaults.removeObject(forKey: $0)
-        }
-        DefaultModeSeeder.seedIfEmpty()
         onComplete()
     }
 
@@ -427,7 +342,6 @@ final class OnboardingFlowController {
 
     func clearExperienceShortcutForIntroIfNeeded() {
         guard coordinator.stage == .experience,
-              coordinator.isExperienceInIntroPhase,
               coordinator.experienceStep.shouldClearShortcutOnIntro,
               !coordinator.clearedExperienceShortcutActions.contains(coordinator.experienceShortcutAction) else {
             return
@@ -473,12 +387,6 @@ final class OnboardingFlowController {
         OutputProfileManager.shared.setAsDefault(configId: template.id)
     }
 
-    private func shouldStartExperienceInIntroPhase(for step: OnboardingExperienceStep) -> Bool {
-        !step.shouldSkipShortcutIntro(
-            hasConfiguredShortcut: ShortcutStore.shortcut(for: shortcutAction(for: step)) != nil
-        )
-    }
-
     private func removeModeShortcutStorageForPrimaryRecordingSteps(_ steps: [OnboardingExperienceStep]) {
         var removedTemplateIds = Set<UUID>()
 
@@ -493,10 +401,6 @@ final class OnboardingFlowController {
                 ShortcutStore.removeShortcutStorage(for: action)
             }
         }
-    }
-
-    private func shortcutAction(for step: OnboardingExperienceStep) -> ShortcutAction {
-        step.shortcutAction(modeTemplate: modeTemplate(for: step))
     }
 
     private func modeTemplate(for step: OnboardingExperienceStep) -> StarterModeTemplate {

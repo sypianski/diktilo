@@ -3,6 +3,8 @@ import SwiftUI
 struct OnboardingPermissionsScreen: View {
     let contentMaxWidth: CGFloat
     let isComplete: Bool
+    let isMicrophoneSelected: Bool
+    let isMicrophoneGranted: Bool
     let activePermission: OnboardingPermissionKind
     let stepNumber: (OnboardingPermissionKind) -> Int
     let status: (OnboardingPermissionKind) -> OnboardingPermissionStatus
@@ -10,6 +12,8 @@ struct OnboardingPermissionsScreen: View {
     let actionTitle: (OnboardingPermissionKind) -> String
     let onSelect: (OnboardingPermissionKind) -> Void
     let onAction: (OnboardingPermissionKind) -> Void
+    let onMicrophoneSelected: () -> Void
+    let onBack: () -> Void
     let onRecheck: () -> Void
     let onContinue: () -> Void
 
@@ -18,13 +22,27 @@ struct OnboardingPermissionsScreen: View {
             stage: .permissions,
             contentMaxWidth: contentMaxWidth
         ) {
-            permissionList
+            VStack(spacing: 16) {
+                permissionList
+
+                if isMicrophoneGranted {
+                    OnboardingMicrophonePicker(onSelectionSaved: onMicrophoneSelected)
+                        .transition(.opacity)
+                }
+
+                if !isComplete {
+                    Button("Recheck", action: onRecheck)
+                        .buttonStyle(.plain)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(AppTheme.Text.secondary)
+                }
+            }
         } bottomBar: {
             OnboardingBottomBar(
-                leadingTitle: "Recheck",
+                leadingTitle: "Back",
                 primaryTitle: "Continue",
-                isPrimaryEnabled: isComplete,
-                onLeading: onRecheck,
+                isPrimaryEnabled: isComplete && isMicrophoneSelected,
+                onLeading: onBack,
                 onPrimary: onContinue
             )
         }

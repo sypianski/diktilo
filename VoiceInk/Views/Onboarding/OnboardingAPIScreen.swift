@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// Text improvement is optional: continuing without a verified key just leaves
+/// it off, so there is no warning dialog, only a quiet "Skip this step".
 struct OnboardingAPIScreen: View {
     @ObservedObject var aiService: AIService
 
@@ -7,13 +9,9 @@ struct OnboardingAPIScreen: View {
     let providerOptions: [AIProvider]
     @Binding var selectedProvider: AIProvider
     let isSelectedProviderVerified: Bool
-    let canContinue: Bool
-    @Binding var isShowingSkipWarning: Bool
     let onVerificationChanged: () -> Void
     let onBack: () -> Void
     let onContinue: () -> Void
-    let onRequestSkip: () -> Void
-    let onConfirmSkip: () -> Void
 
     var body: some View {
         OnboardingStepScreen(
@@ -21,7 +19,10 @@ struct OnboardingAPIScreen: View {
             contentMaxWidth: contentMaxWidth
         ) {
             VStack(alignment: .leading, spacing: 12) {
-                LocalOrKeyDisclosure(subject: .enhancement)
+                Text("Without a key, text improvement and AI modes stay off. You can set it up later in AI Models.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.Text.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 AIProviderVerificationCard(
                     aiService: aiService,
@@ -29,39 +30,23 @@ struct OnboardingAPIScreen: View {
                     selectedProvider: $selectedProvider,
                     onVerificationChanged: onVerificationChanged
                 )
+
+                if !isSelectedProviderVerified {
+                    Button("Skip this step", action: onContinue)
+                        .buttonStyle(.plain)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(AppTheme.Text.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
         } bottomBar: {
             OnboardingBottomBar(
                 leadingTitle: "Back",
-                primaryTitle: primaryButtonTitle,
-                isPrimaryEnabled: isPrimaryEnabled,
+                primaryTitle: "Continue",
+                isPrimaryEnabled: true,
                 onLeading: onBack,
-                onPrimary: primaryAction
+                onPrimary: onContinue
             )
-        }
-        .alert("Skip API setup?", isPresented: $isShowingSkipWarning) {
-            Button("Cancel", role: .cancel) { }
-            Button("Skip API setup", role: .destructive) {
-                onConfirmSkip()
-            }
-        } message: {
-            Text("Enhancement modes and AI actions will stay off. You can always set it up later in the app.")
-        }
-    }
-
-    private var primaryButtonTitle: String {
-        isSelectedProviderVerified ? "Continue" : "Skip API Setup"
-    }
-
-    private var isPrimaryEnabled: Bool {
-        canContinue || !isSelectedProviderVerified
-    }
-
-    private func primaryAction() {
-        if isSelectedProviderVerified {
-            onContinue()
-        } else {
-            onRequestSkip()
         }
     }
 }

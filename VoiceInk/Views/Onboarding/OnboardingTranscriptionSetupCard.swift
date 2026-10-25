@@ -42,11 +42,7 @@ struct OnboardingTranscriptionSetupCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            VStack(alignment: .leading, spacing: 8) {
-                setupSwitcher
-                setupKindCaption
-                LocalOrKeyDisclosure()
-            }
+            setupCards
 
             switch setupKind {
             case .local:
@@ -75,55 +71,70 @@ struct OnboardingTranscriptionSetupCard: View {
         }
     }
 
-    private var setupSwitcher: some View {
-        HStack(spacing: 8) {
-            setupChoice(.local, systemImage: "macbook")
-            setupChoice(.cloud, systemImage: "cloud.fill")
+    /// Two cards, each with its consequences in a sentence, instead of a
+    /// switch plus a collapsed explainer.
+    private var setupCards: some View {
+        HStack(alignment: .top, spacing: 10) {
+            setupCard(
+                .local,
+                systemImage: "macbook",
+                detail: "Runs on your Mac: recordings never leave the computer and it works offline.",
+                isRecommended: !advice.suggestsCloud
+            )
+            setupCard(
+                .cloud,
+                systemImage: "cloud.fill",
+                detail: "Recordings go to the provider you pick, with your own API key: you create an account there, paste the key here and pay for use, often with a free allowance.",
+                isRecommended: advice.suggestsCloud
+            )
         }
-        .padding(4)
-        .background(AppMaterialCardBackground(cornerRadius: 12))
     }
 
-    private func setupChoice(_ kind: OnboardingTranscriptionSetupKind, systemImage: String) -> some View {
+    private func setupCard(
+        _ kind: OnboardingTranscriptionSetupKind,
+        systemImage: String,
+        detail: LocalizedStringKey,
+        isRecommended: Bool
+    ) -> some View {
         let isSelected = setupKind == kind
 
         return Button {
             onSelectSetupKind(kind)
         } label: {
-            HStack(spacing: 8) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 12, weight: .semibold))
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 13, weight: .semibold))
 
-                Text(kind.title)
-                    .font(.system(size: 12, weight: .semibold))
+                    Text(kind.title)
+                        .font(.system(size: 14, weight: .semibold))
+
+                    Spacer(minLength: 0)
+
+                    if isRecommended {
+                        Text("Recommended")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(AppTheme.Accent.text)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(AppTheme.Accent.fill))
+                    }
+                }
+                .foregroundColor(AppTheme.Text.primary)
+
+                Text(detail)
+                    .font(.system(size: 12))
+                    .foregroundColor(AppTheme.Text.secondary)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .foregroundColor(isSelected ? AppTheme.Text.primary : AppTheme.Text.secondary)
-            .frame(maxWidth: .infinity)
-            .frame(height: 36)
-            .background(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .fill(isSelected ? AppTheme.Surface.controlActive : AppTheme.Surface.clear)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+            .padding(14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(AppMaterialCardBackground(isSelected: isSelected, cornerRadius: 12))
+            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
         .buttonStyle(.plain)
-    }
-
-    /// The gist of the choice in one line; the disclosure below has the rest.
-    private var setupKindCaption: some View {
-        Text(setupKindCaptionText)
-            .font(.system(size: 12))
-            .foregroundStyle(AppTheme.Text.secondary)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private var setupKindCaptionText: LocalizedStringKey {
-        switch setupKind {
-        case .local:
-            return "Runs on your Mac: recordings never leave the computer and it works offline."
-        case .cloud:
-            return "Recordings go to the provider you pick, with your own API key: you create an account there, paste the key here and pay for use, often with a free allowance."
-        }
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var advice: ModelRecommendation {
