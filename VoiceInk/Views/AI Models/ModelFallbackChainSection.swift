@@ -106,8 +106,8 @@ struct ModelFallbackChainSection: View {
             Spacer(minLength: 8)
 
             Picker("Model Order", selection: $kind) {
-                Text("Speech Recognition").tag(Kind.transcription)
-                Text("Text Improvement").tag(Kind.enhancement)
+                Text("Speech recognition").tag(Kind.transcription)
+                Text("Text improvement").tag(Kind.enhancement)
             }
             .pickerStyle(.segmented)
             .labelsHidden()

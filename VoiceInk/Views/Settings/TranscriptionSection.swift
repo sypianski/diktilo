@@ -20,22 +20,21 @@ struct TranscriptionSection: View {
 
     var body: some View {
         Section {
-            LabeledContent {
-                Button("Add Language…") { isAddingLanguage = true }
-                    .popover(isPresented: $isAddingLanguage, arrowEdge: .trailing) {
-                        DictationLanguagePicker(excluded: languages) { code in
-                            isAddingLanguage = false
-                            update(languages + [code])
-                        }
-                    }
-            } label: {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Dictation Languages")
                 Text(languagesNote)
-            }
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
 
-            ForEach(Array(languages.enumerated()), id: \.element) { index, code in
-                languageRow(code, at: index)
+                FlowLayout(spacing: 6) {
+                    ForEach(Array(languages.enumerated()), id: \.element) { index, code in
+                        languageChip(code, at: index)
+                    }
+
+                    addLanguageChip
+                }
             }
+            .id(RecordingAnchor.languages)
 
             if let model = transcriptionModelManager.currentTranscriptionModel {
                 if model.provider == .nativeApple {
@@ -47,14 +46,13 @@ struct TranscriptionSection: View {
 
                 let unsupported = DictationLanguages.unsupportedLanguages(by: model)
                 if !unsupported.isEmpty {
-                    Text(String(
-                        format: String(localized: "%1$@ doesn't transcribe %2$@. Put another model first in AI Models → Model Order."),
-                        model.displayName,
-                        unsupported.map(DictationLanguages.displayName(for:)).joined(separator: ", ")
-                    ))
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.Accent.text)
-                    .fixedSize(horizontal: false, vertical: true)
+                    modelWarningBar(
+                        String(
+                            format: String(localized: "%1$@ doesn't transcribe %2$@. Put another model first in AI Models → Model Order."),
+                            model.displayName,
+                            unsupported.map(DictationLanguages.displayName(for:)).joined(separator: ", ")
+                        )
+                    )
                 }
             }
 
@@ -96,32 +94,96 @@ struct TranscriptionSection: View {
         }
     }
 
-    private func languageRow(_ code: String, at index: Int) -> some View {
-        HStack(spacing: 8) {
-            Text(DictationLanguages.displayName(for: code))
-                .foregroundStyle(AppTheme.Text.primary)
+    /// A numbered chip: the number is the order, the name opens a menu to move it.
+    private func languageChip(_ code: String, at index: Int) -> some View {
+        HStack(spacing: 6) {
+            Text(verbatim: "\(index + 1)")
+                .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                .foregroundStyle(AppTheme.Text.secondary)
 
-            Spacer(minLength: 8)
+            Menu {
+                Button("Move Earlier") { move(index, by: -1) }
+                    .disabled(index == 0)
+                Button("Move Later") { move(index, by: 1) }
+                    .disabled(index == languages.count - 1)
+            } label: {
+                Text(DictationLanguages.displayName(for: code))
+                    .font(.system(size: 12.5, weight: .medium))
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
 
             Button {
                 update(languages.filter { $0 != code })
             } label: {
-                Image(systemName: "minus.circle.fill")
+                Image(systemName: "xmark")
+                    .font(.system(size: 9, weight: .bold))
                     .foregroundStyle(AppTheme.Text.secondary)
             }
             .buttonStyle(.plain)
             .help("Remove Language")
             .accessibilityLabel(Text("Remove Language"))
         }
-        .padding(.leading, 12)
-        .contextMenu {
-            Button("Move Up") { move(index, by: -1) }
-                .disabled(index == 0)
-            Button("Move Down") { move(index, by: 1) }
-                .disabled(index == languages.count - 1)
-            Divider()
-            Button("Remove Language") { update(languages.filter { $0 != code }) }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(Capsule().fill(AppTheme.Palette.chip))
+        .overlay(Capsule().stroke(AppTheme.Palette.rule, lineWidth: 1))
+    }
+
+    private var addLanguageChip: some View {
+        Button {
+            isAddingLanguage = true
+        } label: {
+            Label("Add Language…", systemImage: "plus")
+                .font(.system(size: 12.5, weight: .medium))
+                .foregroundStyle(AppTheme.Text.primary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .overlay(Capsule().stroke(AppTheme.Palette.rule, style: StrokeStyle(lineWidth: 1, dash: [3, 3])))
         }
+        .buttonStyle(.plain)
+        .popover(isPresented: $isAddingLanguage, arrowEdge: .bottom) {
+            DictationLanguagePicker(excluded: languages) { code in
+                isAddingLanguage = false
+                update(languages + [code])
+            }
+        }
+    }
+
+    /// The model can't transcribe a chosen language: say so, and offer the fix.
+    private func modelWarningBar(_ message: String) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(AppTheme.Status.warningStrong)
+
+            Text(message)
+                .font(.system(size: 12))
+                .foregroundStyle(AppTheme.Text.primary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Spacer(minLength: 8)
+
+            Button {
+                NotificationCenter.default.post(
+                    name: .navigateToDestination,
+                    object: nil,
+                    userInfo: ["destination": ViewType.models.rawValue]
+                )
+            } label: {
+                HStack(spacing: 4) {
+                    Text("AI Models")
+                    Image(systemName: "arrow.right")
+                }
+                .font(.system(size: 12, weight: .semibold))
+            }
+            .controlSize(.small)
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(AppTheme.Status.warningStrong.opacity(0.1))
+        )
     }
 
     private func move(_ index: Int, by offset: Int) {
