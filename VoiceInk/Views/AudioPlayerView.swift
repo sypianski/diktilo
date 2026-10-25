@@ -348,7 +348,6 @@ private enum OperationFeedback: Equatable {
 struct AudioPlayerView: View {
     let url: URL
     let transcription: Transcription?
-    var onInfoTap: (() -> Void)?
     @StateObject private var playerManager = AudioPlayerManager()
     @State private var isHovering = false
     @State private var isRetranscribing = false
@@ -394,6 +393,7 @@ struct AudioPlayerView: View {
             )
             .padding(.horizontal, 10)
 
+            // Transport: play, speed, times.
             HStack(spacing: 8) {
                 Text(formatTime(playerManager.currentTime))
                     .font(.system(size: 11, weight: .medium))
@@ -403,9 +403,6 @@ struct AudioPlayerView: View {
                 Spacer()
 
                 HStack(spacing: 8) {
-                    CircleIconButton(icon: "folder", action: showInFinder)
-                        .help("Show in Finder")
-
                     Button(action: { playerManager.cyclePlaybackRate() }) {
                         Circle()
                             .fill(playerManager.playbackRate == 1.0 ? AppTheme.Surface.subtle : AppTheme.Surface.controlActive)
@@ -419,8 +416,6 @@ struct AudioPlayerView: View {
                     .buttonStyle(.plain)
                     .help("Playback speed")
 
-                    modeSelectorButton
-
                     CircleIconButton(
                         icon: playerManager.isPlaying ? "pause.fill" : "play.fill",
                         action: { playerManager.isPlaying ? playerManager.pause() : playerManager.play() }
@@ -431,34 +426,6 @@ struct AudioPlayerView: View {
                             isHovering = hovering
                         }
                     }
-
-                    AsyncCircleButton(
-                        defaultIcon: "arrow.clockwise",
-                        isLoading: isRetranscribing,
-                        showSuccess: operationFeedback == .retranscribeSuccess,
-                        action: retranscribeAudio
-                    )
-                    .disabled(isOperationInProgress)
-                    .help("Retranscribe this audio")
-
-                    if transcription != nil {
-                        AsyncCircleButton(
-                            defaultIcon: "wand.and.stars",
-                            isLoading: isReEnhancing,
-                            showSuccess: operationFeedback == .reEnhanceSuccess,
-                            action: { showPromptPopover.toggle() }
-                        )
-                        .disabled(isOperationInProgress)
-                        .help("Re-enhance with selected prompt")
-                        .popover(isPresented: $showPromptPopover, arrowEdge: .bottom) {
-                            promptSelectionPopover
-                        }
-                    }
-
-                    if let onInfoTap {
-                        CircleIconButton(icon: "info.circle", action: onInfoTap)
-                            .help("View details")
-                    }
                 }
 
                 Spacer()
@@ -467,6 +434,39 @@ struct AudioPlayerView: View {
                     .font(.system(size: 11, weight: .medium))
                     .monospacedDigit()
                     .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 10)
+
+            // Actions with words instead of icons to guess.
+            HStack(spacing: 14) {
+                labeledAction("Show in Finder", icon: "folder", action: showInFinder)
+
+                labeledAction(
+                    "Retranscribe",
+                    icon: "arrow.clockwise",
+                    isLoading: isRetranscribing,
+                    showsSuccess: operationFeedback == .retranscribeSuccess,
+                    action: retranscribeAudio
+                )
+                .disabled(isOperationInProgress)
+
+                if transcription != nil {
+                    labeledAction(
+                        "Re-enhance",
+                        icon: "wand.and.stars",
+                        isLoading: isReEnhancing,
+                        showsSuccess: operationFeedback == .reEnhanceSuccess,
+                        action: { showPromptPopover.toggle() }
+                    )
+                    .disabled(isOperationInProgress)
+                    .popover(isPresented: $showPromptPopover, arrowEdge: .bottom) {
+                        promptSelectionPopover
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                modeSelectorButton
             }
             .padding(.horizontal, 10)
         }
@@ -487,6 +487,32 @@ struct AudioPlayerView: View {
         }
     }
 
+    private func labeledAction(
+        _ title: LocalizedStringKey,
+        icon: String,
+        isLoading: Bool = false,
+        showsSuccess: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                if isLoading {
+                    ProgressView().controlSize(.mini)
+                } else if showsSuccess {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(AppTheme.Status.success)
+                } else {
+                    Image(systemName: icon)
+                }
+
+                Text(title)
+            }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+    }
+
     private func showInFinder() {
         NSWorkspace.shared.selectFile(url.path, inFileViewerRootedAtPath: url.deletingLastPathComponent().path)
     }
@@ -495,22 +521,21 @@ struct AudioPlayerView: View {
         Button {
             showOutputProfilePopover.toggle()
         } label: {
-            Circle()
-                .fill(selectedMode == nil ? AppTheme.Surface.subtle : AppTheme.Surface.controlActive)
-                .frame(width: 32, height: 32)
-                .overlay {
-                    if let selectedMode {
-                        ModeIconView(icon: selectedMode.icon, size: selectedMode.icon.kind == .emoji ? 14 : 12)
-                    } else {
-                        Image(systemName: "square.grid.2x2")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.primary.opacity(0.6))
-                    }
+            HStack(spacing: 5) {
+                if let selectedMode {
+                    ModeIconView(icon: selectedMode.icon, size: selectedMode.icon.kind == .emoji ? 12 : 11)
+                    Text(String(format: String(localized: "Mode: %@"), selectedMode.name))
+                        .lineLimit(1)
+                } else {
+                    Image(systemName: "square.grid.2x2")
+                    Text("Select mode")
                 }
+            }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(.secondary)
         }
         .buttonStyle(.plain)
         .opacity(selectedMode == nil ? 0.4 : 1.0)
-        .help(selectedMode.map { "Mode: \($0.name)" } ?? "Select mode")
         .popover(isPresented: $showOutputProfilePopover, arrowEdge: .bottom) {
             OutputProfilePopover(selectedModeId: selectedMode?.id) { mode in
                 selectMode(mode)
@@ -519,8 +544,8 @@ struct AudioPlayerView: View {
     }
 
     private func selectMode(_ mode: OutputProfile) {
+        // Only for this audio: picking a mode here leaves the active mode alone.
         selectedModeId = mode.id
-        modeManager.setActiveConfiguration(mode)
         showOutputProfilePopover = false
     }
 

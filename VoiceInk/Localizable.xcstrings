@@ -20175,40 +20175,6 @@
         }
       }
     },
-    "Load More": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mehr laden"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "载入更多"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Załaduj więcej"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ŝargi pli"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carregar-ne més"
-          }
-        }
-      }
-    },
     "Load Template": {
       "localizations": {
         "de": {
@@ -26068,40 +26034,6 @@
         }
       }
     },
-    "Re-enhance with selected prompt": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mit ausgewähltem Prompt neu verbessern"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用所选提示词重新润色"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ulepsz ponownie z wybranym promptem"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Replibonigi per la elektita instigo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tornar a millorar amb la indicació seleccionada"
-          }
-        }
-      }
-    },
     "Re-enhancement failed": {
       "localizations": {
         "de": {
@@ -27828,40 +27760,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reprendre la baixada"
-          }
-        }
-      }
-    },
-    "Retranscribe this audio": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dieses Audio neu transkribieren"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重新转写此音频"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transkrybuj ponownie to audio"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retransskribi ĉi tiun sonaĵon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tornar a transcriure aquest àudio"
           }
         }
       }
@@ -34480,40 +34378,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vídeos i guies"
-          }
-        }
-      }
-    },
-    "View details": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details anzeigen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "查看详情"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zobacz szczegóły"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vidi detalojn"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Veure els detalls"
           }
         }
       }
@@ -43132,6 +42996,182 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dodano: %@ → %@"
+          }
+        }
+      }
+    },
+    "Today": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziś"
+          }
+        }
+      }
+    },
+    "Yesterday": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wczoraj"
+          }
+        }
+      }
+    },
+    "Select": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaznacz"
+          }
+        }
+      }
+    },
+    "With Recording": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z nagraniem"
+          }
+        }
+      }
+    },
+    "The transcription was canceled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja została anulowana."
+          }
+        }
+      }
+    },
+    "Retranscribe": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrybuj ponownie"
+          }
+        }
+      }
+    },
+    "Re-enhance": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ulepsz ponownie"
+          }
+        }
+      }
+    },
+    "Delete this entry?": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunąć ten wpis?"
+          }
+        }
+      }
+    },
+    "This action cannot be undone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tej operacji nie można cofnąć."
+          }
+        }
+      }
+    },
+    "%lld entries": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld wpisów"
+          }
+        }
+      }
+    },
+    "Shown %lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokazano %lld z %lld"
+          }
+        }
+      }
+    },
+    "Shown %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokazano %lld"
+          }
+        }
+      }
+    },
+    "Recording kept": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagranie zachowane"
+          }
+        }
+      }
+    },
+    "Usage": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użycie"
+          }
+        }
+      }
+    },
+    "Audio is deleted together with the transcripts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio jest usuwane razem z transkryptami."
+          }
+        }
+      }
+    },
+    "%lld entries · %@ of recordings": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld wpisów · %@ nagrań"
           }
         }
       }

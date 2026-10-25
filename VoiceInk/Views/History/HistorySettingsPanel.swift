@@ -18,23 +18,21 @@ struct HistorySettingsPanel: View {
     @State private var showAudioCleanupResult = false
     @State private var audioCleanupResult: (deletedCount: Int, errorCount: Int) = (0, 0)
     @State private var showTranscriptCleanupResult = false
+    @State private var usageText: String?
 
     var body: some View {
         VStack(spacing: 0) {
             AppPanelHeader(title: "History Settings", onClose: onClose)
 
             Form {
-                Section {
-                    ForEach(ShortcutAction.historyActions, id: \.storageName) { action in
-                        LabeledContent(action.displayName) {
-                            ShortcutRecorder(action: action) {
-                                recordingShortcutManager.updateShortcutStatus()
-                            }
-                            .controlSize(.small)
-                        }
+                if let usageText {
+                    Section {
+                        Text(usageText)
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    } header: {
+                        Text("Usage")
                     }
-                } header: {
-                    Text("Shortcuts")
                 }
 
                 Section {
@@ -65,11 +63,15 @@ struct HistorySettingsPanel: View {
                     )
                 }
 
-                if !isTranscriptionCleanupEnabled {
-                    Section {
-                        Toggle("Auto-delete Audio Files", isOn: $isAudioCleanupEnabled)
+                Section {
+                    Toggle("Auto-delete Audio Files", isOn: $isAudioCleanupEnabled)
+                            .disabled(isTranscriptionCleanupEnabled)
 
-                        if isAudioCleanupEnabled {
+                        if isTranscriptionCleanupEnabled {
+                            Text("Audio is deleted together with the transcripts.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                        } else if isAudioCleanupEnabled {
                             Picker("Keep Audio For", selection: $audioRetentionPeriod) {
                                 Text("1 day").tag(1)
                                 Text("3 days").tag(3)
@@ -91,12 +93,25 @@ struct HistorySettingsPanel: View {
                             tip: "Delete old recordings while keeping transcript history."
                         )
                     }
+
+                Section {
+                    ForEach(ShortcutAction.historyActions, id: \.storageName) { action in
+                        LabeledContent(action.displayName) {
+                            ShortcutRecorder(action: action) {
+                                recordingShortcutManager.updateShortcutStatus()
+                            }
+                            .controlSize(.small)
+                        }
+                    }
+                } header: {
+                    Text("Shortcuts")
                 }
             }
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .task { await loadUsage() }
         .alert("Transcript Cleanup", isPresented: $showTranscriptCleanupResult) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -149,6 +164,28 @@ struct HistorySettingsPanel: View {
                 AudioCleanupManager.shared.stopAutomaticCleanup()
             }
         }
+    }
+
+    /// "1 284 entries · 412 MB of recordings", counted from the store and the audio files on disk.
+    private func loadUsage() async {
+        let count = (try? modelContext.fetchCount(FetchDescriptor<Transcription>())) ?? 0
+        var withAudio = FetchDescriptor<Transcription>(
+            predicate: #Predicate<Transcription> { $0.audioFileURL != nil }
+        )
+        withAudio.propertiesToFetch = [\.audioFileURL]
+        let items = (try? modelContext.fetch(withAudio)) ?? []
+        var bytes: Int64 = 0
+        for item in items {
+            guard let urlString = item.audioFileURL, let url = URL(string: urlString),
+                  let size = (try? FileManager.default.attributesOfItem(atPath: url.path))?[.size] as? Int64 else { continue }
+            bytes += size
+        }
+
+        usageText = String(
+            format: String(localized: "%lld entries · %@ of recordings"),
+            Int64(count),
+            AudioCleanupManager.shared.formatFileSize(bytes)
+        )
     }
 
     private func sectionHeader(_ title: LocalizedStringKey, tip: LocalizedStringKey) -> some View {
