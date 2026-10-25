@@ -12,7 +12,6 @@ enum SaveTargetDeliveryError: Error, LocalizedError {
     case invalidURLScheme(String)
     case urlOpenFailed(String)
     case shellCommandFailed(String)
-    case sakoFailed
 
     var errorDescription: String? {
         switch self {
@@ -30,8 +29,6 @@ enum SaveTargetDeliveryError: Error, LocalizedError {
             return String(format: String(localized: "Could not open URL: %@"), url)
         case .shellCommandFailed(let msg):
             return String(format: String(localized: "Shell command failed: %@"), msg)
-        case .sakoFailed:
-            return String(localized: "Failed to send text to Sako.")
         }
     }
 }
@@ -45,7 +42,7 @@ enum SaveTargetDeliveryService {
     )
 
     /// Deliver `text` to `target`. Returns a human-readable success description.
-    /// Must be called from `@MainActor` context (for sako strategy).
+    /// Must be called from `@MainActor` context.
     @MainActor
     static func deliver(text: String, target: SaveTargetConfig) async throws -> String {
         switch target.strategy {
@@ -58,8 +55,6 @@ enum SaveTargetDeliveryService {
             return try await deliverURLScheme(text: text, template: template, activates: activates)
         case .shellCommand(let command):
             return try await deliverShellCommand(text: text, command: command)
-        case .sako:
-            return try deliverSako(text: text)
         }
     }
 
@@ -164,17 +159,6 @@ enum SaveTargetDeliveryService {
 
         logger.notice("Shell command delivered successfully")
         return String(localized: "Shell command executed.")
-    }
-
-    // MARK: - Sako strategy
-
-    @MainActor
-    private static func deliverSako(text: String) throws -> String {
-        guard SakoClient.shared.send(text: text) else {
-            throw SaveTargetDeliveryError.sakoFailed
-        }
-        logger.notice("Sent transcript to Sako")
-        return String(localized: "Sent to Sako.")
     }
 
     // MARK: - Helpers

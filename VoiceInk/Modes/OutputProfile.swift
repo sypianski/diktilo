@@ -23,7 +23,6 @@ enum AutoSendKey: String, Codable, CaseIterable {
 enum OutputMode: String, Codable, CaseIterable {
     case paste
     case copy
-    case editWindow
     case respond
     case customCommand
     case saveTarget
@@ -32,7 +31,6 @@ enum OutputMode: String, Codable, CaseIterable {
         switch self {
         case .paste: return String(localized: "Paste")
         case .copy: return String(localized: "Copy to Clipboard")
-        case .editWindow: return String(localized: "Edit Window")
         case .respond: return String(localized: "Respond")
         case .customCommand: return String(localized: "Custom Command")
         case .saveTarget: return String(localized: "Save to Target")
@@ -43,7 +41,6 @@ enum OutputMode: String, Codable, CaseIterable {
         switch self {
         case .paste: return "doc.on.clipboard"
         case .copy: return "doc.on.doc"
-        case .editWindow: return "square.and.pencil"
         case .respond: return "text.bubble"
         case .customCommand: return "terminal"
         case .saveTarget: return "square.and.arrow.down"
@@ -56,8 +53,20 @@ enum OutputMode: String, Codable, CaseIterable {
 
     static func choices(canRespond: Bool) -> [OutputMode] {
         canRespond
-            ? [.paste, .copy, .editWindow, .respond, .customCommand, .saveTarget]
-            : [.paste, .copy, .editWindow, .customCommand, .saveTarget]
+            ? [.paste, .copy, .respond, .customCommand, .saveTarget]
+            : [.paste, .copy, .customCommand, .saveTarget]
+    }
+
+    /// Modes saved by older builds may carry the removed `editWindow` output.
+    /// That output ended on the clipboard, so it migrates to `.copy`; an
+    /// unknown value falls back to `.paste` instead of failing the whole list.
+    init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        if raw == "editWindow" {
+            self = .copy
+        } else {
+            self = OutputMode(rawValue: raw) ?? .paste
+        }
     }
 }
 

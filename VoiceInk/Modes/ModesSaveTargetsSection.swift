@@ -15,7 +15,7 @@ struct ModesSaveTargetsSection: View {
                 }
             } label: {
                 Text(saveTargetsSummary)
-                Text("Files, URL schemes, shell commands or Notaro — each can have its own finish shortcut.")
+                Text("Files, URL schemes or shell commands — each can have its own finish shortcut.")
             }
         }
         .sheet(isPresented: $isShowingSaveTargets) {

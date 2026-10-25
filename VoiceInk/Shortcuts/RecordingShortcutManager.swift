@@ -236,7 +236,7 @@ class RecordingShortcutManager: ObservableObject {
             interruptibleRecordingActions.insert(.secondaryRecording)
         }
 
-        // Legacy fixed-destination finishers (.finishWithCopy/Paste/EditWindow)
+        // Legacy fixed-destination finishers (.finishWithCopy/Paste)
         // are no longer registered here. Their role — arm delivery via a specific
         // outputMode — moved to per-mode `.profile(id)` shortcuts owned by
         // ProfileShortcutManager. LegacyFinishShortcutMigration reattaches any
@@ -318,7 +318,7 @@ class RecordingShortcutManager: ObservableObject {
             )
         case .quickAddToDictionary:
             DictionaryQuickAddManager.shared.toggle(modelContainer: engine.modelContext.container)
-        // .finishWithCopy/.finishWithPaste/.finishWithEditWindow: no longer
+        // .finishWithCopy/.finishWithPaste: no longer
         // registered in refreshShortcutMonitor, so unreachable here — they
         // fall through the switch. Enum cases stay for backward-compat with
         // LegacyFinishShortcutMigration; delete when the migration is retired.

@@ -12,7 +12,6 @@ enum ShortcutAction: Hashable {
     case profile(UUID)
     case finishWithCopy
     case finishWithPaste
-    case finishWithEditWindow
     case finishWithSaveTarget(UUID)
     case recorderPanelEscape
     case recorderPanelMode(Int)
@@ -55,8 +54,6 @@ enum ShortcutAction: Hashable {
             return "finishWithCopy"
         case .finishWithPaste:
             return "finishWithPaste"
-        case .finishWithEditWindow:
-            return "finishWithEditWindow"
         case .finishWithSaveTarget(let id):
             return "finishSaveTarget_\(id.uuidString)"
         case .recorderPanelEscape:
@@ -100,8 +97,6 @@ enum ShortcutAction: Hashable {
             return String(localized: "Finish → Copy")
         case .finishWithPaste:
             return String(localized: "Finish → Paste")
-        case .finishWithEditWindow:
-            return String(localized: "Finish → Edit Window")
         case .finishWithSaveTarget(let id):
             if let target = SaveTargetManager.shared.target(withID: id) {
                 return String(format: String(localized: "Finish → %@"), target.name)
@@ -140,8 +135,7 @@ enum ShortcutAction: Hashable {
     /// (save-target variants are enumerated dynamically from the target list).
     static let finishDestinationActions: [Self] = [
         .finishWithCopy,
-        .finishWithPaste,
-        .finishWithEditWindow
+        .finishWithPaste
     ]
 
     static let legacyKeyboardShortcutActions: [Self] = [

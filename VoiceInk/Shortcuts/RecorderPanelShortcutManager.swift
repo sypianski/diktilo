@@ -99,7 +99,7 @@ final class RecorderPanelShortcutManager: ObservableObject {
             }
         }
 
-        // NOTE: The one-shot "finish with …" destination shortcuts (⌃⌥C/V/E,
+        // NOTE: The one-shot "finish with …" destination shortcuts (⌃⌥C/V,
         // save targets) are registered GLOBALLY in RecordingShortcutManager, so
         // they are handled there whether or not the panel is visible. They are
         // intentionally NOT registered here to avoid double handling.

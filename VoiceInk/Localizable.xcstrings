@@ -1602,72 +1602,6 @@
         }
       }
     },
-    "A mode sets whether AI rewrites the text and where the result goes: pasted, copied, opened in the edit window or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tryb ustala, czy AI przeredaguje tekst i dokąd trafi wynik: wklejenie, schowek, okno edycji albo zapis do pliku. Zakończ nagranie skrótem trybu, żeby go użyć. Przy otwartym pasku ⌥1…⌥0 przełącza tryby."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reĝimo difinas, ĉu AI reverkas la tekston kaj kien iras la rezulto: algluo, tondujo, redakta fenestro aŭ konservo al dosiero. Finu la registradon per la klavkombino de reĝimo por uzi ĝin. Dum la breto estas malfermita, ⌥1…⌥0 ŝanĝas la reĝimon."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un mode determina si la IA reescriu el text i on va a parar el resultat: s'enganxa, es copia, s'obre a la finestra d'edició o es desa en un fitxer. Acaba l'enregistrament amb la drecera d'un mode per fer servir aquell mode. Mentre la barra és oberta, ⌥1…⌥0 canvia de mode."
-          }
-        }
-      }
-    },
-    "Add a target to save transcripts to a file, URL scheme, shell command, or Sako.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dodaj cel, żeby zapisywać transkrypcje do pliku, przez schemat URL, poleceniem powłoki albo do Sako."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aldonu celon por konservi transskribojn al dosiero, per URL-skemo, ŝelkomando aŭ al Sako."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afegeix una destinació per desar les transcripcions en un fitxer o enviar-les a un esquema d'URL, una ordre de shell o Sako."
-          }
-        }
-      }
-    },
-    "Add Notaro": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dodaj Notaro"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aldoni Notaro"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afegir Notaro"
-          }
-        }
-      }
-    },
     "Add Save Target": {
       "localizations": {
         "pl": {
@@ -2042,28 +1976,6 @@
         }
       }
     },
-    "Custom Target…": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Własny cel…"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Propra celo…"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Destinació personalitzada…"
-          }
-        }
-      }
-    },
     "Default profile is used when no specific app or website matches are found.": {
       "localizations": {
         "pl": {
@@ -2262,40 +2174,6 @@
         }
       }
     },
-    "Edit Window": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Okno edycji"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bearbeitungsfenster"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "编辑窗口"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Redakta fenestro"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Finestra d'edició"
-          }
-        }
-      }
-    },
     "Esc pressed twice cancels": {
       "localizations": {
         "pl": {
@@ -2384,28 +2262,6 @@
         }
       }
     },
-    "Failed to send text to Sako.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nie udało się wysłać tekstu do Sako."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Malsukcesis sendi tekston al Sako."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No s'ha pogut enviar el text a Sako."
-          }
-        }
-      }
-    },
     "Failed to write file: %@": {
       "localizations": {
         "pl": {
@@ -2468,28 +2324,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plantilla del nom de fitxer"
-          }
-        }
-      }
-    },
-    "Files, URL schemes, shell commands or Notaro — each can have its own finish shortcut.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pliki, schematy URL, polecenia powłoki albo Notaro — każdy cel może mieć własny skrót kończący."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dosieroj, URL-skemoj, ŝelkomandoj aŭ Notaro — ĉiu celo povas havi propran finan klavkombinon."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fitxers, esquemes d'URL, ordres de shell o Notaro — cadascun pot tenir la seva pròpia drecera per acabar."
           }
         }
       }
@@ -2622,28 +2456,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Acabar → copiar"
-          }
-        }
-      }
-    },
-    "Finish → Edit Window": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zakończ → okno edycji"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fini → redakta fenestro"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Acabar → finestra d'edició"
           }
         }
       }
@@ -3066,28 +2878,6 @@
         }
       }
     },
-    "No editor app installed — the transcript falls back to the clipboard.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak zainstalowanego edytora — transkrypcja trafi do schowka."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neniu redaktilo instalita — la transskribo iros al la tondujo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No hi ha cap app d'edició instal·lada — la transcripció es copia al porta-retalls."
-          }
-        }
-      }
-    },
     "No modes yet — you'll find the starter modes on the Modes screen.": {
       "localizations": {
         "pl": {
@@ -3260,28 +3050,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obrir l'app de destinació"
-          }
-        }
-      }
-    },
-    "Opens the transcript in your external editor app before delivery; committing there copies the edited text to the clipboard.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Otwiera transkrypcję w zewnętrznym edytorze przed wysłaniem; zatwierdzenie tam kopiuje poprawiony tekst do schowka."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Malfermas la transskribon en via ekstera redaktilo antaŭ liverado; konfirmo tie kopias la redaktitan tekston al la tondujo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Obre la transcripció a la teva app d'edició externa abans de lliurar-la; en confirmar-la allà, el text editat es copia al porta-retalls."
           }
         }
       }
@@ -3924,28 +3692,6 @@
         }
       }
     },
-    "Sent to Sako.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wysłano do Sako."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sendita al Sako."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "S'ha enviat a Sako."
-          }
-        }
-      }
-    },
     "Set Shortcut in Settings": {
       "localizations": {
         "pl": {
@@ -4320,28 +4066,6 @@
         }
       }
     },
-    "Text will be sent to your Sako inbox via the CLI or JSONL fallback.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tekst trafi do skrzynki Sako przez CLI (albo zapasowo przez plik JSONL)."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La teksto iros al via Sako-enirkesto per la CLI (aŭ rezerve per JSONL-dosiero)."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El text s'enviarà a la safata d'entrada de Sako mitjançant la CLI o, com a alternativa, un fitxer JSONL."
-          }
-        }
-      }
-    },
     "The active mode decides where the text goes.": {
       "localizations": {
         "pl": {
@@ -4448,28 +4172,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "El text va al porta-retalls."
-          }
-        }
-      }
-    },
-    "The text opens in the edit window.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tekst otworzy się w oknie edycji."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La teksto malfermiĝas en la redakta fenestro."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El text s'obre a la finestra d'edició."
           }
         }
       }
@@ -46950,6 +46652,48 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用 Fn 键"
+          }
+        }
+      }
+    },
+    "A mode sets whether AI rewrites the text and where the result goes: pasted, copied or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb ustala, czy AI przeredaguje tekst i dokąd trafi wynik: wklejenie, schowek albo zapis do pliku. Zakończ nagranie skrótem trybu, żeby go użyć. Przy otwartym pasku ⌥1…⌥0 przełącza tryby."
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reĝimo difinas, ĉu AI reverkas la tekston kaj kien iras la rezulto: algluo, tondujo aŭ konservo al dosiero. Finu la registradon per la klavkombino de reĝimo por uzi ĝin. Dum la breto estas malfermita, ⌥1…⌥0 ŝanĝas la reĝimon."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un mode determina si la IA reescriu el text i on va a parar el resultat: s'enganxa, es copia o es desa en un fitxer. Acaba l'enregistrament amb la drecera d'un mode per fer servir aquell mode. Mentre la barra és oberta, ⌥1…⌥0 canvia de mode."
+          }
+        }
+      }
+    },
+    "Add a target to save transcripts to a file, URL scheme or shell command.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj cel, żeby zapisywać transkrypcje do pliku, przez schemat URL albo polecenie powłoki."
+          }
+        }
+      }
+    },
+    "Files, URL schemes or shell commands — each can have its own finish shortcut.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pliki, schematy URL albo polecenia powłoki — każdy może mieć własny skrót kończący."
           }
         }
       }

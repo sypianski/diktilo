@@ -36,10 +36,10 @@ enum ShortcutMigration {
         migrateOptionNSaveTargetsToControlOptionIfNeeded()
     }
 
-    /// The Notaro preset used to default to ⌥N, and the three fixed
-    /// destinations to ⌥C/⌥V/⌥E. All are now Ctrl+Option to dodge the Polish
-    /// Pro dead keys (ć/ę/ń). The fixed fallbacks were never persisted (only the
-    /// constants changed), but an explicitly stored save-target ⌥N binding needs
+    /// Save targets used to default to ⌥N, and the fixed destinations to
+    /// ⌥C/⌥V. All are now Ctrl+Option to dodge the Polish Pro dead keys
+    /// (ć/ę/ń). The fixed fallbacks were never persisted (only the constants
+    /// changed), but an explicitly stored save-target ⌥N binding needs
     /// rewriting once. Migrate ONLY an exact ⌥N (option, no other modifiers) →
     /// ⌃⌥N; leave every other user binding untouched.
     private static func migrateOptionNSaveTargetsToControlOptionIfNeeded() {
@@ -296,7 +296,7 @@ enum ShortcutMigration {
             return ["quickAddToDictionary"]
         case .profile(let id):
             return ["mode_\(id.uuidString)", "powerMode_\(id.uuidString)"]
-        case .finishWithCopy, .finishWithPaste, .finishWithEditWindow, .finishWithSaveTarget,
+        case .finishWithCopy, .finishWithPaste, .finishWithSaveTarget,
              .recorderPanelEscape, .recorderPanelMode, .recorderPanelFinish:
             return []
         }

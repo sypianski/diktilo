@@ -48,13 +48,8 @@ struct SaveTargetsSettingsView: View {
         }
         .toolbar {
             ToolbarItem {
-                Menu {
-                    Button("Custom Target…") {
-                        isAddingNew = true
-                    }
-                    Button("Notaro") {
-                        addNotaroPreset()
-                    }
+                Button {
+                    isAddingNew = true
                 } label: {
                     Label("Add Save Target", systemImage: "plus")
                 }
@@ -72,30 +67,17 @@ struct SaveTargetsSettingsView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
 
-            Text("Add a target to save transcripts to a file, URL scheme, shell command, or Sako.")
+            Text("Add a target to save transcripts to a file, URL scheme or shell command.")
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 340)
 
-            HStack(spacing: 12) {
-                Button("Add Save Target") {
-                    isAddingNew = true
-                }
-                .buttonStyle(.amberProminent)
-
-                Button("Add Notaro") {
-                    addNotaroPreset()
-                }
-                .buttonStyle(.bordered)
+            Button("Add Save Target") {
+                isAddingNew = true
             }
+            .buttonStyle(.amberProminent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func addNotaroPreset() {
-        let preset = SaveTargetConfig.notaroPreset()
-        manager.add(preset)
-        FinishDestinationBindings.assignDefaultNotaroShortcut(targetID: preset.id)
     }
 
     private var targetList: some View {
@@ -187,7 +169,6 @@ struct SaveTargetEditorView: View {
         case file
         case urlScheme
         case shellCommand
-        case sako
 
         var id: String { rawValue }
 
@@ -196,7 +177,6 @@ struct SaveTargetEditorView: View {
             case .file: return String(localized: "File")
             case .urlScheme: return String(localized: "URL Scheme")
             case .shellCommand: return String(localized: "Shell Command")
-            case .sako: return String(localized: "Sako")
             }
         }
     }
@@ -237,8 +217,8 @@ struct SaveTargetEditorView: View {
             _urlTemplate = State(initialValue: "")
             _urlActivates = State(initialValue: true)
             _shellCommand = State(initialValue: cmd)
-        case .sako, nil:
-            _strategyKind = State(initialValue: t?.strategy == nil ? .file : .sako)
+        case nil:
+            _strategyKind = State(initialValue: .file)
             _directoryPath = State(initialValue: "~/Documents")
             _filenameTemplate = State(initialValue: "{date}-{slug}")
             _fileFormat = State(initialValue: .markdown)
@@ -304,11 +284,6 @@ struct SaveTargetEditorView: View {
             urlSchemeFields
         case .shellCommand:
             shellCommandFields
-        case .sako:
-            LabeledContent("Sako") {
-                Text("Text will be sent to your Sako inbox via the CLI or JSONL fallback.")
-                    .foregroundColor(.secondary)
-            }
         }
     }
 
@@ -328,7 +303,7 @@ struct SaveTargetEditorView: View {
 
     private var urlSchemeFields: some View {
         Group {
-            TextField("URL Template", text: $urlTemplate, prompt: Text("notaro://add?text={{text}}&source=diktilo"))
+            TextField("URL Template", text: $urlTemplate, prompt: Text("myapp://add?text={{text}}"))
                 .help("Use {{text}} or {text} as a placeholder for the transcript.")
             Toggle(String(localized: "Open target app"), isOn: $urlActivates)
             Text("When off, the text is delivered silently in the background.")
@@ -371,8 +346,6 @@ struct SaveTargetEditorView: View {
             strategy = .urlScheme(template: urlTemplate, activates: urlActivates)
         case .shellCommand:
             strategy = .shellCommand(command: shellCommand)
-        case .sako:
-            strategy = .sako
         }
 
         let config = SaveTargetConfig(

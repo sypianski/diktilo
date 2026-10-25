@@ -1,7 +1,7 @@
 import Foundation
 
-/// One-shot migration from the legacy global "Finish → Copy/Paste/Edit Window"
-/// shortcuts (`ShortcutAction.finishWithCopy/.finishWithPaste/.finishWithEditWindow`)
+/// One-shot migration from the legacy global "Finish → Copy/Paste"
+/// shortcuts (`ShortcutAction.finishWithCopy/.finishWithPaste`)
 /// to per-mode finish shortcuts (`ShortcutAction.profile(id)`).
 ///
 /// For each fixed destination that still has an effective binding (an explicit
@@ -11,7 +11,7 @@ import Foundation
 /// cleared so it stops firing globally.
 ///
 /// AI enhancement on the shims is left OFF to preserve today's semantics: the
-/// legacy Ctrl+Opt+C/V/E flow did not run enhancement on top of the active
+/// legacy Ctrl+Opt+C/V flow did not run enhancement on top of the active
 /// mode's own enhancement. A future global-AI-toggle + per-mode-AI-toggle pass
 /// will revisit this.
 ///
@@ -35,9 +35,8 @@ enum LegacyFinishShortcutMigration {
         let isExistingInstall = UserDefaults.standard.bool(forKey: completedOnboardingKey)
 
         let mappings: [(action: ShortcutAction, outputMode: OutputMode, name: String, symbol: String)] = [
-            (.finishWithCopy,       .copy,       String(localized: "Copy"),        "doc.on.doc"),
-            (.finishWithPaste,      .paste,      String(localized: "Paste"),       "doc.on.clipboard"),
-            (.finishWithEditWindow, .editWindow, String(localized: "Edit Window"), "square.and.pencil")
+            (.finishWithCopy,  .copy,  String(localized: "Copy"),  "doc.on.doc"),
+            (.finishWithPaste, .paste, String(localized: "Paste"), "doc.on.clipboard")
         ]
 
         for mapping in mappings {
@@ -76,7 +75,7 @@ enum LegacyFinishShortcutMigration {
             ShortcutStore.setShortcut(shortcut, for: .profile(shim.id))
             // Clear (not just remove) the legacy binding so that
             // `FinishDestinationBindings.effectiveShortcut` no longer falls
-            // back to Ctrl+Opt+C/V/E for this action.
+            // back to Ctrl+Opt+C/V for this action.
             ShortcutStore.setShortcut(nil, for: mapping.action)
         }
 

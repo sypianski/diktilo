@@ -4,7 +4,7 @@ import Carbon.HIToolbox
 // MARK: - Shared finish-destination binding helpers
 //
 // After the per-mode finish refactor:
-//   • The three fixed destinations (Copy / Paste / Edit Window) no longer own
+//   • The fixed destinations (Copy / Paste) no longer own
 //     global shortcuts — LegacyFinishShortcutMigration reattached any user
 //     binding to a per-mode `.profile(id)` shortcut and cleared the legacy
 //     slot. `effectiveShortcut` is kept only so the migration can still read
@@ -20,7 +20,7 @@ enum FinishDestinationBindings {
     // Preserved for LegacyFinishShortcutMigration only. Returns:
     //   • explicit user binding if set
     //   • nil if the user cleared it (or the migration cleared it)
-    //   • no fallback anymore — the ⌃⌥C/V/E defaults are gone.
+    //   • no fallback anymore — the ⌃⌥C/V defaults are gone.
 
     static func effectiveShortcut(for action: ShortcutAction) -> Shortcut? {
         if let stored = ShortcutStore.shortcut(for: action) {
@@ -32,28 +32,10 @@ enum FinishDestinationBindings {
         // Legacy fallback kept in-line so we don't hold a table of dead cases.
         // Only fires during the one-shot migration window, then never again.
         switch action {
-        case .finishWithCopy:       return .key(keyCode: UInt16(kVK_ANSI_C), modifierFlags: [.control, .option])
-        case .finishWithPaste:      return .key(keyCode: UInt16(kVK_ANSI_V), modifierFlags: [.control, .option])
-        case .finishWithEditWindow: return .key(keyCode: UInt16(kVK_ANSI_E), modifierFlags: [.control, .option])
-        default:                    return nil
+        case .finishWithCopy:  return .key(keyCode: UInt16(kVK_ANSI_C), modifierFlags: [.control, .option])
+        case .finishWithPaste: return .key(keyCode: UInt16(kVK_ANSI_V), modifierFlags: [.control, .option])
+        default:               return nil
         }
-    }
-
-    // MARK: - Default per-target bindings
-
-    /// Gives a freshly created Notaro preset target a working shortcut out of
-    /// the box. No-op when the user already bound or deliberately cleared one,
-    /// or when Ctrl+Option+N fails validation (e.g. collides with another
-    /// binding). Ctrl+Option (not plain Option) avoids the ń dead key on the
-    /// Polish Pro layout.
-    static func assignDefaultNotaroShortcut(targetID: UUID) {
-        let action = ShortcutAction.finishWithSaveTarget(targetID)
-        guard ShortcutStore.shortcut(for: action) == nil,
-              !ShortcutStore.isShortcutCleared(for: action) else { return }
-        ShortcutStore.setShortcut(
-            .key(keyCode: UInt16(kVK_ANSI_N), modifierFlags: [.control, .option]),
-            for: action
-        )
     }
 
     // MARK: - HUD item model

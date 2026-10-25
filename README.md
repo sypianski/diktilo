@@ -64,7 +64,6 @@ If AI enhancement is on, Diktilo starts working on it while you are still speaki
 
 - **Paste** at the cursor, in the app you are writing in.
 - **Copy** to the clipboard; paste it yourself with <kbd>⌘V</kbd>. By default on <kbd>⌃⌥C</kbd>.
-- **Edit window** with vim keys, before it goes anywhere (needs the separate Vimileto app).
 - **A .md or .txt file**, e.g. appending to a daily note.
 - **A shell command** (the text goes to standard input) or **a URL scheme**.
 

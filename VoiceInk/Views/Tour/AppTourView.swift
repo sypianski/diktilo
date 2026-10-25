@@ -175,8 +175,6 @@ private enum TourFacts {
             return String(localized: "The text is pasted where your cursor is.")
         case .copy:
             return String(localized: "The text lands on the clipboard.")
-        case .editWindow:
-            return String(localized: "The text opens in the edit window.")
         case .respond, .customCommand, .saveTarget:
             return String(localized: "The active mode decides where the text goes.")
         }
@@ -262,7 +260,7 @@ private struct AppTourCaption: View {
                 TourFacts.cancelPhrase
             )
         case .modes:
-            return String(localized: "A mode sets whether AI rewrites the text and where the result goes: pasted, copied, opened in the edit window or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.")
+            return String(localized: "A mode sets whether AI rewrites the text and where the result goes: pasted, copied or saved to a file. Finish with a mode's shortcut to use that mode. While the bar is open, ⌥1…⌥0 switches modes.")
         case .models:
             return String(localized: "Diktilo transcribes with a local model or through an outside provider with an API key.")
         case .history:

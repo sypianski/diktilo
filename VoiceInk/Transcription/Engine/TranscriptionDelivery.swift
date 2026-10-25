@@ -54,11 +54,6 @@ final class TranscriptionDelivery {
             return
         }
 
-        if request.output.outputMode == .editWindow {
-            await deliverEditWindow(request, actions: actions)
-            return
-        }
-
         if let text = request.text {
             await paste(text, output: request.output, actions: actions)
         } else {
@@ -86,15 +81,6 @@ final class TranscriptionDelivery {
         }
 
         await actions.dismiss()
-    }
-
-    private func deliverEditWindow(_ item: Request, actions: Actions) async {
-        SoundManager.shared.playStopSound()
-        await actions.dismiss()
-
-        guard let text = item.text else { return }
-        ClipboardManager.autoCopyTranscription(text)
-        TranscriptEditManager.shared.present(text: text)
     }
 
     private func deliverResponse(_ item: Request, actions: Actions) async {

@@ -33,14 +33,13 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
         case file(FileStrategy)
         case urlScheme(template: String, activates: Bool)
         case shellCommand(command: String)
-        case sako
 
         // Manual Codable so associated values round-trip cleanly.
         private enum CodingKeys: String, CodingKey {
             case type, fileStrategy, urlTemplate, urlActivates, shellCommand
         }
         private enum TypeTag: String, Codable {
-            case file, urlScheme, shellCommand, sako
+            case file, urlScheme, shellCommand
         }
 
         init(from decoder: Decoder) throws {
@@ -59,8 +58,6 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
             case .shellCommand:
                 let cmd = try container.decode(String.self, forKey: .shellCommand)
                 self = .shellCommand(command: cmd)
-            case .sako:
-                self = .sako
             }
         }
 
@@ -77,8 +74,6 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
             case .shellCommand(let cmd):
                 try container.encode(TypeTag.shellCommand, forKey: .type)
                 try container.encode(cmd, forKey: .shellCommand)
-            case .sako:
-                try container.encode(TypeTag.sako, forKey: .type)
             }
         }
     }
@@ -121,7 +116,6 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
         case .file: return String(localized: "File")
         case .urlScheme: return String(localized: "URL Scheme")
         case .shellCommand: return String(localized: "Shell Command")
-        case .sako: return String(localized: "Sako")
         }
     }
 
@@ -133,29 +127,19 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
         default: return true
         }
     }
-
-    // MARK: - Presets
-
-    /// Notaro ingest goes through its CLI (`notaro add`), not the notaro://
-    /// URL scheme — macOS activates the handler app on a cold start no matter
-    /// what the opener asks for, while the CLI writes straight to the shared
-    /// SQLite database and the GUI picks changes up via a file watcher.
-    /// Bundle path avoids depending on a PATH symlink. --quiet: diktilo
-    /// already confirms delivery in the recorder panel. The source value
-    /// feeds Notaro's note classifier, so keep it stable.
-    static func notaroPreset() -> SaveTargetConfig {
-        SaveTargetConfig(
-            id: UUID(),
-            name: "Notaro",
-            icon: "note.text",
-            strategy: .shellCommand(
-                command: "'/Applications/Notaro.app/Contents/MacOS/notaro' add - --source diktilo --quiet"
-            )
-        )
-    }
 }
 
 // MARK: - SaveTargetManager
+
+/// Decodes one stored target, or nil when its strategy is no longer supported,
+/// so a single obsolete entry does not discard the whole list.
+private struct LossyTarget: Decodable {
+    let target: SaveTargetConfig?
+
+    init(from decoder: Decoder) throws {
+        target = try? SaveTargetConfig(from: decoder)
+    }
+}
 
 final class SaveTargetManager: ObservableObject {
     static let shared = SaveTargetManager()
@@ -172,10 +156,12 @@ final class SaveTargetManager: ObservableObject {
 
     private func load() {
         guard let data = UserDefaults.standard.data(forKey: defaultsKey),
-              let decoded = try? JSONDecoder().decode([SaveTargetConfig].self, from: data) else {
+              let decoded = try? JSONDecoder().decode([LossyTarget].self, from: data) else {
             return
         }
-        targets = decoded
+        // Targets of a strategy that no longer exists (e.g. the removed Sako
+        // type) fail to decode and are dropped; the rest load as before.
+        targets = decoded.compactMap(\.target)
     }
 
     private func save() {
