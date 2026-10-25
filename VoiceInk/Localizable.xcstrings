@@ -33,40 +33,6 @@
         }
       }
     },
-    " (drag to reorder)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (zum Neuordnen ziehen)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "（拖动以重新排序）"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (przeciągnij, aby zmienić kolejność)"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (trenu por reordigi)"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (arrossega per canviar l'ordre)"
-          }
-        }
-      }
-    },
     "%@ cancels": {
       "localizations": {
         "pl": {
@@ -580,88 +546,6 @@
                 "stringUnit": {
                   "state": "translated",
                   "value": "%lld apps"
-                }
-              }
-            }
-          }
-        },
-        "zh-Hans": {
-          "variations": {
-            "plural": {
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld 个应用"
-                }
-              }
-            }
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld aplikacji"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld aplikaĵoj"
-          }
-        },
-        "ca": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld app"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld apps"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld Apps": {
-      "localizations": {
-        "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld App"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld Apps"
-                }
-              }
-            }
-          }
-        },
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld App"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld Apps"
                 }
               }
             }
@@ -1438,88 +1322,6 @@
         }
       }
     },
-    "%lld Websites": {
-      "localizations": {
-        "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld Website"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld Websites"
-                }
-              }
-            }
-          }
-        },
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld Website"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld Websites"
-                }
-              }
-            }
-          }
-        },
-        "zh-Hans": {
-          "variations": {
-            "plural": {
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld 个网站"
-                }
-              }
-            }
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld witryn"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld retejoj"
-          }
-        },
-        "ca": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld lloc web"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld llocs web"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "%lld words": {
       "localizations": {
         "de": {
@@ -2130,28 +1932,6 @@
         }
       }
     },
-    "During recording, press Option + 1–0 to switch modes quickly.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Podczas nagrywania ⌥1–⌥0 szybko przełącza tryby."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dum registrado ⌥1–⌥0 rapide ŝanĝas la reĝimon."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Durant l'enregistrament, prem Opció + 1–0 per canviar de mode ràpidament."
-          }
-        }
-      }
-    },
     "Edit Save Target": {
       "localizations": {
         "pl": {
@@ -2570,28 +2350,6 @@
         }
       }
     },
-    "Hold while you speak, release to finish.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trzymaj, gdy mówisz; puść, żeby zakończyć."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tenu dum vi parolas; ellasu por fini."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mantén premut mentre parles i deixa anar per acabar."
-          }
-        }
-      }
-    },
     "How many recent transcriptions the dashboard shows at the top.": {
       "localizations": {
         "pl": {
@@ -2676,28 +2434,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plantilla d'esquema d'URL no vàlida: %@"
-          }
-        }
-      }
-    },
-    "Keep Clipboard Content is off while every transcription is copied — the transcription stays on the clipboard.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "„Zachowaj zawartość schowka” jest wyłączone, gdy każda transkrypcja trafia do schowka — transkrypcja zostaje w schowku."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "„Konservi enhavon de tondujo“ estas malŝaltita, dum ĉiu transskribo iras al la tondujo — la transskribo restas en la tondujo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "«Conservar el contingut del porta-retalls» està desactivat mentre es copia cada transcripció — la transcripció es queda al porta-retalls."
           }
         }
       }
@@ -3094,28 +2830,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prem-la durant l'enregistrament per acabar en aquest mode."
-          }
-        }
-      }
-    },
-    "Press to start, press again to finish.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Naciśnij, żeby zacząć; naciśnij ponownie, żeby zakończyć."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Premu por komenci; premu denove por fini."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prem per començar i torna a prémer per acabar."
           }
         }
       }
@@ -3802,28 +3516,6 @@
         }
       }
     },
-    "Start and Stop Recording": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rozpocznij i zakończ nagrywanie"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Komenci kaj fini registradon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Iniciar i aturar l'enregistrament"
-          }
-        }
-      }
-    },
     "Start Dictating": {
       "localizations": {
         "pl": {
@@ -3930,28 +3622,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prem %@ un cop per començar i un altre cop per acabar, o mantén-la premuda mentre parles."
-          }
-        }
-      }
-    },
-    "Tap to start and stop, or hold while you speak.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stuknij, żeby zacząć i zakończyć, albo trzymaj, gdy mówisz."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Frapetu por komenci kaj fini, aŭ tenu dum vi parolas."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prem per començar i aturar, o mantén premut mentre parles."
           }
         }
       }
@@ -6595,40 +6265,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afegir un model de transcripció"
-          }
-        }
-      }
-    },
-    "Add trigger": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auslöser hinzufügen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加触发条件"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dodaj wyzwalacz"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aldoni ekigilon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afegir un activador"
           }
         }
       }
@@ -13961,40 +13597,6 @@
         }
       }
     },
-    "Dismiss": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schließen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zamknij"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fermi"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Descartar"
-          }
-        }
-      }
-    },
     "Dismiss Recorder": {
       "localizations": {
         "de": {
@@ -14025,40 +13627,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tancar l'enregistrador"
-          }
-        }
-      }
-    },
-    "Dismiss shortcut tip": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tastenkürzel-Hinweis schließen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭快捷键提示"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zamknij wskazówkę dotyczącą skrótu"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fermi konsilon pri klavkombino"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Descartar el consell sobre la drecera"
           }
         }
       }
@@ -21175,40 +20743,6 @@
         }
       }
     },
-    "Mode shortcuts": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modus-Tastenkürzel"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模式快捷键"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skróty trybów"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klavkombinoj de reĝimoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dreceres dels modes"
-          }
-        }
-      }
-    },
     "Mode:": {
       "extractionState": "manual",
       "localizations": {
@@ -22188,40 +21722,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "No hi ha cap model d'IA seleccionat"
-          }
-        }
-      }
-    },
-    "No Apps": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Apps"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无 App"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak aplikacji"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neniuj aplikaĵoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cap app"
           }
         }
       }
@@ -23485,40 +22985,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "No hi ha activadors en aquest grup"
-          }
-        }
-      }
-    },
-    "No Websites": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Websites"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无网站"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak witryn"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neniuj retejoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cap lloc web"
           }
         }
       }
@@ -27090,40 +26556,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Treure la paraula"
-          }
-        }
-      }
-    },
-    "Reorder Modes": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modi neu anordnen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重新排序模式"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zmień kolejność trybów"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reordigi reĝimojn"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reordenar els modes"
           }
         }
       }
@@ -37474,74 +36906,6 @@
         }
       }
     },
-    "Uses Mode": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Używa trybu"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verwendet Modus"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用模式"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uzas reĝimon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fa servir el mode"
-          }
-        }
-      }
-    },
-    "When no app or website trigger matches.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gdy żaden wyzwalacz aplikacji ani strony nie pasuje."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn kein App- oder Website-Auslöser passt."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当没有应用或网站触发器匹配时。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kiam neniu ekigilo de aplikaĵo aŭ retejo kongruas."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quan no coincideix cap activador d'app o de lloc web."
-          }
-        }
-      }
-    },
     "Last used mode": {
       "localizations": {
         "pl": {
@@ -37610,40 +36974,6 @@
         }
       }
     },
-    "Mode Order": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kolejność trybów"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reihenfolge der Modi"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模式顺序"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordo de reĝimoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordre dels modes"
-          }
-        }
-      }
-    },
     "Add Mode": {
       "localizations": {
         "pl": {
@@ -37708,40 +37038,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afegeix un mode per triar què passa amb el text: enganxar-lo, copiar-lo, desar-lo o reescriure'l amb IA."
-          }
-        }
-      }
-    },
-    "A mode decides where the text goes and whether AI rewrites it. Finish a recording with a mode's shortcut, or let an app or website trigger pick the mode.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tryb decyduje, dokąd trafia tekst i czy AI go przeredaguje. Zakończ nagranie skrótem trybu albo pozwól, by tryb wybrał wyzwalacz aplikacji lub strony."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Modus legt fest, wohin der Text geht und ob KI ihn umschreibt. Beende eine Aufnahme mit dem Kürzel eines Modus oder lass einen App- oder Website-Auslöser den Modus wählen."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模式决定文本的去向以及是否由 AI 改写。用模式的快捷键结束录音，或让应用或网站触发器选择模式。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reĝimo decidas, kien iras la teksto kaj ĉu AI reverkas ĝin. Finu registradon per la klavkombino de reĝimo, aŭ lasu ekigilon de aplikaĵo aŭ retejo elekti la reĝimon."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un mode decideix on va el text i si la IA el reescriu. Acaba un enregistrament amb la drecera d'un mode o deixa que un activador d'app o de lloc web triï el mode."
           }
         }
       }
@@ -39310,40 +38606,6 @@
         }
       }
     },
-    "You don't have a recording shortcut yet. Set one in Keyboard Shortcuts to start recording from any app.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nie masz jeszcze skrótu nagrywania. Ustaw go w panelu Skróty klawiszowe, żeby nagrywać z dowolnej aplikacji."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Du hast noch keinen Aufnahme-Kurzbefehl. Lege einen unter Tastaturkurzbefehle fest, um in jeder App aufzunehmen."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你还没有录音快捷键。请在“键盘快捷键”中设置，以便在任何应用中录音。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vi ankoraŭ ne havas registran klavkombinon. Agordu ĝin en Klavkombinoj por registri el ajna aplikaĵo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Encara no tens cap drecera d'enregistrament. Defineix-ne una a Dreceres de teclat per enregistrar des de qualsevol app."
-          }
-        }
-      }
-    },
     "The recording shortcut and modes are in Keyboard Shortcuts, the microphone and the bar's look in Recording, language and appearance in App. To see this tour again, choose Help → Diktilo Tour.": {
       "localizations": {
         "pl": {
@@ -39374,176 +38636,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "La drecera d'enregistrament i els modes són a Dreceres de teclat; el micròfon i l'aspecte de la barra, a Enregistrament, i l'idioma i l'aspecte, a App. Per tornar a veure aquesta visita guiada, tria Ajuda → Visita guiada per Diktilo."
-          }
-        }
-      }
-    },
-    "No targets configured — add one in Keyboard Shortcuts → Save Targets.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak celów zapisu — dodaj je w Skróty klawiszowe → Cele zapisu."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Ziele konfiguriert – füge eines unter Tastaturkurzbefehle → Speicherziele hinzu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未配置保存目标——请在“键盘快捷键 → 保存目标”中添加。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neniuj celoj agorditaj — aldonu unu en Klavkombinoj → Konservceloj."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No hi ha cap destinació configurada — afegeix-ne una a Dreceres de teclat → Destinacions de desament."
-          }
-        }
-      }
-    },
-    "No modes yet — add one in Keyboard Shortcuts.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jeszcze brak trybów — dodaj tryb w panelu Skróty klawiszowe."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch keine Modi – füge unter Tastaturkurzbefehle einen hinzu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "还没有模式——请在“键盘快捷键”中添加。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ankoraŭ neniuj reĝimoj — aldonu unu en Klavkombinoj."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Encara no hi ha cap mode — afegeix-ne un a Dreceres de teclat."
-          }
-        }
-      }
-    },
-    "Connect providers here, then choose a model in each mode (Keyboard Shortcuts).": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verbinde hier Anbieter und wähle dann in jedem Modus ein Modell (Tastaturkurzbefehle)."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在此连接提供商，然后在每个模式中选择模型（键盘快捷键）。"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Połącz dostawców tutaj, a potem wybierz model w każdym trybie (panel Skróty klawiszowe)."
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Konektu provizantojn ĉi tie, poste elektu modelon en ĉiu reĝimo (Klavkombinoj)."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connecta els proveïdors aquí i després tria un model a cada mode (Dreceres de teclat)."
-          }
-        }
-      }
-    },
-    "Save to Target mode requires a configured save target. Add one in Keyboard Shortcuts → Save Targets.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tryb „Zapis do celu” wymaga skonfigurowanego celu zapisu. Dodaj go w Skróty klawiszowe → Cele zapisu."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der Modus „In Ziel speichern“ benötigt ein eingerichtetes Speicherziel. Füge eines unter Modi → Speicherziele hinzu."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "“保存到目标”模式需要已配置的保存目标。请在“模式 → 保存目标”中添加。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La reĝimo „Konservi al celo“ postulas agorditan konservcelon. Aldonu unu en Klavkombinoj → Konservceloj."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El mode «Desar a la destinació» requereix una destinació de desament configurada. Afegeix-ne una a Dreceres de teclat → Destinacions de desament."
-          }
-        }
-      }
-    },
-    "Keyboard Shortcuts": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tastaturkurzbefehle"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skróty klawiszowe"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "键盘快捷键"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klavkombinoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dreceres de teclat"
           }
         }
       }
@@ -42930,6 +42022,341 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przesuń później"
+          }
+        }
+      }
+    },
+    "Shortcuts and Modes": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty i tryby"
+          }
+        }
+      }
+    },
+    "Pasting and Save Targets": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklejanie i cele zapisu"
+          }
+        }
+      }
+    },
+    "Shortcut": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót"
+          }
+        }
+      }
+    },
+    "On": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączone"
+          }
+        }
+      }
+    },
+    "AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI"
+          }
+        }
+      }
+    },
+    "Set a shortcut to start recording from any app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw skrót, aby nagrywać z dowolnej aplikacji."
+          }
+        }
+      }
+    },
+    "Press %@, speak, press again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij %@, mów, naciśnij ponownie."
+          }
+        }
+      }
+    },
+    "Hold %@ while you speak, release to finish.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj %@ podczas mówienia, puść, aby zakończyć."
+          }
+        }
+      }
+    },
+    "Tap %@ to start and stop, or hold it while you speak.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij %@, aby zacząć i zakończyć, albo przytrzymaj podczas mówienia."
+          }
+        }
+      }
+    },
+    "The mode the main shortcut runs when no app or website trigger matches.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb uruchamiany skrótem głównym, gdy nie pasuje żaden wyzwalacz aplikacji ani strony."
+          }
+        }
+      }
+    },
+    "Advanced Pasting": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaawansowane wklejanie"
+          }
+        }
+      }
+    },
+    "Needs AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wymaga AI"
+          }
+        }
+      }
+    },
+    "Respond needs AI enhancement with a prompt. Turn it on under AI Enhancement.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odpowiedź wymaga ulepszania przez AI z promptem. Włącz je w sekcji „Ulepszanie przez AI”."
+          }
+        }
+      }
+    },
+    "Off while every transcription is copied to the clipboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone, gdy każda transkrypcja jest kopiowana do schowka."
+          }
+        }
+      }
+    },
+    "A mode decides where the text goes and whether AI rewrites it. Finish a recording with a mode's shortcut, or let an app or website trigger pick the mode. During recording, ⌥1–⌥0 switch the modes in this order.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb decyduje, dokąd trafia tekst i czy AI go przeredaguje. Zakończ nagranie skrótem trybu albo pozwól, by tryb wybrał wyzwalacz aplikacji lub strony. Podczas nagrywania ⌥1–⌥0 przełączają tryby w tej kolejności."
+          }
+        }
+      }
+    },
+    "Save to Target mode requires a configured save target. Add one in Shortcuts and Modes → Pasting and Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb „Zapis do celu” wymaga skonfigurowanego celu zapisu. Dodaj go w Skróty i tryby → Wklejanie i cele zapisu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Modus „In Ziel speichern“ benötigt ein eingerichtetes Speicherziel. Füge eines unter Modi → Speicherziele hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“保存到目标”模式需要已配置的保存目标。请在“模式 → 保存目标”中添加。"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La reĝimo „Konservi al celo“ postulas agorditan konservcelon. Aldonu unu en Klavkombinoj → Konservceloj."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El mode «Desar a la destinació» requereix una destinació de desament configurada. Afegeix-ne una a Dreceres de teclat → Destinacions de desament."
+          }
+        }
+      }
+    },
+    "No targets configured — add one in Shortcuts and Modes → Pasting and Save Targets.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak celów zapisu — dodaj je w Skróty i tryby → Wklejanie i cele zapisu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ziele konfiguriert – füge eines unter Tastaturkurzbefehle → Speicherziele hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未配置保存目标——请在“键盘快捷键 → 保存目标”中添加。"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neniuj celoj agorditaj — aldonu unu en Klavkombinoj → Konservceloj."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hi ha cap destinació configurada — afegeix-ne una a Dreceres de teclat → Destinacions de desament."
+          }
+        }
+      }
+    },
+    "Connect providers here, then choose a model in each mode (Shortcuts and Modes).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinde hier Anbieter und wähle dann in jedem Modus ein Modell (Tastaturkurzbefehle)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在此连接提供商，然后在每个模式中选择模型（键盘快捷键）。"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Połącz dostawców tutaj, a potem wybierz model w każdym trybie (panel Skróty i tryby)."
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konektu provizantojn ĉi tie, poste elektu modelon en ĉiu reĝimo (Klavkombinoj)."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecta els proveïdors aquí i després tria un model a cada mode (Dreceres de teclat)."
+          }
+        }
+      }
+    },
+    "You don't have a recording shortcut yet. Set one in Shortcuts and Modes to start recording from any app.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie masz jeszcze skrótu nagrywania. Ustaw go w panelu Skróty i tryby, żeby nagrywać z dowolnej aplikacji."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast noch keinen Aufnahme-Kurzbefehl. Lege einen unter Tastaturkurzbefehle fest, um in jeder App aufzunehmen."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你还没有录音快捷键。请在“键盘快捷键”中设置，以便在任何应用中录音。"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vi ankoraŭ ne havas registran klavkombinon. Agordu ĝin en Klavkombinoj por registri el ajna aplikaĵo."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encara no tens cap drecera d'enregistrament. Defineix-ne una a Dreceres de teclat per enregistrar des de qualsevol app."
+          }
+        }
+      }
+    },
+    "No modes yet — add one in Shortcuts and Modes.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeszcze brak trybów — dodaj tryb w panelu Skróty i tryby."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Modi – füge unter Tastaturkurzbefehle einen hinzu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有模式——请在“键盘快捷键”中添加。"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ankoraŭ neniuj reĝimoj — aldonu unu en Klavkombinoj."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encara no hi ha cap mode — afegeix-ne un a Dreceres de teclat."
           }
         }
       }

@@ -10,7 +10,6 @@ struct ModeTriggerSection: View {
 
     @EnvironmentObject private var modeWarmupStore: OutputProfileFormWarmupStore
 
-    @State private var isShowingTriggerPicker = false
     @State private var triggerSearchText = ""
 
     private var hasSelectedTriggers: Bool {
@@ -34,6 +33,19 @@ struct ModeTriggerSection: View {
                 emptyTriggerState
             }
 
+            TriggerPickerPopover(
+                installedApps: modeWarmupStore.installedApps,
+                isLoadingApps: modeWarmupStore.isLoadingInstalledApps,
+                currentModeId: profileId,
+                appConfigs: $appConfigs,
+                websiteConfigs: $websiteConfigs,
+                triggerGroups: $triggerGroups,
+                triggerWords: $triggerWords,
+                searchText: $triggerSearchText,
+                cleanURL: cleanURL,
+                isInline: true
+            )
+            .onAppear { modeWarmupStore.refreshInstalledApps() }
         } header: {
             triggerHeader
         }
@@ -46,26 +58,6 @@ struct ModeTriggerSection: View {
                 InfoTip("Diktilo automatically switches to this mode based on the app or website you're using, or when you say a trigger word during recording.")
             }
 
-            Spacer()
-
-            AddIconButton(helpText: "Add trigger") {
-                triggerSearchText = ""
-                isShowingTriggerPicker = true
-                modeWarmupStore.refreshInstalledApps()
-            }
-            .popover(isPresented: $isShowingTriggerPicker, arrowEdge: .bottom) {
-                TriggerPickerPopover(
-                    installedApps: modeWarmupStore.installedApps,
-                    isLoadingApps: modeWarmupStore.isLoadingInstalledApps,
-                    currentModeId: profileId,
-                    appConfigs: $appConfigs,
-                    websiteConfigs: $websiteConfigs,
-                    triggerGroups: $triggerGroups,
-                    triggerWords: $triggerWords,
-                    searchText: $triggerSearchText,
-                    cleanURL: cleanURL
-                )
-            }
         }
         .frame(maxWidth: .infinity)
     }

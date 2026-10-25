@@ -9,6 +9,7 @@ struct ModesPastingSection: View {
     @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
     @AppStorage(ClipboardManager.autoCopyEnabledKey) private var autoCopyTranscription = true
     @AppStorage("AppendTrailingSpace") private var appendTrailingSpace = true
+    @State private var isAdvancedExpanded = false
 
     var body: some View {
         Section {
@@ -38,38 +39,39 @@ struct ModesPastingSection: View {
                 }
             }
 
-            Toggle(isOn: $restoreClipboardAfterPaste) {
-                HStack(spacing: 4) {
-                    Text("Keep Clipboard Content")
-                    InfoTip("Diktilo temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay.")
+            DisclosureGroup("Advanced", isExpanded: $isAdvancedExpanded) {
+                Toggle(isOn: $restoreClipboardAfterPaste) {
+                    HStack(spacing: 4) {
+                        Text("Keep Clipboard Content")
+                        InfoTip("Diktilo temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay.")
+                    }
+                    if autoCopyTranscription {
+                        Text("Off while every transcription is copied to the clipboard.")
+                    }
                 }
-            }
-            .disabled(autoCopyTranscription)
+                .disabled(autoCopyTranscription)
 
-            if restoreClipboardAfterPaste && !autoCopyTranscription {
-                Picker("Restore Delay", selection: $clipboardRestoreDelay) {
-                    Text("250ms").tag(0.25)
-                    Text("500ms").tag(0.5)
-                    Text("1s").tag(1.0)
-                    Text("2s").tag(2.0)
-                    Text("3s").tag(3.0)
-                    Text("4s").tag(4.0)
-                    Text("5s").tag(5.0)
+                if restoreClipboardAfterPaste && !autoCopyTranscription {
+                    Picker("Restore Delay", selection: $clipboardRestoreDelay) {
+                        Text("250ms").tag(0.25)
+                        Text("500ms").tag(0.5)
+                        Text("1s").tag(1.0)
+                        Text("2s").tag(2.0)
+                        Text("3s").tag(3.0)
+                        Text("4s").tag(4.0)
+                        Text("5s").tag(5.0)
+                    }
                 }
-            }
 
-            Toggle(isOn: $appendTrailingSpace) {
-                HStack(spacing: 4) {
-                    Text("Add Space After Paste")
-                    InfoTip("Add a trailing space after pasted transcription output.")
+                Toggle(isOn: $appendTrailingSpace) {
+                    HStack(spacing: 4) {
+                        Text("Add Space After Paste")
+                        InfoTip("Add a trailing space after pasted transcription output.")
+                    }
                 }
             }
         } header: {
             Text("Pasting and Clipboard")
-        } footer: {
-            if autoCopyTranscription {
-                Text("Keep Clipboard Content is off while every transcription is copied — the transcription stays on the clipboard.")
-            }
         }
     }
 }

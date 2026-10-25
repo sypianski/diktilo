@@ -56,101 +56,72 @@ struct OutputProfileView: View {
     @EnvironmentObject private var enhancementService: AIEnhancementService
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
-    @State private var activePanel: PanelType?
+    @State private var tab: Tab = .modes
+    @State private var activeConfiguration: ConfigurationMode?
     @State private var panelID = UUID()
-    @State private var modePendingDeletion: OutputProfile?
 
-    private enum PanelType {
-        case configuration(ConfigurationMode)
-        case order
+    /// Everyone needs the first tab; how text is pasted and where it is saved
+    /// are set once and rarely touched, so they sit one click away.
+    private enum Tab: Hashable {
+        case modes
+        case delivery
     }
 
     private var isPanelOpen: Bool {
-        activePanel != nil
+        activeConfiguration != nil
     }
 
-    private var orderButton: some View {
-        AppIconButton(
-            systemName: "arrow.up.arrow.down",
-            help: "Mode Order"
-        ) {
-            openOrderPanel()
-        }
-    }
-
-    private var addModeButton: some View {
-        Button {
-            openPanel(mode: .add)
-        } label: {
-            Label("Add Mode", systemImage: "plus")
-        }
-        .buttonStyle(.amberProminent)
-        .controlSize(.small)
-    }
-
-    // Order: the shortcut that starts every recording, the modes it can end
-    // in, then the global output defaults those modes build on.
+    // Order: the shortcut that starts every recording, then the modes it can
+    // end in. Global paste defaults and save targets are on the second tab.
     var body: some View {
-            VStack(spacing: 0) {
-                AppScreenHeader(
-                    title: "Keyboard Shortcuts",
-                    infoMessage: "Modes help you set up Diktilo for different writing tasks, workflows, and scenarios."
-                ) {
-                    orderButton
-                }
+        VStack(spacing: 0) {
+            AppScreenHeader(
+                title: "Shortcuts and Modes",
+                infoMessage: "Modes help you set up Diktilo for different writing tasks, workflows, and scenarios."
+            )
 
-                Form {
+            Picker("", selection: $tab) {
+                Text("Shortcuts and Modes").tag(Tab.modes)
+                Text("Pasting and Save Targets").tag(Tab.delivery)
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .fixedSize()
+            .padding(.bottom, 6)
+
+            Form {
+                switch tab {
+                case .modes:
                     MainShortcutSection(modeManager: modeManager)
 
                     modesSection
-
+                case .delivery:
                     ModesPastingSection()
 
                     ModesSaveTargetsSection()
                 }
-                .formStyle(.grouped)
-                .scrollContentBackground(.hidden)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .confirmationDialog(
-                "Delete Mode?",
-                isPresented: Binding(
-                    get: { modePendingDeletion != nil },
-                    set: { if !$0 { modePendingDeletion = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: modePendingDeletion
-            ) { config in
-                Button("Delete", role: .destructive) {
-                    modeManager.removeConfiguration(with: config.id)
-                    modePendingDeletion = nil
-                }
-                Button("Cancel", role: .cancel) { modePendingDeletion = nil }
-            } message: { config in
-                Text(String(format: String(localized: "Are you sure you want to delete '%@'? This action cannot be undone."), config.name))
+            .formStyle(.grouped)
+            .scrollContentBackground(.hidden)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .sidePanel(isPresented: .init(
+            get: { isPanelOpen },
+            set: { if !$0 { closePanel() } }
+        ), dismissOnExitCommand: false) {
+            if let mode = activeConfiguration {
+                OutputProfileEditorView(mode: mode, modeManager: modeManager, onDismiss: closePanel)
+                    .environmentObject(modeWarmupStore)
+                    .id(panelID)
             }
-            .sidePanel(isPresented: .init(
-                get: { isPanelOpen },
-                set: { if !$0 { closePanel() } }
-            ), dismissOnExitCommand: false) {
-                switch activePanel {
-                case .configuration(let mode)?:
-                    OutputProfileEditorView(mode: mode, modeManager: modeManager, onDismiss: closePanel)
-                        .environmentObject(modeWarmupStore)
-                        .id(panelID)
-                case .order?:
-                    OutputProfileSettingsPanelView(modeManager: modeManager, onDismiss: closePanel)
-                case nil:
-                    EmptyView()
-                }
-            }
-            .onAppear {
-                modeWarmupStore.configure(
-                    aiService: aiService,
-                    enhancementService: enhancementService,
-                    transcriptionModelManager: transcriptionModelManager
-                )
-            }
+        }
+        .onAppear {
+            modeWarmupStore.configure(
+                aiService: aiService,
+                enhancementService: enhancementService,
+                transcriptionModelManager: transcriptionModelManager
+            )
+        }
     }
 
     private var modesSection: some View {
@@ -163,50 +134,30 @@ struct OutputProfileView: View {
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
-                    addModeButton
-                        .padding(.top, 4)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-            } else {
-                ForEach($modeManager.configurations) { $config in
-                    ConfigurationRow(
-                        config: $config,
-                        isEditing: false,
-                        modeManager: modeManager,
-                        onEditConfig: { config in
-                            openPanel(mode: .edit(config))
-                        },
-                        onDelete: { config in
-                            modePendingDeletion = config
-                        }
-                    )
-                }
             }
+
+            ModesTableView(
+                modeManager: modeManager,
+                onEdit: { openPanel(mode: .edit($0)) },
+                onAdd: { openPanel(mode: .add) }
+            )
         } header: {
-            HStack {
-                Text("Modes")
-                Spacer()
-                if !modeManager.configurations.isEmpty {
-                    addModeButton
-                }
-            }
+            Text("Modes")
         } footer: {
-            Text("A mode decides where the text goes and whether AI rewrites it. Finish a recording with a mode's shortcut, or let an app or website trigger pick the mode.")
+            Text("A mode decides where the text goes and whether AI rewrites it. Finish a recording with a mode's shortcut, or let an app or website trigger pick the mode. During recording, ⌥1–⌥0 switch the modes in this order.")
         }
     }
 
     private func openPanel(mode: ConfigurationMode) {
         panelID = UUID()
-        activePanel = .configuration(mode)
+        activeConfiguration = mode
     }
 
     private func closePanel() {
-        activePanel = nil
-    }
-
-    private func openOrderPanel() {
-        activePanel = .order
+        activeConfiguration = nil
     }
 }
 

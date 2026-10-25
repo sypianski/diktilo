@@ -10,6 +10,9 @@ struct TriggerPickerPopover: View {
     @Binding var triggerWords: [String]
     @Binding var searchText: String
     let cleanURL: (String) -> String
+    /// Inline in the editor's Triggers section instead of a popover: templates
+    /// as chips and a search field that is always there; apps only while searching.
+    var isInline = false
 
     @FocusState private var isSearchFieldFocused: Bool
 
@@ -96,6 +99,81 @@ struct TriggerPickerPopover: View {
     }
 
     var body: some View {
+        if isInline {
+            inlineBody
+        } else {
+            popoverBody
+        }
+    }
+
+    // MARK: - Inline
+
+    private var inlineBody: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            FlowLayout(spacing: 6) {
+                ForEach(TriggerTemplateCatalog.templates) { template in
+                    templateChip(template)
+                }
+            }
+
+            searchField
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(AppTheme.Surface.control)
+                )
+
+            if !query.isEmpty {
+                VStack(spacing: 4) {
+                    if canOfferWebsite {
+                        websiteCandidateRow
+                    }
+
+                    if canOfferTriggerWord {
+                        triggerWordCandidateRow
+                    }
+
+                    if isLoadingApps && installedApps.isEmpty {
+                        loadingState
+                    } else if filteredApps.isEmpty && !canOfferWebsite {
+                        emptyState
+                    } else {
+                        ForEach(filteredApps.prefix(6), id: \.bundleId) { app in
+                            appRow(app)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func templateChip(_ template: TriggerTemplate) -> some View {
+        let isAdded = snapshot.templateIds.contains(template.id)
+        let group = templateGroup(for: template, isAdded: isAdded)
+        let isDisabled = isLoadingApps || (!isAdded && group.isEmpty)
+
+        return Button {
+            guard !isDisabled else { return }
+            toggleTemplateGroup(group, templateId: template.id)
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: isAdded ? "checkmark" : template.systemImage)
+                    .font(.system(size: 11, weight: .medium))
+                Text(template.name)
+                    .font(.system(size: 12, weight: .medium))
+            }
+            .foregroundStyle(isDisabled ? AppTheme.Text.secondary : AppTheme.Text.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(isAdded ? AppTheme.Selection.fill : Color.clear))
+            .overlay(Capsule().stroke(isAdded ? AppTheme.Selection.border : AppTheme.Border.control, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .help(isAdded ? String(localized: "Remove \(template.name) triggers") : group.summaryText)
+    }
+
+    // MARK: - Popover
+
+    private var popoverBody: some View {
         VStack(spacing: 0) {
             searchField
             Divider()

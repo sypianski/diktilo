@@ -71,7 +71,7 @@ struct CloudProviderManagementView: View {
 
             providerGroup(title: "Available", descriptors: available, showsAll: $showsAllAvailable)
 
-            Text("Connect providers here, then choose a model in each mode (Keyboard Shortcuts).")
+            Text("Connect providers here, then choose a model in each mode (Shortcuts and Modes).")
                 .font(.system(size: 12))
                 .foregroundStyle(AppTheme.Text.secondary)
         }

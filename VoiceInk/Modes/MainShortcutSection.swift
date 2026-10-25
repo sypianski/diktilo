@@ -14,6 +14,7 @@ struct MainShortcutSection: View {
     @State private var cancelResetID = 0
     @State private var isMiddleClickExpanded = false
     @State private var isMoreExpanded = false
+    @State private var shortcutRevision = 0
 
     static let defaultCancelShortcut = Shortcut.key(
         keyCode: UInt16(kVK_Escape),
@@ -22,39 +23,38 @@ struct MainShortcutSection: View {
 
     var body: some View {
         Section {
-            // Stacked rather than a LabeledContent row: the shortcut is the
-            // point of this screen and gets the full width of the section.
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Start and Stop Recording")
-                    .font(.system(size: 13, weight: .semibold))
-
+            // The shortcut is the point of this screen: its recorder and the
+            // press/hold behaviour share a row, and one sentence with the real
+            // keys says what happens.
+            HStack(alignment: .center, spacing: 16) {
                 ShortcutRecorder(action: .primaryRecording, style: .prominent) {
                     recordingShortcutManager.primaryRecordingShortcut = .custom
                     recordingShortcutManager.updateShortcutStatus()
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Picker(selection: $recordingShortcutManager.primaryRecordingShortcutMode) {
-                        ForEach(RecordingShortcutManager.Mode.allCases, id: \.self) { mode in
-                            Text(mode.displayName).tag(mode)
-                        }
-                    } label: {
-                        EmptyView()
+                Picker(selection: $recordingShortcutManager.primaryRecordingShortcutMode) {
+                    ForEach(RecordingShortcutManager.Mode.allCases, id: \.self) { mode in
+                        Text(mode.displayName).tag(mode)
                     }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                    .fixedSize()
-
-                    Text(modeDescription(recordingShortcutManager.primaryRecordingShortcutMode))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                } label: {
+                    EmptyView()
                 }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .fixedSize()
             }
             .padding(.vertical, 4)
 
             // The main shortcut carries no mode of its own: it runs the
             // "default" mode unless an app or website trigger matches.
-            LabeledContent {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(shortcutSentence)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer(minLength: 8)
+
                 Picker(selection: mainShortcutModeBinding) {
                     if modeManager.getDefaultConfiguration() == nil {
                         Text("Last used mode").tag(UUID?.none)
@@ -63,13 +63,11 @@ struct MainShortcutSection: View {
                         Text(config.name).tag(Optional(config.id))
                     }
                 } label: {
-                    EmptyView()
+                    Text("Mode")
                 }
                 .pickerStyle(.menu)
                 .fixedSize()
-            } label: {
-                Text("Uses Mode")
-                Text("When no app or website trigger matches.")
+                .help("The mode the main shortcut runs when no app or website trigger matches.")
             }
 
             DisclosureGroup("More Recording Shortcuts", isExpanded: $isMoreExpanded) {
@@ -82,6 +80,26 @@ struct MainShortcutSection: View {
         } footer: {
             // Fixed panel keys — not rebindable, so they're spelled out here.
             Text("While recording: ⌥1–⌥0 switches the mode, ⌘↩ finishes in the current mode, and a mode's finish shortcut finishes in that mode.")
+        }
+        .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { _ in
+            shortcutRevision += 1
+        }
+    }
+
+    /// "Press ⌃⌥ Space, speak, press again": what the shortcut does right now.
+    private var shortcutSentence: String {
+        _ = shortcutRevision
+        guard let shortcut = ShortcutStore.shortcut(for: .primaryRecording) else {
+            return String(localized: "Set a shortcut to start recording from any app.")
+        }
+        let keys = shortcut.displayString
+        switch recordingShortcutManager.primaryRecordingShortcutMode {
+        case .toggle:
+            return String(format: String(localized: "Press %@, speak, press again."), keys)
+        case .pushToTalk:
+            return String(format: String(localized: "Hold %@ while you speak, release to finish."), keys)
+        case .hybrid:
+            return String(format: String(localized: "Tap %@ to start and stop, or hold it while you speak."), keys)
         }
     }
 
@@ -189,14 +207,6 @@ struct MainShortcutSection: View {
                         .foregroundColor(.secondary)
                 }
             }
-        }
-    }
-
-    private func modeDescription(_ mode: RecordingShortcutManager.Mode) -> LocalizedStringKey {
-        switch mode {
-        case .toggle: return "Press to start, press again to finish."
-        case .pushToTalk: return "Hold while you speak, release to finish."
-        case .hybrid: return "Tap to start and stop, or hold while you speak."
         }
     }
 

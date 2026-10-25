@@ -79,7 +79,7 @@ extension ViewType {
         case .dictionary:
             return "Personal Dictionary"
         case .modes:
-            return "Keyboard Shortcuts"
+            return "Shortcuts and Modes"
         case .audio:
             return "Recording"
         case .settings:

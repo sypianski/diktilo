@@ -245,7 +245,7 @@ private struct AppTourCaption: View {
         switch step {
         case .record:
             guard let shortcut = TourFacts.primaryShortcut else {
-                return String(localized: "You don't have a recording shortcut yet. Set one in Keyboard Shortcuts to start recording from any app.")
+                return String(localized: "You don't have a recording shortcut yet. Set one in Shortcuts and Modes to start recording from any app.")
             }
             let keys = shortcut.displayString
             let how: String
@@ -379,7 +379,7 @@ private struct ModesStage: View {
         let modes = TourFacts.modes
         VStack(spacing: 8) {
             if modes.isEmpty {
-                Text("No modes yet — add one in Keyboard Shortcuts.")
+                Text("No modes yet — add one in Shortcuts and Modes.")
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(modes) { mode in

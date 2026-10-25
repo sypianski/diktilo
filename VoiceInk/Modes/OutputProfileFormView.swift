@@ -19,6 +19,7 @@ struct OutputProfileFormView: View {
     @State private var isShowingIconPicker = false
     @State private var isShowingDeleteConfirmation = false
     @State private var isContextAwarenessExpanded = false
+    @State private var isAdvancedPasteExpanded = false
 
     private var warmupSnapshot: ModeFormWarmupSnapshot {
         modeWarmupStore.snapshot
@@ -58,6 +59,8 @@ struct OutputProfileFormView: View {
         }
         .onAppear {
             applyOutputRules()
+            // Advanced paste settings open by themselves when something non-default is set.
+            isAdvancedPasteExpanded = draft.autoSendKey != .none || hasPasteOverrides
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isNameFieldFocused = true
             }
@@ -120,6 +123,8 @@ struct OutputProfileFormView: View {
 
     private var formContent: some View {
         Form {
+            outputSection
+            aiEnhancementSection
             ModeTriggerSection(
                 appConfigs: $draft.appConfigs,
                 websiteConfigs: $draft.websiteConfigs,
@@ -128,8 +133,6 @@ struct OutputProfileFormView: View {
                 profileId: draft.id,
                 cleanURL: modeManager.cleanURL
             )
-            outputSection
-            aiEnhancementSection
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
@@ -359,10 +362,6 @@ struct OutputProfileFormView: View {
         modeManager.getConfiguration(with: draft.id)?.isDefault ?? false
     }
 
-    private var outputChoices: [OutputMode] {
-        OutputMode.choices(canRespond: canRespond)
-    }
-
     private var canRespond: Bool {
         draft.isAIEnhancementEnabled &&
             selectedPrompt != nil &&
@@ -378,15 +377,10 @@ struct OutputProfileFormView: View {
     /// and the shortcut that finishes a recording in this mode.
     private var outputSection: some View {
         Section {
-            Picker("Output", selection: $draft.outputMode) {
-                ForEach(outputChoices, id: \.self) { outputMode in
-                    Label(outputMode.displayName, systemImage: outputMode.iconName)
-                        .tag(outputMode)
+            outputTiles
+                .onChange(of: draft.outputMode) { _, _ in
+                    applyOutputRules()
                 }
-            }
-            .onChange(of: draft.outputMode) { _, _ in
-                applyOutputRules()
-            }
 
             if draft.outputMode == .customCommand {
                 customCommandControls
@@ -394,19 +388,6 @@ struct OutputProfileFormView: View {
 
             if draft.outputMode == .saveTarget {
                 saveTargetControls
-            }
-
-            if draft.outputMode.usesPasteOptions {
-                Picker(selection: $draft.autoSendKey) {
-                    ForEach(AutoSendKey.allCases, id: \.self) { key in
-                        Text(key.displayName).tag(key)
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Auto Send")
-                        InfoTip("Automatically presses a key combination after pasting text. Useful for chat applications or forms that use different send shortcuts.")
-                    }
-                }
             }
 
             LabeledContent {
@@ -418,11 +399,87 @@ struct OutputProfileFormView: View {
             }
 
             if draft.outputMode.usesPasteOptions {
-                pasteOverridesGroup
+                DisclosureGroup("Advanced Pasting", isExpanded: $isAdvancedPasteExpanded) {
+                    Picker(selection: $draft.autoSendKey) {
+                        ForEach(AutoSendKey.allCases, id: \.self) { key in
+                            Text(key.displayName).tag(key)
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text("Auto Send")
+                            InfoTip("Automatically presses a key combination after pasting text. Useful for chat applications or forms that use different send shortcuts.")
+                        }
+                    }
+
+                    pasteOverridesGroup
+                }
             }
         } header: {
             Text("Where the Text Goes")
         }
+    }
+
+    private var hasPasteOverrides: Bool {
+        draft.pasteMethodOverride != nil
+            || draft.restoreClipboardOverride != nil
+            || draft.clipboardRestoreDelayOverride != nil
+    }
+
+    /// Every output at once. Respond stays visible but greyed out, with the reason,
+    /// until AI enhancement with a prompt is set up below.
+    private var outputTiles: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+            ForEach(OutputMode.allCases, id: \.self) { outputMode in
+                outputTile(outputMode)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func outputTile(_ outputMode: OutputMode) -> some View {
+        let isSelected = draft.outputMode == outputMode
+        let isUnavailable = outputMode == .respond && !canRespond
+
+        return Button {
+            draft.outputMode = outputMode
+        } label: {
+            VStack(spacing: 5) {
+                Image(systemName: outputMode.iconName)
+                    .font(.system(size: 17, weight: .medium))
+
+                Text(outputMode.displayName)
+                    .font(.system(size: 12, weight: isSelected ? .semibold : .medium))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if isUnavailable {
+                    Text("Needs AI")
+                        .font(.system(size: 10))
+                        .foregroundStyle(AppTheme.Text.secondary)
+                }
+            }
+            .foregroundStyle(isUnavailable ? AppTheme.Text.secondary : AppTheme.Text.primary)
+            .frame(maxWidth: .infinity, minHeight: 64)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(isSelected ? AppTheme.Selection.fill : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(
+                        isSelected ? AppTheme.Selection.border : AppTheme.Border.control,
+                        style: StrokeStyle(lineWidth: isSelected ? 1.5 : 1, dash: isUnavailable ? [3, 3] : [])
+                    )
+            )
+            .opacity(isUnavailable ? 0.6 : 1)
+            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .disabled(isUnavailable)
+        .help(isUnavailable ? String(localized: "Respond needs AI enhancement with a prompt. Turn it on under AI Enhancement.") : outputMode.displayName)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     @ViewBuilder
@@ -510,7 +567,7 @@ struct OutputProfileFormView: View {
         let targets = SaveTargetManager.shared.targets
         if targets.isEmpty {
             LabeledContent("Save Target") {
-                Text("No targets configured — add one in Keyboard Shortcuts → Save Targets.")
+                Text("No targets configured — add one in Shortcuts and Modes → Pasting and Save Targets.")
                     .foregroundColor(.secondary)
                     .italic()
             }
