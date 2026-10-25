@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import UniformTypeIdentifiers
 
 /// "Model order": the fallback chain for transcription and for AI enhancement,
@@ -17,6 +18,42 @@ struct ModelFallbackChainSection: View {
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
     @EnvironmentObject private var aiService: AIService
     @AppStorage("EnhancementTimeoutSeconds") private var enhancementTimeout = 7
+    @Query(ModelFallbackChainSection.recentMetrics) private var metrics: [SessionMetric]
+
+    /// Opens the full performance table (a sheet on AI Models).
+    var onShowPerformance: (() -> Void)? = nil
+
+    /// The newest sessions are enough to say how fast a model answers in use.
+    private static var recentMetrics: FetchDescriptor<SessionMetric> {
+        var descriptor = FetchDescriptor<SessionMetric>(sortBy: [SortDescriptor(\.timestamp, order: .reverse)])
+        descriptor.fetchLimit = 200
+        return descriptor
+    }
+
+    /// Average seconds a transcription model took per session, by display name.
+    private var transcriptionTimes: [String: Double] {
+        averages(metrics.compactMap { metric in
+            guard let name = metric.transcriptionModelName, let seconds = metric.transcriptionDuration else { return nil }
+            return (name, seconds)
+        })
+    }
+
+    /// Average seconds an enhancement model took per session, by model name.
+    private var enhancementTimes: [String: Double] {
+        averages(metrics.compactMap { metric in
+            guard let name = metric.aiEnhancementModelName, let seconds = metric.enhancementDuration else { return nil }
+            return (name, seconds)
+        })
+    }
+
+    private func averages(_ samples: [(String, Double)]) -> [String: Double] {
+        var sums: [String: (total: Double, count: Int)] = [:]
+        for (name, seconds) in samples where seconds > 0 {
+            sums[name, default: (0, 0)].total += seconds
+            sums[name, default: (0, 0)].count += 1
+        }
+        return sums.mapValues { $0.total / Double($0.count) }
+    }
 
     @State private var kind: Kind = .transcription
     @State private var transcriptionOrder: [String] = []
@@ -69,8 +106,8 @@ struct ModelFallbackChainSection: View {
             Spacer(minLength: 8)
 
             Picker("Model Order", selection: $kind) {
-                Text("Transcription").tag(Kind.transcription)
-                Text("AI Enhancement").tag(Kind.enhancement)
+                Text("Speech Recognition").tag(Kind.transcription)
+                Text("Text Improvement").tag(Kind.enhancement)
             }
             .pickerStyle(.segmented)
             .labelsHidden()
@@ -93,6 +130,15 @@ struct ModelFallbackChainSection: View {
 
             Spacer(minLength: 8)
 
+            if let onShowPerformance {
+                Button(action: onShowPerformance) {
+                    Label("Response Times", systemImage: "chart.bar.xaxis")
+                        .font(.system(size: 12, weight: .medium))
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(AppTheme.Accent.text)
+            }
+
             Text("Drag to change the order")
                 .font(.system(size: 12))
                 .foregroundStyle(AppTheme.Text.secondary)
@@ -112,6 +158,7 @@ struct ModelFallbackChainSection: View {
                     title: transcriptionTitle(name: name, model: model),
                     detail: transcriptionDetail(model),
                     skipReason: transcriptionSkipReason(model),
+                    responseTime: model.flatMap { transcriptionTimes[$0.displayName] },
                     canRemove: transcriptionOrder.count > 1,
                     onRemove: { removeTranscription(name) },
                     onMoveUp: index > 0 ? { moveTranscription(name, by: -1) } : nil,
@@ -259,6 +306,7 @@ struct ModelFallbackChainSection: View {
                     title: enhancementTitle(link),
                     detail: enhancementDetail(link),
                     skipReason: enhancementSkipReason(link),
+                    responseTime: link.model.flatMap { enhancementTimes[$0] },
                     canRemove: true,
                     onRemove: { removeEnhancement(link) },
                     onMoveUp: index > 0 ? { moveEnhancement(link, by: -1) } : nil,
@@ -502,6 +550,8 @@ private struct ChainLinkRow: View {
     let title: Text
     let detail: String
     let skipReason: String?
+    /// Average seconds this model took in recent sessions; nil until it has run.
+    var responseTime: Double? = nil
     var trailingNote: String? = nil
     var canRemove: Bool = false
     var onRemove: (() -> Void)? = nil
@@ -534,6 +584,13 @@ private struct ChainLinkRow: View {
             }
 
             Spacer(minLength: 8)
+
+            if let responseTime, skipReason == nil {
+                Text(verbatim: responseTime.formatted(.number.precision(.fractionLength(1))) + " s")
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(AppTheme.Text.secondary)
+                    .help("Average response time in your recent sessions")
+            }
 
             if let trailingNote {
                 Text(trailingNote)

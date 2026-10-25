@@ -107,6 +107,7 @@ struct WhisperModelCardView: View {
     private var actionSection: some View {
         HStack(spacing: 8) {
             if isDownloaded {
+                ModelOrderControl(modelName: model.name)
                 modelStatusPill("Downloaded", systemImage: "checkmark.circle")
             } else {
                 Button(action: downloadAction) {
@@ -183,6 +184,7 @@ struct ImportedWhisperModelCardView: View {
 
             HStack(spacing: 8) {
                 if isDownloaded {
+                    ModelOrderControl(modelName: model.name)
                     modelStatusPill("Imported", systemImage: "checkmark.circle")
                 }
 

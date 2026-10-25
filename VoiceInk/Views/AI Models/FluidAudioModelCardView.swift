@@ -122,6 +122,7 @@ struct FluidAudioModelCardView: View {
     private var actionSection: some View {
         HStack(spacing: 8) {
             if isDownloaded && !isDownloading {
+                ModelOrderControl(modelName: model.name)
                 modelStatusPill("Downloaded", systemImage: "checkmark.circle")
             } else {
                 Button(action: {

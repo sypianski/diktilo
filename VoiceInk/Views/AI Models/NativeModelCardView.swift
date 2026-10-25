@@ -72,6 +72,7 @@ struct NativeAppleModelCardView: View {
     
     private var actionSection: some View {
         HStack(spacing: 8) {
+            ModelOrderControl(modelName: model.name)
             modelStatusPill("Built in", systemImage: "checkmark.circle")
         }
     }

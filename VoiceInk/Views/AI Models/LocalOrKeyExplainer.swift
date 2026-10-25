@@ -92,10 +92,12 @@ struct LocalOrKeyExplainer: View {
     }
 }
 
-/// The explainer as the first card of AI Models: the choice everything else on
-/// that screen depends on, so it starts expanded; folding it is remembered.
+/// The explainer on AI Models, folded under one line. It opens by itself while
+/// there is no model that works yet (the person it's for), and stays closed
+/// for everyone else; opening or closing it by hand is not remembered.
 struct LocalOrKeyCard: View {
-    @AppStorage("ModelsLocalOrKeyExpanded") private var isExpanded = true
+    @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
+    @State private var isExpanded = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
@@ -107,8 +109,11 @@ struct LocalOrKeyCard: View {
                 .foregroundStyle(AppTheme.Text.primary)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.vertical, 12)
         .background(AppMaterialCardBackground(cornerRadius: AppTheme.Radius.card))
+        .onAppear {
+            isExpanded = transcriptionModelManager.usableModels.isEmpty
+        }
     }
 }
 

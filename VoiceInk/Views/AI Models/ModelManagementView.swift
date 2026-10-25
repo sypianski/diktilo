@@ -21,6 +21,29 @@ enum ModelFilter: String, CaseIterable, Identifiable {
     }
 }
 
+/// How the local catalogue is folded: by who makes the model.
+enum LocalModelFamily: Hashable {
+    case parakeet
+    case whisper
+    case apple
+
+    init(model: any TranscriptionModel) {
+        switch model.provider {
+        case .fluidAudio: self = .parakeet
+        case .whisper: self = .whisper
+        default: self = .apple
+        }
+    }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .parakeet: return "Parakeet and Nemotron"
+        case .whisper: return "Whisper"
+        case .apple: return "Apple Speech"
+        }
+    }
+}
+
 struct ModelManagementView: View {
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var whisperModelManager: WhisperModelManager
@@ -32,6 +55,8 @@ struct ModelManagementView: View {
 
     @State private var selectedFilter: ModelFilter = .local
     @State private var activePanel: ModelManagementPanel?
+    @State private var isShowingPerformance = false
+    @State private var expandedFamilies: Set<LocalModelFamily> = []
 
     @State private var isShowingDeleteAlert = false
     @State private var alertTitle = ""
@@ -90,7 +115,7 @@ struct ModelManagementView: View {
                 // the catalogue. Language, live text and paragraphs live in
                 // Recording; the per-Mac advisor only matters for local models.
                 VStack(alignment: .leading, spacing: 18) {
-                    ModelFallbackChainSection()
+                    ModelFallbackChainSection(onShowPerformance: { isShowingPerformance = true })
 
                     LocalOrKeyCard()
 
@@ -113,6 +138,10 @@ struct ModelManagementView: View {
             set: { if !$0 { closePanel() } }
         )) {
             modelPanelContent
+        }
+        .sheet(isPresented: $isShowingPerformance) {
+            ModelPerformancePanel(onClose: { isShowingPerformance = false })
+                .frame(width: 560, height: 520)
         }
         .alert(isPresented: $isShowingDeleteAlert) {
             Alert(
@@ -221,19 +250,37 @@ struct ModelManagementView: View {
                     }
                     activePanel = nil
                 }) {
-                    Text(filter.title)
-                        .font(.system(size: 14, weight: selectedFilter == filter ? .semibold : .medium))
-                        .foregroundColor(selectedFilter == filter ? .primary : .primary.opacity(0.7))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            AppMaterialCardBackground(isSelected: selectedFilter == filter, cornerRadius: 22)
-                        )
+                    HStack(spacing: 6) {
+                        Text(filter.title)
+                        countLabel(for: filter)
+                            .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            .foregroundColor(.secondary)
+                    }
+                    .font(.system(size: 14, weight: selectedFilter == filter ? .semibold : .medium))
+                    .foregroundColor(selectedFilter == filter ? .primary : .primary.opacity(0.7))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        AppMaterialCardBackground(isSelected: selectedFilter == filter, cornerRadius: 22)
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(.bottom, 8)
+    }
+
+    /// "14", "2 of 15", "1": what is in each tab before you open it.
+    private func countLabel(for filter: ModelFilter) -> Text {
+        switch filter {
+        case .local:
+            return Text(verbatim: "\(localModels.count)")
+        case .cloud:
+            let counts = CloudProviderManagementView.connectionCounts
+            return Text("\(counts.connected) of \(counts.total)")
+        case .custom:
+            return Text(verbatim: "\(customModelManager.customModels.count + customAIProviderManager.providers.count)")
+        }
     }
 
     private var settingsButton: some View {
@@ -254,27 +301,8 @@ struct ModelManagementView: View {
                 activePanel = nil
             })
 
-            ForEach(localModels, id: \.id) { model in
-                let isWarming = (model as? WhisperModel).map { whisperModel in
-                    warmupCoordinator.isWarming(modelNamed: whisperModel.name)
-                } ?? false
-
-                ModelCardView(
-                    model: model,
-                    fluidAudioModelManager: fluidAudioModelManager,
-                    isDownloaded: whisperModelManager.availableModels.contains { $0.name == model.name },
-                    downloadProgress: whisperModelManager.downloadProgress,
-                    modelURL: whisperModelManager.availableModels.first { $0.name == model.name }?.url,
-                    isWarming: isWarming,
-                    deleteAction: {
-                        confirmDeleteLocalModel(model)
-                    },
-                    downloadAction: {
-                        if let whisperModel = model as? WhisperModel {
-                            Task { await whisperModelManager.downloadModel(whisperModel) }
-                        }
-                    }
-                )
+            ForEach(localFamilies, id: \.family) { group in
+                familySection(group.family, models: group.models)
             }
 
             importLocalModelButton
@@ -283,6 +311,95 @@ struct ModelManagementView: View {
                 .environmentObject(aiService)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private enum LocalModelFamilyOrder {
+        static let all: [LocalModelFamily] = [.parakeet, .whisper, .apple]
+    }
+
+    /// The catalogue in families, in a fixed order, skipping empty ones.
+    private var localFamilies: [(family: LocalModelFamily, models: [any TranscriptionModel])] {
+        LocalModelFamilyOrder.all.compactMap { family in
+            let models = localModels.filter { LocalModelFamily(model: $0) == family }
+            return models.isEmpty ? nil : (family, models)
+        }
+    }
+
+    /// Folded families: the one holding the main model starts open, the rest are one click away.
+    private func openInitialFamily() {
+        guard expandedFamilies.isEmpty else { return }
+        let main = transcriptionModelManager.currentTranscriptionModel.map(LocalModelFamily.init(model:))
+        let first = localFamilies.first?.family
+        if let family = [main, first].compactMap({ $0 }).first(where: { family in
+            localFamilies.contains { $0.family == family }
+        }) {
+            expandedFamilies = [family]
+        }
+    }
+
+    @ViewBuilder
+    private func familySection(_ family: LocalModelFamily, models: [any TranscriptionModel]) -> some View {
+        let isExpanded = expandedFamilies.contains(family)
+
+        VStack(spacing: 12) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    if isExpanded { expandedFamilies.remove(family) } else { expandedFamilies.insert(family) }
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .semibold))
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                        .foregroundStyle(AppTheme.Text.secondary)
+
+                    Text(family.title)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(AppTheme.Text.primary)
+
+                    if models.count > 1 {
+                        Text(verbatim: "(\(models.count))")
+                            .font(.system(size: 13, design: .monospaced))
+                            .foregroundStyle(AppTheme.Text.secondary)
+                    }
+
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                ForEach(models, id: \.id) { model in
+                    localModelCard(model)
+                }
+            }
+        }
+        .onAppear(perform: openInitialFamily)
+    }
+
+    private func localModelCard(_ model: any TranscriptionModel) -> some View {
+        let isWarming = (model as? WhisperModel).map { whisperModel in
+            warmupCoordinator.isWarming(modelNamed: whisperModel.name)
+        } ?? false
+
+        return ModelCardView(
+            model: model,
+            fluidAudioModelManager: fluidAudioModelManager,
+            isDownloaded: whisperModelManager.availableModels.contains { $0.name == model.name },
+            downloadProgress: whisperModelManager.downloadProgress,
+            modelURL: whisperModelManager.availableModels.first { $0.name == model.name }?.url,
+            isWarming: isWarming,
+            deleteAction: {
+                confirmDeleteLocalModel(model)
+            },
+            downloadAction: {
+                if let whisperModel = model as? WhisperModel {
+                    Task { await whisperModelManager.downloadModel(whisperModel) }
+                }
+            }
+        )
     }
 
     private var importLocalModelButton: some View {

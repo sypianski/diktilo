@@ -23785,40 +23785,6 @@
         }
       }
     },
-    "Not connected": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht verbunden"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未连接"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nie połączono"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ne konektita"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No connectat"
-          }
-        }
-      }
-    },
     "Not connected to streaming transcription service": {
       "localizations": {
         "de": {
@@ -38924,40 +38890,6 @@
         }
       }
     },
-    "Recommended: %@": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zalecany: %@"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Empfohlen: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "推荐：%@"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rekomendata: %@"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recomanat: %@"
-          }
-        }
-      }
-    },
     "Alternative: %@. %@": {
       "localizations": {
         "pl": {
@@ -39022,40 +38954,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Configurar un model al núvol"
-          }
-        }
-      }
-    },
-    "You're using the recommended model": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Używasz zalecanego modelu"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Du nutzt das empfohlene Modell"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你正在使用推荐的模型"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vi uzas la rekomendatan modelon"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ja fas servir el model recomanat"
           }
         }
       }
@@ -41338,380 +41236,6 @@
         }
       }
     },
-    "One Key, Many Models": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jeden klucz, wiele modeli"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Schlüssel, viele Modelle"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一个密钥，多种模型"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unu ŝlosilo, multaj modeloj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Una clau, molts models"
-          }
-        }
-      }
-    },
-    "For AI enhancement an aggregator is the easiest choice: one key gives you Claude, GPT, Gemini or Llama, you pay in one place, and backup models need no extra accounts.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Do ulepszania AI najwygodniej połączyć agregator. Jednym kluczem wybierasz Claude, GPT, Gemini czy Llamę, płacisz w jednym miejscu, a modele zapasowe ustawisz bez zakładania kolejnych kont."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für die KI-Verbesserung ist ein Aggregator am einfachsten: Mit einem Schlüssel nutzt du Claude, GPT, Gemini oder Llama, bezahlst an einer Stelle und brauchst für Ersatzmodelle keine weiteren Konten."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "用于 AI 润色时，聚合服务最方便：一个密钥即可使用 Claude、GPT、Gemini 或 Llama，在一处付费，备用模型也无需另开账户。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Por AI-plibonigo agregatoro estas la plej facila elekto: unu ŝlosilo donas al vi Claude, GPT, Gemini aŭ Llama, vi pagas en unu loko, kaj rezervaj modeloj ne bezonas pliajn kontojn."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Per a la millora amb IA, un agregador és l'opció més fàcil: amb una sola clau tens Claude, GPT, Gemini o Llama, pagues en un sol lloc i els models de reserva no necessiten comptes addicionals."
-          }
-        }
-      }
-    },
-    "Models from all the major vendors under one key, with the price shown next to each model.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modele wszystkich dużych dostawców pod jednym kluczem, z ceną widoczną przy każdym modelu."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modelle aller großen Anbieter unter einem Schlüssel, mit Preis bei jedem Modell."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一个密钥即可使用各大厂商的模型，每个模型都标明价格。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modeloj de ĉiuj ĉefaj vendistoj sub unu ŝlosilo, kun la prezo montrata apud ĉiu modelo."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Models de tots els grans proveïdors amb una sola clau, amb el preu indicat al costat de cada model."
-          }
-        }
-      }
-    },
-    "One key for many vendors, with a cost dashboard and spending limits.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jeden klucz do wielu dostawców, z panelem kosztów i limitami wydatków."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Schlüssel für viele Anbieter, mit Kostenübersicht und Ausgabenlimits."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一个密钥对接多家厂商，附带费用面板和支出上限。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unu ŝlosilo por multaj vendistoj, kun kosta panelo kaj elspezlimoj."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Una clau per a molts proveïdors, amb un tauler de costos i límits de despesa."
-          }
-        }
-      }
-    },
-    "model router": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "router modeli"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modell-Router"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模型路由"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "modela enkursigilo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "encaminador de models"
-          }
-        }
-      }
-    },
-    "Models: %lld": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modele: %lld"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modelle: %lld"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模型：%lld"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modeloj: %lld"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Models: %lld"
-          }
-        }
-      }
-    },
-    "Choose Models": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wybierz modele"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modelle auswählen"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择模型"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Elekti modelojn"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Triar models"
-          }
-        }
-      }
-    },
-    "Transcription in the Cloud": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transkrypcja w chmurze"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transkription in der Cloud"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "云端转写"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transskribo en la nubo"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transcripció al núvol"
-          }
-        }
-      }
-    },
-    "Aggregators don't turn speech into text.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agregatory nie zamieniają mowy na tekst."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aggregatoren wandeln keine Sprache in Text um."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "聚合服务不能将语音转为文字。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agregatoroj ne konvertas parolon al teksto."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Els agregadors no converteixen la veu en text."
-          }
-        }
-      }
-    },
-    "Individual AI Providers": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pojedynczy dostawcy AI"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einzelne KI-Anbieter"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "单独的 AI 提供商"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unuopaj AI-provizantoj"
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Proveïdors d'IA individuals"
-          }
-        }
-      }
-    },
-    "Groq, Gemini and Mistral also enhance text; they're listed above.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Groq, Gemini i Mistral też ulepszają tekst; znajdziesz ich wyżej."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Groq, Gemini und Mistral verbessern auch Text; sie stehen weiter oben."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Groq、Gemini 和 Mistral 也能润色文本，见上方列表。"
-          }
-        },
-        "eo": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Groq, Gemini kaj Mistral ankaŭ plibonigas tekston; ili estas listigitaj supre."
-          }
-        },
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Groq, Gemini i Mistral també milloren el text; els trobaràs més amunt."
-          }
-        }
-      }
-    },
     "Show All": {
       "localizations": {
         "pl": {
@@ -43334,6 +42858,138 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Use as Main": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użyj jako głównego"
+          }
+        }
+      }
+    },
+    "%lld in order": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld w kolejności"
+          }
+        }
+      }
+    },
+    "In use": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W użyciu"
+          }
+        }
+      }
+    },
+    "Response Times": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czasy odpowiedzi"
+          }
+        }
+      }
+    },
+    "Average response time in your recent sessions": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Średni czas odpowiedzi w ostatnich sesjach"
+          }
+        }
+      }
+    },
+    "Speech Recognition": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpoznawanie mowy"
+          }
+        }
+      }
+    },
+    "Text Improvement": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprawianie tekstu"
+          }
+        }
+      }
+    },
+    "Available": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostępni"
+          }
+        }
+      }
+    },
+    "Manage": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zarządzaj"
+          }
+        }
+      }
+    },
+    "One key, many models": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeden klucz, wiele modeli"
+          }
+        }
+      }
+    },
+    "Parakeet and Nemotron": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet i Nemotron"
+          }
+        }
+      }
+    },
+    "%lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld z %lld"
           }
         }
       }

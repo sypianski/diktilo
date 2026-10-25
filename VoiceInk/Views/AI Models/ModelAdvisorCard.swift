@@ -38,57 +38,39 @@ struct ModelAdvisorCard: View {
         transcriptionModelManager.usableModels.contains { $0.name == recommendation.modelName }
     }
 
+    /// The details that used to fill the card; now in the tooltip.
+    private var details: String {
+        var lines = [ModelAdvisor.hardwareSummary(hardware), languagesLine, recommendation.reason]
+        if let alternative = recommendation.alternativeModelName,
+           let alternativeReason = recommendation.alternativeReason {
+            lines.append(String(format: String(localized: "Alternative: %@. %@"), ModelAdvisor.displayName(forModelNamed: alternative), alternativeReason))
+        }
+        return lines.joined(separator: "\n")
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Model for This Mac")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(AppTheme.Text.primary)
+        HStack(spacing: 10) {
+            Image(systemName: "sparkle")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(AppTheme.Accent.text)
 
-                Text(ModelAdvisor.hardwareSummary(hardware))
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundStyle(AppTheme.Text.secondary)
+            Text(String(format: String(localized: "Recommended for this Mac: %@"), ModelAdvisor.displayName(forModelNamed: recommendation.modelName)))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AppTheme.Text.primary)
+                .lineLimit(1)
+                .help(details)
 
-                Text(languagesLine)
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundStyle(AppTheme.Text.secondary)
+            Spacer(minLength: 8)
+
+            action
+
+            if recommendation.suggestsCloud, let onShowCloudProviders {
+                Button("Set Up a Cloud Model", action: onShowCloudProviders)
+                    .controlSize(.small)
             }
-            .padding(.bottom, 10)
-
-            PerforationRule()
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text(String(format: String(localized: "Recommended: %@"), ModelAdvisor.displayName(forModelNamed: recommendation.modelName)))
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AppTheme.Text.primary)
-
-                Text(recommendation.reason)
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.Text.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                if let alternative = recommendation.alternativeModelName,
-                   let alternativeReason = recommendation.alternativeReason {
-                    Text(String(format: String(localized: "Alternative: %@. %@"), ModelAdvisor.displayName(forModelNamed: alternative), alternativeReason))
-                        .font(.system(size: 12))
-                        .foregroundStyle(AppTheme.Text.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                HStack(spacing: 10) {
-                    action
-
-                    if recommendation.suggestsCloud, let onShowCloudProviders {
-                        Button("Set Up a Cloud Model", action: onShowCloudProviders)
-                            .controlSize(.small)
-                    }
-                }
-                .padding(.top, 4)
-            }
-            .padding(.top, 10)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.vertical, 10)
         .background(AppMaterialCardBackground(cornerRadius: AppTheme.Radius.card))
         .onAppear { hardware = MacHardwareProfile.current() }
         .onReceive(NotificationCenter.default.publisher(for: .dictationLanguagesDidChange)) { _ in
@@ -101,7 +83,7 @@ struct ModelAdvisorCard: View {
     @ViewBuilder
     private var action: some View {
         if isCurrent {
-            Label("You're using the recommended model", systemImage: "checkmark.circle.fill")
+            Label("In use", systemImage: "checkmark.circle.fill")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(AppTheme.Text.primary)
         } else if let fraction = downloadFraction {

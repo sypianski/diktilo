@@ -1,25 +1,42 @@
 import SwiftUI
 import AppKit
 
-/// Cloud tab of AI Models: aggregators first (one key, many models, the easy
-/// path for AI enhancement), then speech-to-text providers, then the
-/// enhancement-only vendors. Every row and card opens the provider panel.
+/// Cloud tab of AI Models: providers you have connected first, then the ones
+/// you can still connect. Every provider is the same kind of row, whatever it
+/// does (aggregator, speech to text, enhancement); the row says what it offers.
 struct CloudProviderManagementView: View {
     let selectedProviderID: String?
     let onSelectProvider: (ProviderDescriptor) -> Void
 
-    @State private var showsAllTranscription = false
+    @State private var showsAllAvailable = false
 
     private static let collapsedCount = 4
 
-    private var aggregatorDescriptors: [ProviderDescriptor] {
+    /// Aggregators first (one key, the easy path for AI enhancement), then
+    /// speech-to-text providers, then the enhancement-only vendors. Vendors that
+    /// also enhance text (Groq, Gemini, Mistral) appear once, with both abilities.
+    static var allDescriptors: [ProviderDescriptor] {
+        var seen = Set<String>()
+        return (aggregatorDescriptors + transcriptionDescriptors + enhancementOnlyDescriptors)
+            .filter { seen.insert($0.id).inserted }
+    }
+
+    /// "Cloud 2 of 15" in the tab switcher.
+    static var connectionCounts: (connected: Int, total: Int) {
+        let all = allDescriptors
+        return (all.filter(isConnected).count, all.count)
+    }
+
+    static func isConnected(_ descriptor: ProviderDescriptor) -> Bool {
+        APIKeyManager.shared.hasAPIKey(forProvider: descriptor.providerKey)
+    }
+
+    private static var aggregatorDescriptors: [ProviderDescriptor] {
         AIProvider.allCases.filter(\.isAggregator).map { descriptor(for: $0) }
     }
 
-    /// Speech-to-text providers, connected ones first. Vendors that also
-    /// enhance text (Groq, Gemini, Mistral) live here with both abilities.
-    private var transcriptionDescriptors: [ProviderDescriptor] {
-        let descriptors = CloudProviderRegistry.allProviders.map { cloudProvider in
+    private static var transcriptionDescriptors: [ProviderDescriptor] {
+        CloudProviderRegistry.allProviders.map { cloudProvider in
             ProviderDescriptor(
                 displayName: cloudProvider.providerKey,
                 providerKey: cloudProvider.providerKey,
@@ -29,15 +46,9 @@ struct CloudProviderManagementView: View {
                 cloudProvider: cloudProvider
             )
         }
-        return descriptors.enumerated().sorted { first, second in
-            let firstConnected = APIKeyManager.shared.hasAPIKey(forProvider: first.element.providerKey)
-            let secondConnected = APIKeyManager.shared.hasAPIKey(forProvider: second.element.providerKey)
-            if firstConnected != secondConnected { return firstConnected }
-            return first.offset < second.offset
-        }.map(\.element)
     }
 
-    private var enhancementOnlyDescriptors: [ProviderDescriptor] {
+    private static var enhancementOnlyDescriptors: [ProviderDescriptor] {
         let preferredOrder: [AIProvider] = [.openAI, .anthropic, .cerebras]
         return AIProvider.allCases
             .filter { provider in
@@ -49,22 +60,16 @@ struct CloudProviderManagementView: View {
     }
 
     var body: some View {
+        let all = Self.allDescriptors
+        let connected = all.filter(Self.isConnected)
+        let available = all.filter { !Self.isConnected($0) }
+
         VStack(alignment: .leading, spacing: 22) {
-            aggregatorSection
+            if !connected.isEmpty {
+                providerGroup(title: "Connected", descriptors: connected, showsAll: nil)
+            }
 
-            providerGroup(
-                title: "Transcription in the Cloud",
-                note: "Aggregators don't turn speech into text.",
-                descriptors: transcriptionDescriptors,
-                showsAll: $showsAllTranscription
-            )
-
-            providerGroup(
-                title: "Individual AI Providers",
-                note: "Groq, Gemini and Mistral also enhance text; they're listed above.",
-                descriptors: enhancementOnlyDescriptors,
-                showsAll: nil
-            )
+            providerGroup(title: "Available", descriptors: available, showsAll: $showsAllAvailable)
 
             Text("Connect providers here, then choose a model in each mode (Keyboard Shortcuts).")
                 .font(.system(size: 12))
@@ -72,43 +77,9 @@ struct CloudProviderManagementView: View {
         }
     }
 
-    private var aggregatorSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("One Key, Many Models")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(AppTheme.Text.primary)
-                Text("For AI enhancement an aggregator is the easiest choice: one key gives you Claude, GPT, Gemini or Llama, you pay in one place, and backup models need no extra accounts.")
-                    .font(.system(size: 13))
-                    .foregroundStyle(AppTheme.Text.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            HStack(alignment: .top, spacing: 12) {
-                ForEach(aggregatorDescriptors) { descriptor in
-                    AggregatorCard(
-                        descriptor: descriptor,
-                        isSelected: selectedProviderID == descriptor.id,
-                        onSelect: { onSelectProvider(descriptor) }
-                    )
-                }
-            }
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(AppTheme.Palette.raised)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(AppTheme.Palette.ink, lineWidth: 1.5)
-        )
-    }
-
     @ViewBuilder
     private func providerGroup(
         title: LocalizedStringKey,
-        note: LocalizedStringKey,
         descriptors: [ProviderDescriptor],
         showsAll: Binding<Bool>?
     ) -> some View {
@@ -118,14 +89,9 @@ struct CloudProviderManagementView: View {
         let hidden = descriptors.dropFirst(visible.count)
 
         VStack(alignment: .leading, spacing: 8) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(AppTheme.Text.primary)
-                Text(note)
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.Text.secondary)
-            }
+            Text(title)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(AppTheme.Text.primary)
 
             VStack(spacing: 0) {
                 ForEach(Array(visible.enumerated()), id: \.element.id) { index, descriptor in
@@ -167,7 +133,7 @@ struct CloudProviderManagementView: View {
         }
     }
 
-    private func descriptor(for aiProvider: AIProvider) -> ProviderDescriptor {
+    private static func descriptor(for aiProvider: AIProvider) -> ProviderDescriptor {
         ProviderDescriptor(
             displayName: aiProvider.rawValue,
             providerKey: aiProvider.rawValue,
@@ -176,7 +142,7 @@ struct CloudProviderManagementView: View {
         )
     }
 
-    private func matchingCloudProvider(for aiProvider: AIProvider) -> (any CloudProvider)? {
+    private static func matchingCloudProvider(for aiProvider: AIProvider) -> (any CloudProvider)? {
         CloudProviderRegistry.allProviders.first {
             $0.providerKey.caseInsensitiveCompare(aiProvider.rawValue) == .orderedSame
         }
@@ -276,103 +242,6 @@ struct ProviderDescriptor: Identifiable {
     }
 }
 
-/// A bigger card for an aggregator: what it gives you and one clear action.
-private struct AggregatorCard: View {
-    @EnvironmentObject private var aiService: AIService
-
-    let descriptor: ProviderDescriptor
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    private var isConfigured: Bool {
-        APIKeyManager.shared.hasAPIKey(forProvider: descriptor.providerKey)
-    }
-
-    private var modelCountText: String {
-        let count = descriptor.aiProvider.map { aiService.availableModels(for: $0).count } ?? 0
-        guard count > 0 else { return String(localized: "model router") }
-        return String(format: String(localized: "Models: %lld"), Int64(count))
-    }
-
-    private var summary: LocalizedStringKey {
-        descriptor.aiProvider == .requesty
-            ? "One key for many vendors, with a cost dashboard and spending limits."
-            : "Models from all the major vendors under one key, with the price shown next to each model."
-    }
-
-    var body: some View {
-        Button(action: onSelect) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 10) {
-                    ProviderBrandIcon(
-                        descriptor: descriptor,
-                        fallbackSystemImage: "arrow.triangle.branch",
-                        isSelected: isSelected,
-                        size: 34,
-                        iconSize: 16
-                    )
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(descriptor.displayName)
-                            .font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(AppTheme.Text.primary)
-                        Text(modelCountText)
-                            .font(.system(size: 11, design: .monospaced))
-                            .foregroundStyle(AppTheme.Text.secondary)
-                    }
-                }
-
-                Text(summary)
-                    .font(.system(size: 12.5))
-                    .foregroundStyle(AppTheme.Text.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                HStack {
-                    ProviderStatusBadge(
-                        title: isConfigured ? "Connected" : "Not connected",
-                        color: isConfigured ? AppTheme.Status.positive : AppTheme.Text.secondary
-                    )
-                    Spacer(minLength: 8)
-                    actionLabel
-                }
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isSelected ? AppTheme.Palette.chip : AppTheme.Palette.paper)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(AppTheme.Palette.rule, lineWidth: 1)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        }
-        .buttonStyle(.plain)
-        .accessibilityHint(isConfigured ? Text("Choose Models") : Text("Connect"))
-    }
-
-    /// Looks like a button; the whole card is the button, so it can't nest one.
-    @ViewBuilder
-    private var actionLabel: some View {
-        if isConfigured {
-            Text("Choose Models")
-                .font(.system(size: 12.5, weight: .semibold))
-                .foregroundStyle(AppTheme.Text.primary)
-                .padding(.horizontal, 14)
-                .frame(height: 30)
-                .overlay(Capsule().strokeBorder(AppTheme.Palette.ink, lineWidth: 1.5))
-        } else {
-            Text("Connect")
-                .font(.system(size: 12.5, weight: .semibold))
-                .foregroundStyle(AppTheme.Palette.onAmber)
-                .padding(.horizontal, 14)
-                .frame(height: 30)
-                .background(Capsule().fill(AppTheme.Palette.amber))
-        }
-    }
-}
-
 /// One line of a provider list; rows of a group share one card, split by
 /// perforation.
 private struct CompactProviderRow: View {
@@ -394,6 +263,10 @@ private struct CompactProviderRow: View {
 
     private var capabilitySummary: String {
         var parts: [String] = []
+
+        if descriptor.aiProvider?.isAggregator == true {
+            parts.append(String(localized: "One key, many models"))
+        }
 
         let transcriptionCount = descriptor.transcriptionModels.count
         if transcriptionCount > 0 {
@@ -435,14 +308,7 @@ private struct CompactProviderRow: View {
 
                 Spacer(minLength: 8)
 
-                ProviderStatusBadge(
-                    title: isConfigured ? "Connected" : "Not connected",
-                    color: isConfigured ? AppTheme.Status.positive : AppTheme.Text.secondary
-                )
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(AppTheme.Text.secondary)
+                actionLabel
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
@@ -450,5 +316,25 @@ private struct CompactProviderRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    /// Looks like a button; the whole row is the button, so it can't nest one.
+    @ViewBuilder
+    private var actionLabel: some View {
+        if isConfigured {
+            Text("Manage")
+                .font(.system(size: 12.5, weight: .semibold))
+                .foregroundStyle(AppTheme.Text.primary)
+                .padding(.horizontal, 14)
+                .frame(height: 28)
+                .overlay(Capsule().strokeBorder(AppTheme.Palette.ink, lineWidth: 1.5))
+        } else {
+            Text("Connect")
+                .font(.system(size: 12.5, weight: .semibold))
+                .foregroundStyle(AppTheme.Palette.onAmber)
+                .padding(.horizontal, 14)
+                .frame(height: 28)
+                .background(Capsule().fill(AppTheme.Palette.amber))
+        }
     }
 }
