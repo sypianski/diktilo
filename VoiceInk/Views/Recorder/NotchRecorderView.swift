@@ -22,6 +22,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @ObservedObject private var messageCenter = RecorderStatusMessageCenter.shared
+    @State private var showsFullConversation = false
 
     // MARK: - Display State
 
@@ -72,10 +73,12 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     // the pill's edge.
     private let recordingSideExpansion: CGFloat = 124
     private let transcriptSideExpansion: CGFloat = 124
-    private let assistantSideExpansion: CGFloat = 230
+    private let assistantSideExpansion: CGFloat = 140
     private let activeHeightBonus: CGFloat = 6
-    private let transcriptPanelHeight: CGFloat = 57
-    private let assistantPanelHeight: CGFloat = 320
+    // Three lines of live text plus the rule above them.
+    private let transcriptPanelHeight: CGFloat = LiveTranscriptView.threeLinesHeight + 1.5
+    private let compactAssistantHeight: CGFloat = 220
+    private let fullAssistantHeight: CGFloat = 320
     // The band plus the perforated rule above it; less clips the chips.
     private let hudPanelHeight: CGFloat = RecorderHUDMetrics.bandHeight + 1.5
     /// Least clear space between content and the pill's visible edge.
@@ -83,15 +86,19 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
 
     private var mainRowHeight: CGFloat { notchHeight + activeHeightBonus }
 
+    private var assistantPanelHeight: CGFloat {
+        showsFullConversation ? fullAssistantHeight : compactAssistantHeight
+    }
+
     // HUD strip appears only while actively recording (finish-destination
     // shortcuts are meaningful then), OR whenever a status message is active.
     // A status message wins even when the HUD toggle is off. Matches
     // MiniRecorderView: .active also covers .transcribing/.enhancing, so gate
-    // the hint on the raw recording state, not displayState.
+    // the hint on the raw recording state, not displayState. The hints stay
+    // under the live text rather than giving way to it.
     private var shouldShowHUD: Bool {
         let hasMsg = messageCenter.current != nil
-        let inNonAssistantState = displayState != .assistant && displayState != .liveText
-        return inNonAssistantState && (
+        return displayState != .assistant && (
             (destinationHUDEnabled && stateProvider.recordingState == .recording)
             || hasMsg
         )
@@ -113,7 +120,7 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         switch displayState {
         case .collapsed: return 0
         case .active:    base = mainRowHeight
-        case .liveText:  return mainRowHeight + transcriptPanelHeight
+        case .liveText:  base = mainRowHeight + transcriptPanelHeight
         case .assistant: return mainRowHeight + assistantPanelHeight
         }
         return base + (shouldShowHUD ? hudPanelHeight : 0)
@@ -173,6 +180,10 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         }
         .animation(pillAnimation, value: displayState)
         .animation(expandAnimation, value: shouldShowHUD)
+        .animation(expandAnimation, value: showsFullConversation)
+        .onChange(of: assistantSession.isVisible) {
+            if !assistantSession.isVisible { showsFullConversation = false }
+        }
     }
 
     // MARK: - Pill
@@ -180,8 +191,8 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private var pill: some View {
         VStack(spacing: 0) {
             mainRow
-            hudPanel
             liveTextPanel
+            hudPanel
             assistantPanel
         }
         .frame(width: pillWidth, height: pillHeight)
@@ -287,6 +298,8 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 AssistantPanelView(
                     session: assistantSession,
                     liveFollowUpText: liveAssistantFollowUpText,
+                    showsFullConversation: $showsFullConversation,
+                    height: assistantPanelHeight,
                     onSend: onAssistantFollowUp
                 )
             }

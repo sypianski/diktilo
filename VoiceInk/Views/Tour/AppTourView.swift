@@ -350,7 +350,7 @@ private struct RecorderBarStage: View {
 
             HStack(spacing: 6) {
                 ForEach(FinishDestinationBindings.hudItems().prefix(3)) { item in
-                    DestinationChip(item: item)
+                    DestinationChip(label: item.label, shortcut: item.shortcutDisplay)
                         .fixedSize()
                 }
             }

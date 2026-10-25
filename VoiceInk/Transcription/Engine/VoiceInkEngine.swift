@@ -93,6 +93,8 @@ class VoiceInkEngine: NSObject, ObservableObject {
     }
 
     @Published var recordingState: RecordingState = .idle
+    /// When the current recording began; the recorder panel counts up from it.
+    @Published var recordingStartedAt: Date?
     @Published var shouldCancelRecording = false
     @Published var partialTranscript: String = ""
     var currentSession: TranscriptionSession?
@@ -288,6 +290,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
                                 return
                             }
 
+                            self.recordingStartedAt = Date()
                             self.recordingState = .recording
 
                             await activeModeTask.value

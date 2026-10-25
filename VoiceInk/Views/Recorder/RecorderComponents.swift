@@ -117,6 +117,8 @@ struct RecorderToggleButton: View {
 
 struct RecorderRecordButton: View {
     let recordingState: RecordingState
+    /// Mini panel only: a capsule that says "Record" / "Stop" instead of the bare mark.
+    var showsLabel = false
     let action: () -> Void
     @Environment(\.recorderSurface) private var surface
 
@@ -150,20 +152,56 @@ struct RecorderRecordButton: View {
         .accessibilityLabel(Text(accessibilityLabel))
     }
 
+    @ViewBuilder
     private var buttonFace: some View {
-        ZStack {
-            Circle()
-                .fill(colors.surface)
-                .overlay(
-                    Circle()
-                        .strokeBorder(colors.border, lineWidth: colors.borderWidth)
-                )
+        if showsLabel {
+            labeledFace
+        } else {
+            ZStack {
+                Circle()
+                    .fill(colors.surface)
+                    .overlay(
+                        Circle()
+                            .strokeBorder(colors.border, lineWidth: colors.borderWidth)
+                    )
 
-            stateMark
+                stateMark
+            }
+            .frame(width: 21, height: 21)
+            .contentShape(Circle())
+            .animation(.easeOut(duration: 0.16), value: visualState)
         }
-        .frame(width: 21, height: 21)
-        .contentShape(Circle())
+    }
+
+    private var labeledFace: some View {
+        HStack(spacing: 6) {
+            stateMark
+                .frame(width: 12, height: 12)
+
+            if let label = faceLabel {
+                Text(label)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(colors.mark)
+                    .lineLimit(1)
+            }
+        }
+        .padding(.horizontal, 10)
+        .frame(minWidth: 52, minHeight: 26)
+        .background(
+            Capsule()
+                .fill(colors.surface)
+                .overlay(Capsule().strokeBorder(colors.border, lineWidth: colors.borderWidth))
+        )
+        .contentShape(Capsule())
         .animation(.easeOut(duration: 0.16), value: visualState)
+    }
+
+    private var faceLabel: String? {
+        switch visualState {
+        case .ready:      return String(localized: "Record")
+        case .recording:  return String(localized: "Stop")
+        case .processing: return nil
+        }
     }
 
     private var colors: StateColors {
@@ -307,49 +345,6 @@ struct ProcessingIndicator: View {
     }
 }
 
-// MARK: - Progress Dot Animation
-
-struct ProgressAnimation: View {
-    let color: Color
-    let animationSpeed: Double
-
-    private let dotCount = 5
-    private let dotSize: CGFloat = 3
-    private let dotSpacing: CGFloat = 2
-
-    @State private var currentDot = 0
-    @State private var timer: Timer?
-
-    init(color: Color = .white, animationSpeed: Double = 0.3) {
-        self.color = color
-        self.animationSpeed = animationSpeed
-    }
-
-    var body: some View {
-        HStack(spacing: dotSpacing) {
-            ForEach(0..<dotCount, id: \.self) { index in
-                RoundedRectangle(cornerRadius: dotSize / 2)
-                    .fill(color.opacity(index <= currentDot ? 0.85 : 0.25))
-                    .frame(width: dotSize, height: dotSize)
-            }
-        }
-        .onAppear { startAnimation() }
-        .onDisappear {
-            timer?.invalidate()
-            timer = nil
-        }
-    }
-
-    private func startAnimation() {
-        timer?.invalidate()
-        currentDot = 0
-        timer = Timer.scheduledTimer(withTimeInterval: animationSpeed, repeats: true) { _ in
-            currentDot = (currentDot + 1) % (dotCount + 2)
-            if currentDot > dotCount { currentDot = -1 }
-        }
-    }
-}
-
 // MARK: - Mode Button
 
 struct RecorderModeButton: View {
@@ -388,7 +383,7 @@ struct RecorderModeButton: View {
             syncPopoverVisibility()
         }
         .popover(isPresented: $isPopoverPresented, arrowEdge: .bottom) {
-            OutputProfilePopover()
+            OutputProfilePopover(surface: surface, showsShortcutNumbers: true)
                 .onHover {
                     isHoveringPopover = $0
                     syncPopoverVisibility()
@@ -425,9 +420,10 @@ struct LiveTranscriptView: View {
 
     // Grow with the spoken text (panel is bottom-anchored, so height grows
     // upward) up to a cap, then scroll. Keeps early lines visible instead of
-    // scrolling them out of a fixed-height window. A fixed-height host (the
-    // notch) passes its own height as the cap, or it would crop the text.
-    var maxHeight: CGFloat = 220
+    // scrolling them out of a fixed-height window. Capped at three lines in
+    // both panels: older lines fade out at the top.
+    static let threeLinesHeight: CGFloat = 68
+    var maxHeight: CGFloat = LiveTranscriptView.threeLinesHeight
     private let minHeight: CGFloat = 30
     @State private var contentHeight: CGFloat = 0
 
@@ -479,21 +475,33 @@ struct RecorderStatusDisplay: View {
     let currentState: RecordingState
     let audioMeter: AudioMeter
     let menuBarHeight: CGFloat?
+    /// The mini panel prints the processing stage in its bar instead.
+    let showsProcessingText: Bool
     @Environment(\.recorderSurface) private var surface
 
-    init(currentState: RecordingState, audioMeter: AudioMeter, menuBarHeight: CGFloat? = nil) {
+    init(
+        currentState: RecordingState,
+        audioMeter: AudioMeter,
+        menuBarHeight: CGFloat? = nil,
+        showsProcessingText: Bool = true
+    ) {
         self.currentState = currentState
         self.audioMeter = audioMeter
         self.menuBarHeight = menuBarHeight
+        self.showsProcessingText = showsProcessingText
     }
 
     var body: some View {
         let palette = RecorderPalette(surface)
         Group {
-            if currentState == .enhancing {
-                ProcessingStatusDisplay(mode: .enhancing, color: palette.text(notch: 1)).transition(.opacity)
-            } else if currentState == .transcribing {
-                ProcessingStatusDisplay(mode: .transcribing, color: palette.text(notch: 1)).transition(.opacity)
+            if showsProcessingText, let text = RecorderProcessingLabel.text(for: currentState) {
+                Text(text)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(palette.text(notch: 1))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(height: 28)
+                    .transition(.opacity)
             } else if currentState == .recording {
                 AudioVisualizer(audioMeter: audioMeter, color: palette.waveform, isActive: true)
                     .scaleEffect(y: menuBarHeight != nil ? min(1.0, (menuBarHeight! - 8) / 25) : 1.0, anchor: .center)
@@ -508,11 +516,93 @@ struct RecorderStatusDisplay: View {
     }
 }
 
+// MARK: - Processing label
+
+/// "Enhancing → Paste": the running stage and where the text is headed.
+enum RecorderProcessingLabel {
+    @MainActor
+    static func text(for state: RecordingState) -> String? {
+        let stage: String
+        switch state {
+        case .transcribing: stage = String(localized: "Transcribing")
+        case .enhancing:    stage = String(localized: "Enhancing")
+        default:            return nil
+        }
+        guard let target = OutputProfileManager.shared.currentEffectiveConfiguration?.outputMode.recorderTargetName else {
+            return stage
+        }
+        return "\(stage) → \(target)"
+    }
+}
+
+extension OutputMode {
+    /// Short destination name for the recorder's one-line status.
+    var recorderTargetName: String {
+        switch self {
+        case .paste:         return String(localized: "Paste")
+        case .copy:          return String(localized: "Copy")
+        case .respond:       return String(localized: "Respond")
+        case .customCommand: return String(localized: "Custom Command")
+        case .saveTarget:    return String(localized: "Save to Target")
+        }
+    }
+}
+
+// MARK: - Mode name and time (mini panel bar)
+
+struct RecorderModeStatusLabel: View {
+    let recordingState: RecordingState
+    let startedAt: Date?
+    @ObservedObject private var modeManager = OutputProfileManager.shared
+    @Environment(\.recorderSurface) private var surface
+
+    private var palette: RecorderPalette { RecorderPalette(surface) }
+    private var mode: OutputProfile? { modeManager.currentEffectiveConfiguration }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(mode?.name ?? "")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(palette.text(notch: 1))
+                .lineLimit(1)
+
+            detail
+                .font(.system(size: 11))
+                .foregroundColor(palette.secondaryText(notch: 0.7))
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+        }
+    }
+
+    @ViewBuilder
+    private var detail: some View {
+        if recordingState == .recording, let startedAt {
+            TimelineView(.periodic(from: startedAt, by: 1)) { context in
+                Text(Self.clock(context.date.timeIntervalSince(startedAt)))
+                    .monospacedDigit()
+            }
+        } else if let processing = RecorderProcessingLabel.text(for: recordingState) {
+            Text(processing)
+        } else if let mode {
+            Text(mode.outputMode.recorderTargetName)
+        }
+    }
+
+    private static func clock(_ interval: TimeInterval) -> String {
+        let total = max(0, Int(interval))
+        return String(format: "%d:%02d", total / 60, total % 60)
+    }
+}
+
 // MARK: - Assistant Response Panel
 
 struct AssistantPanelView: View {
     @ObservedObject var session: AssistantSession
     let liveFollowUpText: String
+    /// Compact (last answer only) or the whole conversation; the host owns it
+    /// because the pill's height follows.
+    @Binding var showsFullConversation: Bool
+    let height: CGFloat
     let onSend: (String) -> Void
 
     @State private var draftMessage = ""
@@ -538,11 +628,14 @@ struct AssistantPanelView: View {
     var body: some View {
         VStack(spacing: 8) {
             messageList
+            if session.messages.count > 1 {
+                conversationToggle
+            }
             followUpRow
         }
         .padding(.horizontal, horizontalPadding)
         .padding(.vertical, 10)
-        .frame(height: 320)
+        .frame(height: height)
         .onAppear(perform: focusFollowUpFieldIfAvailable)
         .onChange(of: session.phase) {
             focusFollowUpFieldIfAvailable()
@@ -556,11 +649,36 @@ struct AssistantPanelView: View {
         }.joined(separator: "\n\n")
     }
 
+    /// Messages on screen: everything, or only the latest answer.
+    private var visibleMessages: [AssistantDisplayMessage] {
+        if showsFullConversation { return session.messages }
+        return session.messages.last(where: { $0.role == .assistant }).map { [$0] } ?? []
+    }
+
+    private var conversationToggle: some View {
+        Button {
+            showsFullConversation.toggle()
+        } label: {
+            HStack(spacing: 4) {
+                Text(showsFullConversation
+                     ? String(localized: "Hide conversation")
+                     : String(format: String(localized: "Show conversation (%lld)"), session.messages.count))
+                Image(systemName: showsFullConversation ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 8, weight: .semibold))
+            }
+            .font(.system(size: 11, weight: .medium))
+            .foregroundColor(palette.secondaryText(notch: 0.7))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
     private var messageList: some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
-                    ForEach(session.messages) { message in
+                    ForEach(visibleMessages) { message in
                         AssistantMessageBubble(message: message)
                             .id(message.id)
                     }
@@ -577,7 +695,7 @@ struct AssistantPanelView: View {
                 }
                 .padding(.vertical, 2)
                 .overlay(alignment: .topLeading) {
-                    if !session.messages.isEmpty {
+                    if showsFullConversation, !session.messages.isEmpty {
                         CopyIconButton(textToCopy: fullConversationText)
                             .scaleEffect(0.72)
                     }

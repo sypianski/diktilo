@@ -10,13 +10,17 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     @AppStorage(RecorderDisplaySettingsKeys.showLiveTranscript) private var showLiveTranscript = true
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @ObservedObject private var messageCenter = RecorderStatusMessageCenter.shared
+    @State private var showsFullConversation = false
 
     // MARK: - Layout Constants
 
     private let controlBarHeight: CGFloat = 40
-    private let compactWidth: CGFloat = 184
+    // Room for the Record label, mode name with time, waveform and mode icon.
+    private let compactWidth: CGFloat = 344
     private let expandedWidth: CGFloat = 460
-    private let assistantWidth: CGFloat = 520
+    private let assistantWidth: CGFloat = 460
+    private let compactAssistantHeight: CGFloat = 220
+    private let fullAssistantHeight: CGFloat = 320
     private let compactCornerRadius: CGFloat = 20
     private let expandedCornerRadius: CGFloat = 14
     // Room under the bar so its shadow isn't cut by the bottom of the host window.
@@ -61,17 +65,25 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 } else {
                     RecorderRecordButton(
                         recordingState: stateProvider.recordingState,
+                        showsLabel: true,
                         action: onRecordButtonTapped
                     )
                 }
             }
             .padding(.leading, 10)
 
-            Spacer(minLength: 0)
+            RecorderModeStatusLabel(
+                recordingState: stateProvider.recordingState,
+                startedAt: stateProvider.recordingStartedAt
+            )
+            .padding(.leading, 12)
+
+            Spacer(minLength: 8)
 
             RecorderStatusDisplay(
                 currentState: stateProvider.recordingState,
-                audioMeter: recorder.audioMeter
+                audioMeter: recorder.audioMeter,
+                showsProcessingText: false
             )
 
             Spacer(minLength: 0)
@@ -114,6 +126,8 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 AssistantPanelView(
                     session: assistantSession,
                     liveFollowUpText: liveAssistantFollowUpText,
+                    showsFullConversation: $showsFullConversation,
+                    height: showsFullConversation ? fullAssistantHeight : compactAssistantHeight,
                     onSend: onAssistantFollowUp
                 )
                 PerforationRule()
@@ -139,6 +153,10 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         .animation(.easeInOut(duration: 0.3), value: hasLiveTranscript)
         .animation(.easeInOut(duration: 0.3), value: hasAssistantResponse)
         .animation(.easeInOut(duration: 0.3), value: shouldShowHUD)
+        .animation(.easeInOut(duration: 0.25), value: showsFullConversation)
+        .onChange(of: assistantSession.isVisible) {
+            if !assistantSession.isVisible { showsFullConversation = false }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 }

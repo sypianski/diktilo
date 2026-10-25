@@ -42360,6 +42360,28 @@
           }
         }
       }
+    },
+    "Show conversation (%lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż rozmowę (%lld)"
+          }
+        }
+      }
+    },
+    "Hide conversation": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ukryj rozmowę"
+          }
+        }
+      }
     }
   },
   "version": "1.1"

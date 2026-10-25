@@ -2,14 +2,15 @@ import SwiftUI
 
 // MARK: - RecorderDestinationHUDView
 //
-// A compact one-line hint bar that shows "icon  ⌥C" chips for every
+// A compact one-line hint bar that shows "Name  ⌥C" chips for every
 // active finish-destination shortcut.  Displayed during recording so the
 // user does not have to memorise the bindings.
 //
 // Design constraints:
 //   • Follows the recorder surface: white-on-black in the notch, paper
 //     palette in the mini panel (see RecorderPalette).
-//   • Chip = small SF-symbol icon + shortcut string in a muted capsule.
+//   • Chip = mode/target name + shortcut string in a muted capsule, plus a
+//     permanent "Cancel  Esc Esc" chip.
 //   • Max 6 items; if fewer → centred row; if more → horizontal scroll.
 //   • Visibility gated by @AppStorage "RecorderDestinationHUDEnabled".
 //   • Updates reactively when shortcuts or targets change.
@@ -59,8 +60,9 @@ struct RecorderDestinationHUDView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
                 ForEach(items) { item in
-                    DestinationChip(item: item)
+                    DestinationChip(label: item.label, shortcut: item.shortcutDisplay)
                 }
+                DestinationChip(label: String(localized: "Cancel"), shortcut: "Esc Esc")
             }
             .padding(.horizontal, 10)
             // Fill the band so the chips sit vertically centred in it.
@@ -79,24 +81,27 @@ struct RecorderDestinationHUDView: View {
 // MARK: - Single chip
 
 struct DestinationChip: View {
-    let item: FinishDestinationBindings.HUDItem
+    let label: String
+    let shortcut: String
     @Environment(\.recorderSurface) private var surface
 
     var body: some View {
         let palette = RecorderPalette(surface)
-        HStack(spacing: 4) {
-            Image(systemName: item.icon)
-                .font(.system(size: 9, weight: .regular))
-                .foregroundColor(palette.text(notch: 0.55))
+        HStack(spacing: 5) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(palette.text(notch: 0.70))
+                .lineLimit(1)
 
-            Text(item.shortcutDisplay)
+            Text(shortcut)
                 .font(.system(size: 10, weight: .medium, design: .monospaced))
                 .foregroundColor(palette.secondaryText(notch: 0.70))
         }
-        .padding(.horizontal, 6)
+        .fixedSize()
+        .padding(.horizontal, 7)
         .padding(.vertical, 3)
         .background(palette.fill(notch: 0.10))
         .clipShape(Capsule())
-        .help("\(item.label): \(item.shortcutDisplay)")
+        .help("\(label): \(shortcut)")
     }
 }
