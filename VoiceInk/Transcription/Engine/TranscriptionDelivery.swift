@@ -134,6 +134,19 @@ final class TranscriptionDelivery {
             return
         }
 
+        // Save Targets switched off: degrade to copying (targets stay stored).
+        guard AdvancedFeature.saveTargets.isEnabled() else {
+            if !ClipboardManager.setClipboard(text) {
+                logger.error("Save targets are off and clipboard copy also failed")
+            }
+            center.show(.warning, icon: "exclamationmark.triangle.fill",
+                        text: String(localized: "Save Targets are off — copied to clipboard."), duration: 2.2)
+            SoundManager.shared.playStopSound()
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            await actions.dismiss()
+            return
+        }
+
         guard let targetID = item.output.saveTargetID,
               let target = SaveTargetManager.shared.target(withID: targetID) else {
             // No target configured — fall back to clipboard, tell user.

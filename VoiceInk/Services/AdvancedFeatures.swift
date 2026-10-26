@@ -45,7 +45,7 @@ enum AdvancedFeatures {
     static let defaultDetectors: [AdvancedFeature: Detector] = [
         .modes: { AdvancedFeatures.modesInUse(in: $0) },
         .advancedOutputs: { _ in false },
-        .saveTargets: { _ in false },
+        .saveTargets: { AdvancedFeatures.saveTargetsInUse(in: $0) },
         .aiEnhancement: { _ in false },
         .fileTranscription: { _ in false }
     ]
@@ -76,6 +76,23 @@ enum AdvancedFeatures {
             || mode.autoSendKey != .none
             || hasTriggers
             || hasShortcut
+    }
+
+    /// True when at least one save target is stored (entries of a removed
+    /// strategy are dropped on load, so they do not count) or a stored mode
+    /// delivers to a target. Reads the JSON directly, like `modesInUse`.
+    static func saveTargetsInUse(in defaults: UserDefaults) -> Bool {
+        if let data = defaults.data(forKey: SaveTargetManager.defaultsKey),
+           let stored = try? JSONDecoder().decode([LossyTarget].self, from: data),
+           stored.contains(where: { $0.target != nil }) {
+            return true
+        }
+        guard let data = defaults.data(forKey: OutputProfileManager.configKey)
+                ?? defaults.data(forKey: LegacyModeDataKey.configurations),
+              let modes = try? JSONDecoder().decode([OutputProfile].self, from: data) else {
+            return false
+        }
+        return modes.contains { $0.outputMode == .saveTarget }
     }
 
     /// One-shot: switches a feature on when a detector reports a non-default

@@ -42408,6 +42408,36 @@
           }
         }
       }
+    },
+    "Save Targets send a recording somewhere other than the clipboard or the cursor: a file, a URL scheme or a shell command. Each can have its own shortcut that finishes the recording.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cele zapisu wysyłają nagranie gdzieś indziej niż do schowka czy kursora: do pliku, schematu URL albo komendy powłoki. Każdy może mieć własny skrót kończący nagranie."
+          }
+        }
+      }
+    },
+    "A shell command runs code with your user's permissions, so add only commands you trust. Turning Save Targets off only suspends them: your targets and their shortcuts are kept and come back when you turn it on again.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Komenda powłoki uruchamia kod z uprawnieniami Twojego użytkownika, więc dodawaj tylko komendy, którym ufasz. Wyłączenie celów zapisu tylko je zawiesza: cele i ich skróty zostają i wracają po ponownym włączeniu."
+          }
+        }
+      }
+    },
+    "Save Targets are off — copied to clipboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cele zapisu są wyłączone — skopiowano do schowka."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

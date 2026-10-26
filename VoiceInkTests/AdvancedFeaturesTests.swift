@@ -156,4 +156,59 @@ struct AdvancedFeaturesTests {
             #expect(AdvancedFeature.modes.isEnabled(in: defaults))
         }
     }
+
+    // MARK: Save targets detector
+
+    private func storeTargets(_ targets: [SaveTargetConfig], in defaults: UserDefaults) {
+        let data = try! JSONEncoder().encode(targets)
+        defaults.set(data, forKey: SaveTargetManager.defaultsKey)
+    }
+
+    @Test func saveTargetsDetectorIsFalseWithoutTargets() {
+        withDefaults { defaults in
+            #expect(!AdvancedFeatures.saveTargetsInUse(in: defaults))
+            storeTargets([], in: defaults)
+            #expect(!AdvancedFeatures.saveTargetsInUse(in: defaults))
+        }
+    }
+
+    @Test func saveTargetsDetectorIsTrueForStoredTarget() {
+        withDefaults { defaults in
+            let target = SaveTargetConfig(name: "Notes", strategy: .shellCommand(command: "cat >> ~/n.txt"))
+            storeTargets([target], in: defaults)
+            #expect(AdvancedFeatures.saveTargetsInUse(in: defaults))
+        }
+    }
+
+    @Test func saveTargetsDetectorIgnoresTargetsOfRemovedStrategy() {
+        withDefaults { defaults in
+            let legacy = #"[{"id":"\#(UUID().uuidString)","name":"Old","icon":"x","strategy":{"type":"sako"}}]"#
+            defaults.set(Data(legacy.utf8), forKey: SaveTargetManager.defaultsKey)
+            #expect(!AdvancedFeatures.saveTargetsInUse(in: defaults))
+        }
+    }
+
+    @Test func saveTargetsDetectorIsTrueForModeDeliveringToTarget() {
+        withDefaults { defaults in
+            let mode = OutputProfile(name: "Save", isAIEnhancementEnabled: false, outputMode: .saveTarget)
+            store([cleanPaste(), mode], in: defaults)
+            #expect(AdvancedFeatures.saveTargetsInUse(in: defaults))
+        }
+    }
+
+    @Test func saveTargetsMigrationUsesRealDetector() {
+        withDefaults { defaults in
+            storeTargets([SaveTargetConfig(name: "Notes", strategy: .file(.init()))], in: defaults)
+            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
+            #expect(AdvancedFeature.saveTargets.isEnabled(in: defaults))
+            #expect(defaults.data(forKey: SaveTargetManager.defaultsKey) != nil)
+        }
+    }
+
+    @Test func saveTargetsMigrationKeepsOffOnFreshInstall() {
+        withDefaults { defaults in
+            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
+            #expect(!AdvancedFeature.saveTargets.isEnabled(in: defaults))
+        }
+    }
 }

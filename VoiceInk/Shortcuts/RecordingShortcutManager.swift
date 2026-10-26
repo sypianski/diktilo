@@ -52,6 +52,8 @@ class RecordingShortcutManager: ObservableObject {
     private var shortcutChangeObserver: NSObjectProtocol?
     private let shortcutModeHandler: RecordingShortcutModeHandler
     private var saveTargetsObserverTask: Task<Void, Never>?
+    private var defaultsObserver: NSObjectProtocol?
+    private var lastSaveTargetsEnabled = AdvancedFeature.saveTargets.isEnabled()
 
     // MARK: - Helper Properties
     private var canHandleShortcutAction: Bool {
@@ -171,6 +173,21 @@ class RecordingShortcutManager: ObservableObject {
             }
         }
 
+        // The Save Targets switch lives in UserDefaults: re-register the target
+        // finish shortcuts when it flips so they stop/resume without a restart.
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                let enabled = AdvancedFeature.saveTargets.isEnabled()
+                guard enabled != self.lastSaveTargetsEnabled else { return }
+                self.refreshShortcutMonitoring()
+            }
+        }
+
         // Final step — every other stored property is set, so `self` is fully
         // initialized. Safe to capture in ProfileShortcutManager's finish
         // handler closure. Weak-self so it doesn't retain us.
@@ -242,7 +259,9 @@ class RecordingShortcutManager: ObservableObject {
         // ProfileShortcutManager. LegacyFinishShortcutMigration reattaches any
         // existing user binding to the appropriate shim mode on first launch,
         // then clears the legacy slot. Save-target finishers stay global.
-        for target in SaveTargetManager.shared.targets {
+        // Suspended (not removed) while Save Targets is switched off.
+        lastSaveTargetsEnabled = AdvancedFeature.saveTargets.isEnabled()
+        for target in lastSaveTargetsEnabled ? SaveTargetManager.shared.targets : [] {
             let action = ShortcutAction.finishWithSaveTarget(target.id)
             if let shortcut = ShortcutStore.shortcut(for: action) {
                 shortcuts[action] = shortcut
@@ -448,6 +467,9 @@ class RecordingShortcutManager: ObservableObject {
         }
 
         saveTargetsObserverTask?.cancel()
+        if let defaultsObserver {
+            NotificationCenter.default.removeObserver(defaultsObserver)
+        }
 
         MainActor.assumeIsolated {
             removeAllMonitoring()

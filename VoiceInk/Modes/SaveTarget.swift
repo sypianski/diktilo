@@ -133,7 +133,7 @@ struct SaveTargetConfig: Identifiable, Codable, Equatable {
 
 /// Decodes one stored target, or nil when its strategy is no longer supported,
 /// so a single obsolete entry does not discard the whole list.
-private struct LossyTarget: Decodable {
+struct LossyTarget: Decodable {
     let target: SaveTargetConfig?
 
     init(from decoder: Decoder) throws {
@@ -146,7 +146,8 @@ final class SaveTargetManager: ObservableObject {
 
     @Published var targets: [SaveTargetConfig] = []
 
-    private let defaultsKey = "saveTargetsV1"
+    static let defaultsKey = "saveTargetsV1"
+    private var defaultsKey: String { Self.defaultsKey }
 
     private init() {
         load()
