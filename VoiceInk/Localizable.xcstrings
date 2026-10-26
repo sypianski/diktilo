@@ -40909,17 +40909,6 @@
         }
       }
     },
-    "Transcribing files is off by default. Turn on Transcribe Files in App → Advanced.": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transkrypcja plików jest domyślnie wyłączona. Włącz „Transkrypcja plików” w Aplikacja → Zaawansowane."
-          }
-        }
-      }
-    },
     "Open Shortcuts and Modes": {
       "extractionState": "manual",
       "localizations": {
@@ -40927,28 +40916,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Otwórz „Skróty i tryby”"
-          }
-        }
-      }
-    },
-    "Open App settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Otwórz ustawienia aplikacji"
-          }
-        }
-      }
-    },
-    "More possibilities: Modes, Save Targets, File transcription — turn them on in Shortcuts and Modes and in App → Advanced.": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Więcej możliwości: Tryby, Cele zapisu, Transkrypcja plików — włączysz je w „Skróty i tryby” oraz w Aplikacja → Zaawansowane."
           }
         }
       }
@@ -42695,52 +42662,23 @@
         }
       }
     },
-    "Backup, diagnostics, help and intro, and optional features.": {
+    "More possibilities: Modes and Save Targets — turn them on in Shortcuts and Modes.": {
+      "extractionState": "manual",
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopia zapasowa, diagnostyka, pomoc i wprowadzenie oraz funkcje opcjonalne."
+            "value": "Więcej możliwości: Tryby i Cele zapisu — włączysz je w „Skróty i tryby”."
           }
         }
       }
     },
-    "Optional features": {
+    "Backup, diagnostics, help and intro.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Funkcje opcjonalne"
-          }
-        }
-      }
-    },
-    "Transcribe Files": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transkrypcja plików"
-          }
-        }
-      }
-    },
-    "Transcribe audio and video files. The result is saved in History.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transkrybuj pliki audio i wideo. Wynik trafia do Historii."
-          }
-        }
-      }
-    },
-    "Hiding it only removes the item from the sidebar. Your history and settings are kept, and opening an audio or video file in Diktilo turns it back on.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ukrycie usuwa tylko pozycję z paska bocznego. Historia i ustawienia zostają, a otwarcie pliku audio lub wideo w Diktilo włącza ją z powrotem."
+            "value": "Kopia zapasowa, diagnostyka, pomoc i wprowadzenie."
           }
         }
       }

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct AppSidebar: View {
     @Binding var selectedView: ViewType
-    @AppStorage(AdvancedFeature.fileTranscription.defaultsKey) private var fileTranscriptionEnabled = AdvancedFeature.defaultValue
 
     var body: some View {
         ZStack(alignment: .trailing) {
@@ -19,7 +18,7 @@ struct AppSidebar: View {
 
     private var sidebarContent: some View {
         VStack(spacing: 0) {
-            sidebarSection(ViewType.visiblePrimaryItems(fileTranscriptionEnabled: fileTranscriptionEnabled))
+            sidebarSection(ViewType.primaryItems)
                 .padding(.top, 10)
 
             Spacer(minLength: 16)
@@ -103,12 +102,6 @@ extension ViewType {
     static let secondaryItems: [ViewType] = [
         .settings
     ]
-
-    /// `primaryItems` stays the full list (the coverage assertion compares it
-    /// with `allCases`); the sidebar draws only what is switched on.
-    static func visiblePrimaryItems(fileTranscriptionEnabled: Bool) -> [ViewType] {
-        primaryItems.filter { fileTranscriptionEnabled || $0 != .transcribeAudio }
-    }
 
     static func assertSidebarItemsCoverAllCases() {
         #if DEBUG

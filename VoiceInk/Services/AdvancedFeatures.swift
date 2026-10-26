@@ -11,7 +11,6 @@ enum AdvancedFeature: String, CaseIterable {
     case advancedOutputs
     case saveTargets
     case aiEnhancement
-    case fileTranscription
 
     static let defaultValue = false
 
@@ -46,29 +45,13 @@ enum AdvancedFeatures {
         .modes: { AdvancedFeatures.modesInUse(in: $0) },
         .advancedOutputs: { AdvancedFeatures.advancedOutputsInUse(in: $0) },
         .saveTargets: { AdvancedFeatures.saveTargetsInUse(in: $0) },
-        .aiEnhancement: { _ in false },
-        .fileTranscription: { AdvancedFeatures.fileTranscriptionInUse(in: $0) }
+        .aiEnhancement: { _ in false }
     ]
 
     /// Mode picked on the file screen (set once the user chooses one there).
+    /// File transcription itself is not an advanced feature: it is always in
+    /// the sidebar.
     static let fileTranscriptionModeKey = "fileTranscriptionModeID"
-    /// Set when a file transcription actually starts.
-    static let fileTranscriptionUsedKey = "fileTranscriptionUsed"
-
-    /// True when there is a trace of the file screen being used: a transcription
-    /// was started, or a mode was picked there. History (SwiftData) is not read
-    /// here, so files transcribed by builds that did not set the flag are not
-    /// detected; the toggle in Settings -> Advanced covers that case.
-    static func fileTranscriptionInUse(in defaults: UserDefaults) -> Bool {
-        defaults.bool(forKey: fileTranscriptionUsedKey)
-            || defaults.string(forKey: fileTranscriptionModeKey) != nil
-    }
-
-    /// Records that a file transcription was started, so a later migration or
-    /// check can tell the feature is in use.
-    static func markFileTranscriptionUsed(in defaults: UserDefaults = .standard) {
-        defaults.set(true, forKey: fileTranscriptionUsedKey)
-    }
 
     /// True when the stored modes go beyond the single untouched "Paste" mode a
     /// fresh install starts with: several modes (the old default pair was

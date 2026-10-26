@@ -55,10 +55,7 @@ struct DashboardContent: View {
                 )
 
                 if hasHiddenAdvancedFeatures {
-                    DashboardMoreHint(
-                        onOpenModes: { navigate(to: .modes) },
-                        onOpenApp: { navigate(to: .settings) }
-                    )
+                    DashboardMoreHint(onOpenModes: { navigate(to: .modes) })
                 }
             } else {
                 if !isAccessibilityEnabled {
@@ -76,7 +73,7 @@ struct DashboardContent: View {
 
     /// True while any of the optional features the hint names is still off.
     private var hasHiddenAdvancedFeatures: Bool {
-        [AdvancedFeature.modes, .saveTargets, .fileTranscription].contains { !$0.isEnabled() }
+        [AdvancedFeature.modes, .saveTargets].contains { !$0.isEnabled() }
     }
 
     /// No displayable session yet: show the checklist instead of an empty list.
@@ -234,22 +231,18 @@ private struct DashboardFirstSteps: View {
 }
 
 /// Quiet line under the checklist: the hidden features exist and where their
-/// switches are (Shortcuts and Modes, App → Advanced).
+/// switches are (Shortcuts and Modes).
 private struct DashboardMoreHint: View {
     let onOpenModes: () -> Void
-    let onOpenApp: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("More possibilities: Modes, Save Targets, File transcription — turn them on in Shortcuts and Modes and in App → Advanced.")
+            Text("More possibilities: Modes and Save Targets — turn them on in Shortcuts and Modes.")
                 .font(.system(size: 12))
                 .foregroundStyle(AppTheme.Text.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 16) {
-                link("Shortcuts and Modes", action: onOpenModes)
-                link("App", action: onOpenApp)
-            }
+            link("Shortcuts and Modes", action: onOpenModes)
         }
         .padding(.horizontal, 4)
         .frame(maxWidth: .infinity, alignment: .leading)

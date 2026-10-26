@@ -77,7 +77,7 @@ More destinations are off by default and are turned on in **Shortcuts and Modes*
 - Several dictation languages at once; the model recognises which one you are speaking.
 - Dictionary and word replacements for names, terms and abbreviations.
 - Modes: separate settings for email, notes, code and so on. Off by default; turn on in Shortcuts and Modes.
-- Transcription of audio files. Off by default; turn on "Transcribe Files" in App → Advanced.
+- Transcription of audio and video files (Transcribe Files in the sidebar).
 - If you had your own modes or targets before this change, they stay on automatically.
 - Interface in English, Polish, Esperanto and Catalan.
 

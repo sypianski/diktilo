@@ -237,12 +237,6 @@ private struct AppTourCaption: View {
                     .padding(.top, 2)
             }
 
-            if step == .settings && !AdvancedFeature.fileTranscription.isEnabled() {
-                Button("Open App settings") { onOpen(.settings) }
-                    .controlSize(.small)
-                    .padding(.top, 2)
-            }
-
         }
     }
 
@@ -291,10 +285,7 @@ private struct AppTourCaption: View {
                 ? String(localized: "Every recording is saved in History and copied to the clipboard. The copy button on a transcript copies it again.")
                 : String(localized: "Every recording is saved in History. The copy button on a transcript copies it again.")
         case .settings:
-            let settingsText = String(localized: "Everything is in the sidebar. To see this guide again, choose Help → Diktilo Tour.")
-            return AdvancedFeature.fileTranscription.isEnabled()
-                ? settingsText
-                : settingsText + " " + String(localized: "Transcribing files is off by default. Turn on Transcribe Files in App → Advanced.")
+            return String(localized: "Everything is in the sidebar. To see this guide again, choose Help → Diktilo Tour.")
         }
     }
 }
@@ -496,11 +487,9 @@ private struct HistoryStage: View {
 
 /// The whole sidebar, one sentence per item, so the guide covers the app.
 private struct SettingsStage: View {
-    @AppStorage(AdvancedFeature.fileTranscription.defaultsKey) private var fileTranscriptionEnabled = AdvancedFeature.defaultValue
-
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            ForEach(ViewType.visiblePrimaryItems(fileTranscriptionEnabled: fileTranscriptionEnabled) + ViewType.secondaryItems) { item in
+            ForEach(ViewType.primaryItems + ViewType.secondaryItems) { item in
                 HStack(spacing: 10) {
                     Image(systemName: item.icon)
                         .font(.system(size: 12))

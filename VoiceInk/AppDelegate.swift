@@ -39,8 +39,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             // Running: focus current window and route in-place to Transcribe Audio
             menuBarManager?.focusMainWindow()
-            // Opening a file is an explicit request: bring the hidden screen back.
-            AdvancedFeature.fileTranscription.setEnabled(true)
             NotificationCenter.default.post(name: .navigateToDestination, object: nil, userInfo: ["destination": "Transcribe Audio"])
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: .openFileForTranscription, object: nil, userInfo: ["url": url])

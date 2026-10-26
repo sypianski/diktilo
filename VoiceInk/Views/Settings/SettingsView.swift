@@ -17,7 +17,6 @@ struct SettingsView: View {
     @AppStorage(AppLanguagePreference.userDefaultsKey) private var appLanguagePreference = AppLanguagePreference.systemValue
     @AppStorage(UserAddressForm.userDefaultsKey) private var userAddressForm = UserAddressForm.masculine
     @AppStorage("dashboardRecentTranscriptCount") private var dashboardRecentCount = 5
-    @AppStorage(AdvancedFeature.fileTranscription.defaultsKey) private var fileTranscriptionEnabled = AdvancedFeature.defaultValue
     @State private var showResetOnboardingAlert = false
     @State private var isAdvancedExpanded = false
     @State private var languageNeedsRestart = false
@@ -170,11 +169,10 @@ struct SettingsView: View {
                 title: "Advanced",
                 isExpanded: $isAdvancedExpanded,
                 isEnabled: nil,
-                summary: "Backup, diagnostics, help and intro, and optional features.",
+                summary: "Backup, diagnostics, help and intro.",
                 statusNote: nil
             ) {
                 VStack(alignment: .leading, spacing: 18) {
-                    optionalFeaturesGroup
                     dashboardGroup
                     helpGroup
                     dataGroup
@@ -188,24 +186,6 @@ struct SettingsView: View {
         Text(title)
             .font(.system(size: 12, weight: .semibold))
             .foregroundStyle(.secondary)
-    }
-
-    /// Switching it off only hides the sidebar item; history and settings stay.
-    private var optionalFeaturesGroup: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            advancedGroupTitle("Optional features")
-
-            Toggle(isOn: $fileTranscriptionEnabled) {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 4) {
-                        Text("Transcribe Files")
-                        InfoTip("Hiding it only removes the item from the sidebar. Your history and settings are kept, and opening an audio or video file in Diktilo turns it back on.")
-                    }
-                    Text("Transcribe audio and video files. The result is saved in History.")
-                        .settingsDescription()
-                }
-            }
-        }
     }
 
     private var dashboardGroup: some View {

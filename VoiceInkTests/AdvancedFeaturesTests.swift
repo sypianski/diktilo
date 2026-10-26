@@ -286,49 +286,4 @@ struct AdvancedFeaturesTests {
             #expect(AdvancedFeatures.anyModeUsesAI(in: defaults))
         }
     }
-
-    // MARK: File transcription
-
-    @Test func fileTranscriptionDetectorIsFalseOnFreshDefaults() {
-        withDefaults { defaults in
-            #expect(!AdvancedFeatures.fileTranscriptionInUse(in: defaults))
-        }
-    }
-
-    @Test func fileTranscriptionDetectorIsTrueAfterUsedFlag() {
-        withDefaults { defaults in
-            AdvancedFeatures.markFileTranscriptionUsed(in: defaults)
-            #expect(AdvancedFeatures.fileTranscriptionInUse(in: defaults))
-        }
-    }
-
-    @Test func fileTranscriptionDetectorIsTrueWithStoredFileMode() {
-        withDefaults { defaults in
-            defaults.set(UUID().uuidString, forKey: AdvancedFeatures.fileTranscriptionModeKey)
-            #expect(AdvancedFeatures.fileTranscriptionInUse(in: defaults))
-        }
-    }
-
-    @Test func migrationEnablesFileTranscriptionOnlyWhenUsed() {
-        withDefaults { defaults in
-            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
-            #expect(!AdvancedFeature.fileTranscription.isEnabled(in: defaults))
-        }
-        withDefaults { defaults in
-            AdvancedFeatures.markFileTranscriptionUsed(in: defaults)
-            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
-            #expect(AdvancedFeature.fileTranscription.isEnabled(in: defaults))
-            #expect(!AdvancedFeature.saveTargets.isEnabled(in: defaults))
-        }
-    }
-
-    @Test func sidebarHidesFileTranscriptionWhenOff() {
-        let off = ViewType.visiblePrimaryItems(fileTranscriptionEnabled: false)
-        #expect(!off.contains(.transcribeAudio))
-        #expect(off.count == ViewType.primaryItems.count - 1)
-
-        let on = ViewType.visiblePrimaryItems(fileTranscriptionEnabled: true)
-        #expect(on == ViewType.primaryItems)
-        #expect(on.contains(.transcribeAudio))
-    }
 }
