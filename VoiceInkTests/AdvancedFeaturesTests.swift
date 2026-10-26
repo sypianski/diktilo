@@ -87,4 +87,73 @@ struct AdvancedFeaturesTests {
             #expect(AdvancedFeature.modes.isEnabled(in: defaults))
         }
     }
+    // MARK: Modes detector
+
+    private func store(_ modes: [OutputProfile], in defaults: UserDefaults) {
+        let data = try! JSONEncoder().encode(modes)
+        defaults.set(data, forKey: OutputProfileManager.configKey)
+    }
+
+    private func cleanPaste() -> OutputProfile {
+        OutputProfile(name: "Paste", isAIEnhancementEnabled: false, isDefault: true)
+    }
+
+    @Test func modesDetectorIsFalseWithoutStoredModes() {
+        withDefaults { defaults in
+            #expect(!AdvancedFeatures.modesInUse(in: defaults))
+            store([], in: defaults)
+            #expect(!AdvancedFeatures.modesInUse(in: defaults))
+        }
+    }
+
+    @Test func modesDetectorIsFalseForSingleUntouchedPasteMode() {
+        withDefaults { defaults in
+            store([cleanPaste()], in: defaults)
+            #expect(!AdvancedFeatures.modesInUse(in: defaults))
+        }
+    }
+
+    @Test func modesDetectorIsTrueForSeveralModes() {
+        withDefaults { defaults in
+            let copy = OutputProfile(name: "Copy", isAIEnhancementEnabled: false, outputMode: .copy)
+            store([cleanPaste(), copy], in: defaults)
+            #expect(AdvancedFeatures.modesInUse(in: defaults))
+        }
+    }
+
+    @Test func modesDetectorIsTrueForChangedSingleMode() {
+        withDefaults { defaults in
+            let changed: [OutputProfile] = [
+                OutputProfile(name: "Paste", isAIEnhancementEnabled: true),
+                OutputProfile(name: "Paste", isAIEnhancementEnabled: false, outputMode: .copy),
+                OutputProfile(name: "Paste", triggerWords: ["note"], isAIEnhancementEnabled: false),
+                OutputProfile(
+                    name: "Paste",
+                    appConfigs: [AppConfig(bundleIdentifier: "com.example.app", appName: "Example")],
+                    isAIEnhancementEnabled: false
+                )
+            ]
+            for mode in changed {
+                store([mode], in: defaults)
+                #expect(AdvancedFeatures.modesInUse(in: defaults))
+            }
+        }
+    }
+
+    @Test func modesDetectorIsTrueForSingleModeWithOwnShortcut() {
+        withDefaults { defaults in
+            let mode = cleanPaste()
+            store([mode], in: defaults)
+            defaults.set(Data([1]), forKey: ShortcutAction.profile(mode.id).userDefaultsKey)
+            #expect(AdvancedFeatures.modesInUse(in: defaults))
+        }
+    }
+
+    @Test func modesMigrationUsesRealDetector() {
+        withDefaults { defaults in
+            store([cleanPaste(), OutputProfile(name: "Copy", isAIEnhancementEnabled: false, outputMode: .copy)], in: defaults)
+            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
+            #expect(AdvancedFeature.modes.isEnabled(in: defaults))
+        }
+    }
 }

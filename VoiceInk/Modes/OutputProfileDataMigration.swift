@@ -112,7 +112,7 @@ extension OutputProfileManager {
     }
 }
 
-private enum LegacyModeDataKey {
+enum LegacyModeDataKey {
     static let configurations = "powerModeConfigurationsV2"
     static let shortcutPrefix = "Shortcut_powerMode_"
 }

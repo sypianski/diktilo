@@ -43,12 +43,40 @@ enum AdvancedFeatures {
     /// Per-feature detectors. Each feature's task replaces its `false` stub
     /// with the real rule.
     static let defaultDetectors: [AdvancedFeature: Detector] = [
-        .modes: { _ in false },
+        .modes: { AdvancedFeatures.modesInUse(in: $0) },
         .advancedOutputs: { _ in false },
         .saveTargets: { _ in false },
         .aiEnhancement: { _ in false },
         .fileTranscription: { _ in false }
     ]
+
+    /// True when the stored modes go beyond the single untouched "Paste" mode a
+    /// fresh install starts with: several modes (the old default pair was
+    /// Paste + Copy), or one mode that was changed (other output, AI, a trigger,
+    /// auto-send or its own shortcut). Reads the stored JSON directly, so it
+    /// works with an injected defaults suite and without the manager singleton.
+    static func modesInUse(in defaults: UserDefaults) -> Bool {
+        guard let data = defaults.data(forKey: OutputProfileManager.configKey)
+                ?? defaults.data(forKey: LegacyModeDataKey.configurations),
+              let modes = try? JSONDecoder().decode([OutputProfile].self, from: data),
+              !modes.isEmpty else {
+            return false
+        }
+        guard modes.count == 1, let mode = modes.first else { return true }
+
+        let hasShortcut = defaults.data(
+            forKey: ShortcutAction.profile(mode.id).userDefaultsKey
+        ) != nil
+        let hasTriggers = !(mode.appConfigs ?? []).isEmpty
+            || !(mode.urlConfigs ?? []).isEmpty
+            || !(mode.triggerGroups ?? []).isEmpty
+            || !mode.triggerWords.isEmpty
+        return mode.outputMode != .paste
+            || mode.isAIEnhancementEnabled
+            || mode.autoSendKey != .none
+            || hasTriggers
+            || hasShortcut
+    }
 
     /// One-shot: switches a feature on when a detector reports a non-default
     /// configuration. Never overwrites a value the user has set explicitly.

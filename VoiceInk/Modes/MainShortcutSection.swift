@@ -9,6 +9,9 @@ import Carbon.HIToolbox
 struct MainShortcutSection: View {
     @EnvironmentObject private var recordingShortcutManager: RecordingShortcutManager
     @ObservedObject var modeManager: OutputProfileManager
+    /// False while the Modes feature is off: the shortcut then simply runs the
+    /// default mode, so there is nothing to choose.
+    var showsModePicker = true
 
     @State private var hasCancelShortcut: Bool = ShortcutStore.shortcut(for: .cancelRecorder) != nil
     @State private var cancelResetID = 0
@@ -55,19 +58,21 @@ struct MainShortcutSection: View {
 
                 Spacer(minLength: 8)
 
-                Picker(selection: mainShortcutModeBinding) {
-                    if modeManager.getDefaultConfiguration() == nil {
-                        Text("Last used mode").tag(UUID?.none)
+                if showsModePicker {
+                    Picker(selection: mainShortcutModeBinding) {
+                        if modeManager.getDefaultConfiguration() == nil {
+                            Text("Last used mode").tag(UUID?.none)
+                        }
+                        ForEach(mainShortcutModeChoices) { config in
+                            Text(config.name).tag(Optional(config.id))
+                        }
+                    } label: {
+                        Text("Mode")
                     }
-                    ForEach(mainShortcutModeChoices) { config in
-                        Text(config.name).tag(Optional(config.id))
-                    }
-                } label: {
-                    Text("Mode")
+                    .pickerStyle(.menu)
+                    .fixedSize()
+                    .help("The mode the main shortcut runs when no app or website trigger matches.")
                 }
-                .pickerStyle(.menu)
-                .fixedSize()
-                .help("The mode the main shortcut runs when no app or website trigger matches.")
             }
 
             DisclosureGroup("More Recording Shortcuts", isExpanded: $isMoreExpanded) {
@@ -79,7 +84,11 @@ struct MainShortcutSection: View {
             Text("Main Shortcut")
         } footer: {
             // Fixed panel keys — not rebindable, so they're spelled out here.
-            Text("While recording: ⌥1–⌥0 switches the mode, ⌘↩ finishes in the current mode, and a mode's finish shortcut finishes in that mode.")
+            if showsModePicker {
+                Text("While recording: ⌥1–⌥0 switches the mode, ⌘↩ finishes in the current mode, and a mode's finish shortcut finishes in that mode.")
+            } else {
+                Text("While recording: ⌘↩ finishes the recording.")
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { _ in
             shortcutRevision += 1

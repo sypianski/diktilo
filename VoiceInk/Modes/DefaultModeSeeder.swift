@@ -11,11 +11,19 @@ enum DefaultModeSeeder {
     )
 
     /// Seeds only when there are no modes at all, so an existing setup is
-    /// never touched.
+    /// never touched. With the Modes feature off only "Paste" is created: no
+    /// "Copy" mode and no ⌃⌥C, so no shortcut runs without a place in the UI
+    /// to see or change it (PC-005).
     static func seedIfEmpty() {
         let manager = OutputProfileManager.shared
         guard manager.configurations.isEmpty,
               let paste = StarterModeFactory.makeDefaultMode() else {
+            return
+        }
+
+        guard AdvancedFeature.modes.isEnabled() else {
+            manager.replaceConfigurations([paste])
+            manager.setActiveConfiguration(paste)
             return
         }
 

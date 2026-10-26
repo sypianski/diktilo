@@ -61,7 +61,8 @@ final class RecorderPanelShortcutManager: ObservableObject {
     }
 
     private var canUseModeShortcuts: Bool {
-        !OutputProfileManager.shared.enabledConfigurations.isEmpty
+        AdvancedFeature.modes.isEnabled()
+            && !OutputProfileManager.shared.enabledConfigurations.isEmpty
     }
 
     private func resetEscapeState() {

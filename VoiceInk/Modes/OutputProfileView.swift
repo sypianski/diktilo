@@ -56,6 +56,9 @@ struct OutputProfileView: View {
     @EnvironmentObject private var enhancementService: AIEnhancementService
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
+    // Modes are off by default; switching them off suspends them (shortcuts,
+    // ⌥1–⌥0, triggers) but never deletes the saved modes.
+    @AppStorage(AdvancedFeature.modes.defaultsKey) private var modesEnabled = AdvancedFeature.defaultValue
     @State private var tab: Tab = .modes
     @State private var activeConfiguration: ConfigurationMode?
     @State private var panelID = UUID()
@@ -80,22 +83,36 @@ struct OutputProfileView: View {
                 infoMessage: "Modes help you set up Diktilo for different writing tasks, workflows, and scenarios."
             )
 
-            Picker("", selection: $tab) {
-                Text("Shortcuts and Modes").tag(Tab.modes)
-                Text("Pasting and Save Targets").tag(Tab.delivery)
+            if modesEnabled {
+                Picker("", selection: $tab) {
+                    Text("Shortcuts and Modes").tag(Tab.modes)
+                    Text("Pasting and Save Targets").tag(Tab.delivery)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .fixedSize()
+                .padding(.bottom, 6)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
-            .padding(.bottom, 6)
 
             Form {
-                switch tab {
-                case .modes:
-                    MainShortcutSection(modeManager: modeManager)
+                if modesEnabled {
+                    switch tab {
+                    case .modes:
+                        MainShortcutSection(modeManager: modeManager)
 
-                    modesSection
-                case .delivery:
+                        modesGate
+                    case .delivery:
+                        ModesPastingSection()
+
+                        ModesSaveTargetsSection()
+                    }
+                } else {
+                    // One screen: the shortcut, how text is pasted, and the
+                    // card that explains (and switches on) Modes.
+                    MainShortcutSection(modeManager: modeManager, showsModePicker: false)
+
+                    modesGate
+
                     ModesPastingSection()
 
                     ModesSaveTargetsSection()
@@ -124,8 +141,15 @@ struct OutputProfileView: View {
         }
     }
 
-    private var modesSection: some View {
-        Section {
+    /// The Modes feature switch. While off, the card only describes what
+    /// modes are; switched on, it holds the list of saved modes.
+    private var modesGate: some View {
+        FeatureGateSection(
+            "Modes",
+            summary: "Create several modes, each with its own shortcut and destination, switch them with ⌥1–⌥0 while recording, and let apps, websites or trigger words pick one automatically.",
+            infoMessage: "A mode decides where the text goes and whether AI rewrites it. Turning Modes off only suspends them: your modes are kept and come back when you turn it on again.",
+            mode: .toggle(isOn: $modesEnabled)
+        ) {
             if modeManager.configurations.isEmpty {
                 VStack(spacing: 8) {
                     Text("No Modes Yet")
@@ -144,10 +168,11 @@ struct OutputProfileView: View {
                 onEdit: { openPanel(mode: .edit($0)) },
                 onAdd: { openPanel(mode: .add) }
             )
-        } header: {
-            Text("Modes")
-        } footer: {
+
             Text("A mode decides where the text goes and whether AI rewrites it. Finish a recording with a mode's shortcut, or let an app or website trigger pick the mode. During recording, ⌥1–⌥0 switch the modes in this order.")
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

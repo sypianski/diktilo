@@ -42375,6 +42375,39 @@
           }
         }
       }
+    },
+    "Create several modes, each with its own shortcut and destination, switch them with ⌥1–⌥0 while recording, and let apps, websites or trigger words pick one automatically.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twórz wiele trybów, każdy z własnym skrótem i miejscem docelowym, przełączaj je przez ⌥1–⌥0 podczas nagrywania i pozwól, by aplikacje, strony lub słowa-wyzwalacze wybierały tryb automatycznie."
+          }
+        }
+      }
+    },
+    "A mode decides where the text goes and whether AI rewrites it. Turning Modes off only suspends them: your modes are kept and come back when you turn it on again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb decyduje, dokąd trafia tekst i czy AI go przepisuje. Wyłączenie Trybów tylko je zawiesza: Twoje tryby zostają zachowane i wracają po ponownym włączeniu."
+          }
+        }
+      }
+    },
+    "While recording: ⌘↩ finishes the recording.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas nagrywania: ⌘↩ kończy nagrywanie."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

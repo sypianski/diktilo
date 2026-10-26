@@ -14,6 +14,8 @@ class ProfileShortcutManager {
     private let shortcutMonitor = ShortcutMonitor()
     private let finishHandler: @MainActor (UUID) async -> Void
     private var shortcutChangeObserver: NSObjectProtocol?
+    private var defaultsObserver: NSObjectProtocol?
+    private var lastModesEnabled = AdvancedFeature.modes.isEnabled()
 
     init(finishHandler: @escaping @MainActor (UUID) async -> Void) {
         self.finishHandler = finishHandler
@@ -37,6 +39,21 @@ class ProfileShortcutManager {
             }
         }
 
+        // The Modes switch lives in UserDefaults: re-register when it flips so
+        // per-mode shortcuts stop/resume without a restart.
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                let enabled = AdvancedFeature.modes.isEnabled()
+                guard enabled != self.lastModesEnabled else { return }
+                self.refreshModeShortcuts()
+            }
+        }
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(profileShortcutAvailabilityDidChange),
@@ -50,6 +67,9 @@ class ProfileShortcutManager {
         if let shortcutChangeObserver {
             NotificationCenter.default.removeObserver(shortcutChangeObserver)
         }
+        if let defaultsObserver {
+            NotificationCenter.default.removeObserver(defaultsObserver)
+        }
         MainActor.assumeIsolated {
             shortcutMonitor.stop()
         }
@@ -62,7 +82,11 @@ class ProfileShortcutManager {
     }
 
     private func refreshModeShortcuts() {
-        let shortcuts = OutputProfileManager.shared.enabledConfigurations.reduce(into: [ShortcutAction: Shortcut]()) { result, config in
+        // Per-mode shortcuts are suspended while Modes is off; the shortcuts
+        // stay stored and come back when it is switched on again.
+        lastModesEnabled = AdvancedFeature.modes.isEnabled()
+        let modes = lastModesEnabled ? OutputProfileManager.shared.enabledConfigurations : []
+        let shortcuts = modes.reduce(into: [ShortcutAction: Shortcut]()) { result, config in
             let action = ShortcutAction.profile(config.id)
             if let shortcut = ShortcutStore.shortcut(for: action) {
                 result[action] = shortcut
@@ -92,7 +116,8 @@ class ProfileShortcutManager {
     }
 
     private func isValidProfileShortcut(profileId: UUID) -> Bool {
-        guard let config = OutputProfileManager.shared.getConfiguration(with: profileId),
+        guard AdvancedFeature.modes.isEnabled(),
+              let config = OutputProfileManager.shared.getConfiguration(with: profileId),
               config.isEnabled,
               ShortcutStore.shortcut(for: .profile(config.id)) != nil else {
             return false

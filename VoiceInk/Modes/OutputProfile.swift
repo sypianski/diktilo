@@ -274,7 +274,8 @@ class OutputProfileManager: ObservableObject {
     @Published var configurations: [OutputProfile] = []
     @Published var activeConfiguration: OutputProfile?
 
-    private let configKey = "modeConfigurationsV2"
+    static let configKey = "modeConfigurationsV2"
+    private var configKey: String { Self.configKey }
     private let activeConfigIdKey = "activeConfigurationId"
 
     private init() {
@@ -347,6 +348,8 @@ class OutputProfileManager: ObservableObject {
     }
 
     func getConfigurationForURL(_ url: String) -> OutputProfile? {
+        // App/website triggers are suspended while the Modes feature is off.
+        guard AdvancedFeature.modes.isEnabled() else { return nil }
         let cleanedURL = cleanURL(url)
         
         for config in configurations.filter({ $0.isEnabled }) {
@@ -362,6 +365,7 @@ class OutputProfileManager: ObservableObject {
     }
     
     func getConfigurationForApp(_ bundleId: String) -> OutputProfile? {
+        guard AdvancedFeature.modes.isEnabled() else { return nil }
         for config in configurations.filter({ $0.isEnabled }) {
             if config.allAppConfigs.contains(where: { $0.bundleIdentifier == bundleId }) {
                 return config
@@ -482,6 +486,7 @@ class OutputProfileManager: ObservableObject {
     }
 
     func getConfigurationForTriggerWord(_ text: String) -> (mode: OutputProfile, processedText: String)? {
+        guard AdvancedFeature.modes.isEnabled() else { return nil }
         guard let detection = ModeTriggerWordDetectionService.detect(
             in: text,
             configurations: configurations.filter { $0.isEnabled }
