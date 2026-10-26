@@ -22885,7 +22885,8 @@
             "value": "Cap activador"
           }
         }
-      }
+      },
+      "extractionState": "manual"
     },
     "No triggers in this group": {
       "localizations": {
@@ -42435,6 +42436,116 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cele zapisu są wyłączone — skopiowano do schowka."
+          }
+        }
+      }
+    },
+    "Advanced outputs": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyjścia zaawansowane"
+          }
+        }
+      }
+    },
+    "Custom shell command and saving to a file, URL or command.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własna komenda powłoki oraz zapis do pliku, adresu URL lub komendy."
+          }
+        }
+      }
+    },
+    "A custom command runs a shell command with your user permissions — it can read, change or delete anything you can. Only use commands you trust.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własna komenda uruchamia polecenie powłoki z Twoimi uprawnieniami — może czytać, zmieniać i usuwać wszystko, do czego masz dostęp. Używaj tylko komend, którym ufasz."
+          }
+        }
+      }
+    },
+    "Off in Save Targets": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone w Celach zapisu"
+          }
+        }
+      }
+    },
+    "Save Targets are off, so the text is copied to the clipboard instead. Turn them on in Shortcuts and Modes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cele zapisu są wyłączone, więc tekst zostanie skopiowany do schowka. Włącz je w Skrótach i trybach."
+          }
+        }
+      }
+    },
+    "Apps: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikacje: %lld"
+          }
+        }
+      }
+    },
+    "Websites: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strony: %lld"
+          }
+        }
+      }
+    },
+    "Words: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Słowa: %lld"
+          }
+        }
+      }
+    },
+    "Trigger groups: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grupy wyzwalaczy: %lld"
+          }
+        }
+      }
+    },
+    "Diktilo switches to this mode on its own for chosen apps, websites or a spoken trigger word.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diktilo samo przełącza się na ten tryb dla wybranych aplikacji, stron lub wypowiedzianego słowa wyzwalającego."
           }
         }
       }

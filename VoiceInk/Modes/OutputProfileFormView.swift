@@ -14,6 +14,8 @@ struct OutputProfileFormView: View {
     @EnvironmentObject private var aiService: AIService
     @EnvironmentObject private var modeWarmupStore: OutputProfileFormWarmupStore
     @AppStorage(ClipboardManager.autoCopyEnabledKey) private var autoCopyTranscription = true
+    @AppStorage(AdvancedFeature.advancedOutputs.defaultsKey) private var advancedOutputsEnabled = AdvancedFeature.defaultValue
+    @AppStorage(AdvancedFeature.saveTargets.defaultsKey) private var saveTargetsEnabled = AdvancedFeature.defaultValue
     @FocusState private var isNameFieldFocused: Bool
 
     @State private var isShowingIconPicker = false
@@ -425,20 +427,56 @@ struct OutputProfileFormView: View {
             || draft.clipboardRestoreDelayOverride != nil
     }
 
-    /// Every output at once. Respond stays visible but greyed out, with the reason,
-    /// until AI enhancement with a prompt is set up below.
-    private var outputTiles: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
-            ForEach(OutputMode.allCases, id: \.self) { outputMode in
-                outputTile(outputMode)
+    /// Paste, Copy and Respond always; Custom Command and Save to Target only
+    /// behind "Advanced outputs" — or when this mode already uses one, so an
+    /// edited mode never loses the tile of its own output.
+    private var visibleOutputModes: [OutputMode] {
+        OutputMode.allCases.filter { outputMode in
+            switch outputMode {
+            case .paste, .copy, .respond:
+                return true
+            case .customCommand, .saveTarget:
+                return advancedOutputsEnabled || draft.outputMode == outputMode
             }
         }
+    }
+
+    /// Respond stays visible but greyed out, with the reason, until AI
+    /// enhancement with a prompt is set up below.
+    private var outputTiles: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+                ForEach(visibleOutputModes, id: \.self) { outputMode in
+                    outputTile(outputMode)
+                }
+            }
+
+            advancedOutputsToggle
+        }
         .padding(.vertical, 2)
+    }
+
+    /// Turning it off only hides the extra tiles; no mode's output changes.
+    private var advancedOutputsToggle: some View {
+        Toggle(isOn: $advancedOutputsEnabled) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 4) {
+                    Text("Advanced outputs")
+                    InfoTip("A custom command runs a shell command with your user permissions — it can read, change or delete anything you can. Only use commands you trust.")
+                }
+                Text("Custom shell command and saving to a file, URL or command.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     private func outputTile(_ outputMode: OutputMode) -> some View {
         let isSelected = draft.outputMode == outputMode
         let isUnavailable = outputMode == .respond && !canRespond
+        // Delivery falls back to the clipboard while Save Targets are off.
+        let isSaveTargetOff = outputMode == .saveTarget && !saveTargetsEnabled
 
         return Button {
             draft.outputMode = outputMode
@@ -455,6 +493,10 @@ struct OutputProfileFormView: View {
 
                 if isUnavailable {
                     Text("Needs AI")
+                        .font(.system(size: 10))
+                        .foregroundStyle(AppTheme.Text.secondary)
+                } else if isSaveTargetOff {
+                    Text("Off in Save Targets")
                         .font(.system(size: 10))
                         .foregroundStyle(AppTheme.Text.secondary)
                 }
@@ -478,8 +520,18 @@ struct OutputProfileFormView: View {
         }
         .buttonStyle(.plain)
         .disabled(isUnavailable)
-        .help(isUnavailable ? String(localized: "Respond needs AI enhancement with a prompt. Turn it on under AI Enhancement.") : outputMode.displayName)
+        .help(outputTileHelp(outputMode, isUnavailable: isUnavailable, isSaveTargetOff: isSaveTargetOff))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func outputTileHelp(_ outputMode: OutputMode, isUnavailable: Bool, isSaveTargetOff: Bool) -> String {
+        if isUnavailable {
+            return String(localized: "Respond needs AI enhancement with a prompt. Turn it on under AI Enhancement.")
+        }
+        if isSaveTargetOff {
+            return String(localized: "Save Targets are off, so the text is copied to the clipboard instead. Turn them on in Shortcuts and Modes.")
+        }
+        return outputMode.displayName
     }
 
     @ViewBuilder

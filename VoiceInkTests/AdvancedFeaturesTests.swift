@@ -211,4 +211,55 @@ struct AdvancedFeaturesTests {
             #expect(!AdvancedFeature.saveTargets.isEnabled(in: defaults))
         }
     }
+
+    // MARK: Advanced outputs detector
+
+    @Test func advancedOutputsDetectorIsFalseWithoutModes() {
+        withDefaults { defaults in
+            #expect(!AdvancedFeatures.advancedOutputsInUse(in: defaults))
+            store([], in: defaults)
+            #expect(!AdvancedFeatures.advancedOutputsInUse(in: defaults))
+        }
+    }
+
+    @Test func advancedOutputsDetectorIsFalseForPasteAndCopyModes() {
+        withDefaults { defaults in
+            let copy = OutputProfile(name: "Copy", isAIEnhancementEnabled: false, outputMode: .copy)
+            store([cleanPaste(), copy], in: defaults)
+            #expect(!AdvancedFeatures.advancedOutputsInUse(in: defaults))
+        }
+    }
+
+    @Test func advancedOutputsDetectorIsTrueForCustomCommandMode() {
+        withDefaults { defaults in
+            let mode = OutputProfile(name: "Cmd", isAIEnhancementEnabled: false, outputMode: .customCommand)
+            store([cleanPaste(), mode], in: defaults)
+            #expect(AdvancedFeatures.advancedOutputsInUse(in: defaults))
+        }
+    }
+
+    @Test func advancedOutputsDetectorIsTrueForSaveTargetMode() {
+        withDefaults { defaults in
+            let mode = OutputProfile(name: "Save", isAIEnhancementEnabled: false, outputMode: .saveTarget)
+            store([cleanPaste(), mode], in: defaults)
+            #expect(AdvancedFeatures.advancedOutputsInUse(in: defaults))
+        }
+    }
+
+    @Test func advancedOutputsMigrationUsesRealDetector() {
+        withDefaults { defaults in
+            let mode = OutputProfile(name: "Cmd", isAIEnhancementEnabled: false, outputMode: .customCommand)
+            store([cleanPaste(), mode], in: defaults)
+            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
+            #expect(AdvancedFeature.advancedOutputs.isEnabled(in: defaults))
+        }
+    }
+
+    @Test func advancedOutputsMigrationKeepsOffOnFreshInstall() {
+        withDefaults { defaults in
+            store([cleanPaste()], in: defaults)
+            AdvancedFeatures.runMigrationIfNeeded(defaults: defaults)
+            #expect(!AdvancedFeature.advancedOutputs.isEnabled(in: defaults))
+        }
+    }
 }

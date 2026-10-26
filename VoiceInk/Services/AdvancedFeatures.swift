@@ -44,7 +44,7 @@ enum AdvancedFeatures {
     /// with the real rule.
     static let defaultDetectors: [AdvancedFeature: Detector] = [
         .modes: { AdvancedFeatures.modesInUse(in: $0) },
-        .advancedOutputs: { _ in false },
+        .advancedOutputs: { AdvancedFeatures.advancedOutputsInUse(in: $0) },
         .saveTargets: { AdvancedFeatures.saveTargetsInUse(in: $0) },
         .aiEnhancement: { _ in false },
         .fileTranscription: { _ in false }
@@ -93,6 +93,17 @@ enum AdvancedFeatures {
             return false
         }
         return modes.contains { $0.outputMode == .saveTarget }
+    }
+
+    /// True when a stored mode ends in a shell command or a save target (the
+    /// outputs hidden behind "Advanced outputs"). Reads the JSON directly.
+    static func advancedOutputsInUse(in defaults: UserDefaults) -> Bool {
+        guard let data = defaults.data(forKey: OutputProfileManager.configKey)
+                ?? defaults.data(forKey: LegacyModeDataKey.configurations),
+              let modes = try? JSONDecoder().decode([OutputProfile].self, from: data) else {
+            return false
+        }
+        return modes.contains { $0.outputMode == .customCommand || $0.outputMode == .saveTarget }
     }
 
     /// One-shot: switches a feature on when a detector reports a non-default
