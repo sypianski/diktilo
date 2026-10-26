@@ -40887,13 +40887,68 @@
         }
       }
     },
-    "Language, appearance and help.": {
+    "Language, appearance and advanced options.": {
       "extractionState": "manual",
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Język, wygląd i pomoc."
+            "value": "Język, wygląd i opcje zaawansowane."
+          }
+        }
+      }
+    },
+    "Modes and Save Targets are off by default. Turn them on in Shortcuts and Modes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryby i Cele zapisu są domyślnie wyłączone. Włączysz je w „Skróty i tryby”."
+          }
+        }
+      }
+    },
+    "Transcribing files is off by default. Turn on Transcribe Files in App → Advanced.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja plików jest domyślnie wyłączona. Włącz „Transkrypcja plików” w Aplikacja → Zaawansowane."
+          }
+        }
+      }
+    },
+    "Open Shortcuts and Modes": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz „Skróty i tryby”"
+          }
+        }
+      }
+    },
+    "Open App settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ustawienia aplikacji"
+          }
+        }
+      }
+    },
+    "More possibilities: Modes, Save Targets, File transcription — turn them on in Shortcuts and Modes and in App → Advanced.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Więcej możliwości: Tryby, Cele zapisu, Transkrypcja plików — włączysz je w „Skróty i tryby” oraz w Aplikacja → Zaawansowane."
           }
         }
       }

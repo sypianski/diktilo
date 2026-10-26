@@ -53,6 +53,13 @@ struct DashboardContent: View {
                     onChangeShortcut: { navigate(to: .modes) },
                     onOpenAccessibilitySettings: openAccessibilitySettings
                 )
+
+                if hasHiddenAdvancedFeatures {
+                    DashboardMoreHint(
+                        onOpenModes: { navigate(to: .modes) },
+                        onOpenApp: { navigate(to: .settings) }
+                    )
+                }
             } else {
                 if !isAccessibilityEnabled {
                     DashboardAccessibilityBar(onOpenSettings: openAccessibilitySettings)
@@ -65,6 +72,11 @@ struct DashboardContent: View {
             }
         }
         .frame(width: availableWidth, alignment: .topLeading)
+    }
+
+    /// True while any of the optional features the hint names is still off.
+    private var hasHiddenAdvancedFeatures: Bool {
+        [AdvancedFeature.modes, .saveTargets, .fileTranscription].contains { !$0.isEnabled() }
     }
 
     /// No displayable session yet: show the checklist instead of an empty list.
@@ -218,6 +230,41 @@ private struct DashboardFirstSteps: View {
                     .controlSize(.small)
             }
         }
+    }
+}
+
+/// Quiet line under the checklist: the hidden features exist and where their
+/// switches are (Shortcuts and Modes, App → Advanced).
+private struct DashboardMoreHint: View {
+    let onOpenModes: () -> Void
+    let onOpenApp: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("More possibilities: Modes, Save Targets, File transcription — turn them on in Shortcuts and Modes and in App → Advanced.")
+                .font(.system(size: 12))
+                .foregroundStyle(AppTheme.Text.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 16) {
+                link("Shortcuts and Modes", action: onOpenModes)
+                link("App", action: onOpenApp)
+            }
+        }
+        .padding(.horizontal, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func link(_ title: LocalizedStringKey, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Text(title)
+                Image(systemName: "arrow.right")
+            }
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(AppTheme.Text.primary)
+        }
+        .buttonStyle(.plain)
     }
 }
 

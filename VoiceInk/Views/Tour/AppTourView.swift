@@ -69,7 +69,7 @@ struct AppTourView: View {
 
             Divider()
 
-            AppTourCaption(step: step, onOpenSettings: openSettings)
+            AppTourCaption(step: step, onOpen: open)
                 .padding(.horizontal, 28)
                 .padding(.top, 20)
                 .frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
@@ -148,11 +148,12 @@ struct AppTourView: View {
         withAnimation(.easeInOut(duration: 0.25)) { step = previous }
     }
 
-    private func openSettings() {
+    /// Closes the tour (it is a sheet over the main window) and opens a screen.
+    private func open(_ destination: ViewType) {
         NotificationCenter.default.post(
             name: .navigateToDestination,
             object: nil,
-            userInfo: ["destination": ViewType.modes.rawValue]
+            userInfo: ["destination": destination.rawValue]
         )
         onClose()
     }
@@ -210,7 +211,7 @@ private enum TourFacts {
 
 private struct AppTourCaption: View {
     let step: AppTourStep
-    let onOpenSettings: () -> Void
+    let onOpen: (ViewType) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -224,7 +225,20 @@ private struct AppTourCaption: View {
                 .lineSpacing(2)
 
             if step == .record && TourFacts.primaryShortcut == nil {
-                Button("Set Recording Shortcut", action: onOpenSettings)
+                Button("Set Recording Shortcut") { onOpen(.modes) }
+                    .controlSize(.small)
+                    .padding(.top, 2)
+            }
+
+            // Hidden advanced features: say where to switch them on.
+            if step == .modes && !AdvancedFeature.modes.isEnabled() {
+                Button("Open Shortcuts and Modes") { onOpen(.modes) }
+                    .controlSize(.small)
+                    .padding(.top, 2)
+            }
+
+            if step == .settings && !AdvancedFeature.fileTranscription.isEnabled() {
+                Button("Open App settings") { onOpen(.settings) }
                     .controlSize(.small)
                     .padding(.top, 2)
             }
@@ -267,13 +281,20 @@ private struct AppTourCaption: View {
             )
             return how + " " + TourFacts.activeOutputSentence + " " + bar
         case .modes:
-            return String(localized: "A mode sets whether AI rewrites the text and where the result goes. Finish with a mode's shortcut to use that mode.")
+            let modesText = String(localized: "A mode sets whether AI rewrites the text and where the result goes. Finish with a mode's shortcut to use that mode.")
+            // Users who already had modes keep them on; everyone else is told where to find them.
+            return AdvancedFeature.modes.isEnabled()
+                ? modesText
+                : modesText + " " + String(localized: "Modes and Save Targets are off by default. Turn them on in Shortcuts and Modes.")
         case .history:
             return TourFacts.isAutoCopyEnabled
                 ? String(localized: "Every recording is saved in History and copied to the clipboard. The copy button on a transcript copies it again.")
                 : String(localized: "Every recording is saved in History. The copy button on a transcript copies it again.")
         case .settings:
-            return String(localized: "Everything is in the sidebar. To see this guide again, choose Help → Diktilo Tour.")
+            let settingsText = String(localized: "Everything is in the sidebar. To see this guide again, choose Help → Diktilo Tour.")
+            return AdvancedFeature.fileTranscription.isEnabled()
+                ? settingsText
+                : settingsText + " " + String(localized: "Transcribing files is off by default. Turn on Transcribe Files in App → Advanced.")
         }
     }
 }
@@ -513,7 +534,7 @@ private extension ViewType {
         case .dictionary: return "Your words and replacements."
         case .models: return "Speech recognition and text improvement."
         case .audio: return "Microphone, languages and recording bar."
-        case .settings: return "Language, appearance and help."
+        case .settings: return "Language, appearance and advanced options."
         }
     }
 }

@@ -64,17 +64,21 @@ If AI enhancement is on, Diktilo starts working on it while you are still speaki
 
 - **Paste** at the cursor, in the app you are writing in.
 - **Copy** to the clipboard; paste it yourself with <kbd>⌘V</kbd>. By default on <kbd>⌃⌥C</kbd>.
+
+More destinations are off by default and are turned on in **Shortcuts and Modes** (Save Targets, Advanced outputs):
+
 - **A .md or .txt file**, e.g. appending to a daily note.
 - **A shell command** (the text goes to standard input) or **a URL scheme**.
 
-<kbd>⌘↩</kbd> finishes the recording in the current mode; <kbd>⌥1</kbd>…<kbd>⌥0</kbd> switch modes.
+<kbd>⌘↩</kbd> finishes the recording in the current mode; once Modes are turned on, <kbd>⌥1</kbd>…<kbd>⌥0</kbd> switch them.
 
 ## Also
 
 - Several dictation languages at once; the model recognises which one you are speaking.
 - Dictionary and word replacements for names, terms and abbreviations.
-- Modes: separate settings for email, notes, code and so on.
-- Transcription of audio files.
+- Modes: separate settings for email, notes, code and so on. Off by default; turn on in Shortcuts and Modes.
+- Transcription of audio files. Off by default; turn on "Transcribe Files" in App → Advanced.
+- If you had your own modes or targets before this change, they stay on automatically.
 - Interface in English, Polish, Esperanto and Catalan.
 
 ## Feedback
