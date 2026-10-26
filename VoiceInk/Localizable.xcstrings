@@ -42639,6 +42639,56 @@
           }
         }
       }
+    },
+    "Backup, diagnostics, help and intro, and optional features.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopia zapasowa, diagnostyka, pomoc i wprowadzenie oraz funkcje opcjonalne."
+          }
+        }
+      }
+    },
+    "Optional features": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funkcje opcjonalne"
+          }
+        }
+      }
+    },
+    "Transcribe Files": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrypcja plików"
+          }
+        }
+      }
+    },
+    "Transcribe audio and video files. The result is saved in History.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkrybuj pliki audio i wideo. Wynik trafia do Historii."
+          }
+        }
+      }
+    },
+    "Hiding it only removes the item from the sidebar. Your history and settings are kept, and opening an audio or video file in Diktilo turns it back on.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ukrycie usuwa tylko pozycję z paska bocznego. Historia i ustawienia zostają, a otwarcie pliku audio lub wideo w Diktilo włącza ją z powrotem."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

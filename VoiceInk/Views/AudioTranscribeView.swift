@@ -4,7 +4,7 @@ import UniformTypeIdentifiers
 
 struct AudioTranscribeView: View {
     /// The mode used for files is remembered separately from the active recording mode.
-    private static let fileModeKey = "fileTranscriptionModeID"
+    private static let fileModeKey = AdvancedFeatures.fileTranscriptionModeKey
 
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var engine: VoiceInkEngine

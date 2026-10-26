@@ -17,7 +17,9 @@ struct SettingsView: View {
     @AppStorage(AppLanguagePreference.userDefaultsKey) private var appLanguagePreference = AppLanguagePreference.systemValue
     @AppStorage(UserAddressForm.userDefaultsKey) private var userAddressForm = UserAddressForm.masculine
     @AppStorage("dashboardRecentTranscriptCount") private var dashboardRecentCount = 5
+    @AppStorage(AdvancedFeature.fileTranscription.defaultsKey) private var fileTranscriptionEnabled = AdvancedFeature.defaultValue
     @State private var showResetOnboardingAlert = false
+    @State private var isAdvancedExpanded = false
     @State private var languageNeedsRestart = false
 
     // Only what concerns the app itself. Recording shortcut, pasting and save
@@ -34,13 +36,7 @@ struct SettingsView: View {
             Form {
                 languageAndAppearanceSection
                 startupSection
-                helpSection
-                dataSection
-
-                Section("Diagnostics") {
-                    DiagnosticsSettingsView()
-                }
-                .id(SettingsAnchor.diagnostics)
+                advancedSection
             }
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
@@ -61,10 +57,16 @@ struct SettingsView: View {
         }
     }
 
-    /// The Help menu's "Report a Bug…" opens this screen at Diagnostics.
+    /// The Help menu's "Report a Bug…" opens this screen at Diagnostics, which
+    /// lives inside the folded Advanced section: unfold it first, then scroll
+    /// once the section has its final height.
     private func scrollToPendingSection(_ proxy: ScrollViewProxy) {
         guard let anchor = SettingsAnchor.consumePending() else { return }
-        DispatchQueue.main.async {
+        switch anchor {
+        case .diagnostics:
+            withAnimation(.easeInOut(duration: 0.2)) { isAdvancedExpanded = true }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             withAnimation { proxy.scrollTo(anchor, anchor: .top) }
         }
     }
@@ -119,17 +121,6 @@ struct SettingsView: View {
             .onChange(of: appAppearancePreference) { _, newValue in
                 newValue.apply()
             }
-
-            Picker(selection: $dashboardRecentCount) {
-                Text("3").tag(3)
-                Text("5").tag(5)
-                Text("8").tag(8)
-                Text("10").tag(10)
-            } label: {
-                Text("Recent Transcripts on Dashboard")
-                Text("How many recent transcriptions the dashboard shows at the top.")
-            }
-            .pickerStyle(.menu)
         }
     }
 
@@ -168,8 +159,76 @@ struct SettingsView: View {
         }
     }
 
-    private var helpSection: some View {
-        Section("Help") {
+    // MARK: - Advanced
+
+    /// Folded by default: backup, diagnostics, help and rarely changed options.
+    /// The groups are VStacks (not nested Sections), because the whole block is
+    /// one row of the grouped Form.
+    private var advancedSection: some View {
+        Section {
+            ExpandableSettingsRow(
+                title: "Advanced",
+                isExpanded: $isAdvancedExpanded,
+                isEnabled: nil,
+                summary: "Backup, diagnostics, help and intro, and optional features.",
+                statusNote: nil
+            ) {
+                VStack(alignment: .leading, spacing: 18) {
+                    optionalFeaturesGroup
+                    dashboardGroup
+                    helpGroup
+                    dataGroup
+                    diagnosticsGroup
+                }
+            }
+        }
+    }
+
+    private func advancedGroupTitle(_ title: LocalizedStringKey) -> some View {
+        Text(title)
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(.secondary)
+    }
+
+    /// Switching it off only hides the sidebar item; history and settings stay.
+    private var optionalFeaturesGroup: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            advancedGroupTitle("Optional features")
+
+            Toggle(isOn: $fileTranscriptionEnabled) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Text("Transcribe Files")
+                        InfoTip("Hiding it only removes the item from the sidebar. Your history and settings are kept, and opening an audio or video file in Diktilo turns it back on.")
+                    }
+                    Text("Transcribe audio and video files. The result is saved in History.")
+                        .settingsDescription()
+                }
+            }
+        }
+    }
+
+    private var dashboardGroup: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            advancedGroupTitle("Dashboard")
+
+            Picker(selection: $dashboardRecentCount) {
+                Text("3").tag(3)
+                Text("5").tag(5)
+                Text("8").tag(8)
+                Text("10").tag(10)
+            } label: {
+                Text("Recent Transcripts on Dashboard")
+                Text("How many recent transcriptions the dashboard shows at the top.")
+            }
+            .pickerStyle(.menu)
+        }
+    }
+
+    private var helpGroup: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            advancedGroupTitle("Help")
+
             LabeledContent("Diktilo Tour") {
                 Button("Show Tour") {
                     AppTour.show()
@@ -187,8 +246,10 @@ struct SettingsView: View {
         }
     }
 
-    private var dataSection: some View {
-        Section("Data") {
+    private var dataGroup: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            advancedGroupTitle("Data")
+
             LabeledContent {
                 HStack(spacing: 8) {
                     Button("Export") {
@@ -221,6 +282,15 @@ struct SettingsView: View {
                 Text("Export all settings, or choose specific categories when importing a backup.")
             }
         }
+    }
+
+    private var diagnosticsGroup: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            advancedGroupTitle("Diagnostics")
+
+            DiagnosticsSettingsView()
+        }
+        .id(SettingsAnchor.diagnostics)
     }
 }
 

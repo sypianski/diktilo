@@ -108,6 +108,7 @@ class AudioTranscriptionManager: ObservableObject {
     func startProcessing(modelContext: ModelContext, engine: VoiceInkEngine, mode: OutputProfile) {
         guard !isProcessingQueue else { return }
         isProcessingQueue = true
+        AdvancedFeatures.markFileTranscriptionUsed()
         processingGeneration &+= 1
         let generation = processingGeneration
 

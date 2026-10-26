@@ -475,9 +475,11 @@ private struct HistoryStage: View {
 
 /// The whole sidebar, one sentence per item, so the guide covers the app.
 private struct SettingsStage: View {
+    @AppStorage(AdvancedFeature.fileTranscription.defaultsKey) private var fileTranscriptionEnabled = AdvancedFeature.defaultValue
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            ForEach(ViewType.primaryItems + ViewType.secondaryItems) { item in
+            ForEach(ViewType.visiblePrimaryItems(fileTranscriptionEnabled: fileTranscriptionEnabled) + ViewType.secondaryItems) { item in
                 HStack(spacing: 10) {
                     Image(systemName: item.icon)
                         .font(.system(size: 12))

@@ -18,6 +18,7 @@ struct ContentView: View {
     private let logger = Logger(subsystem: "cc.sypianski.diktilo", category: "ContentView")
     @State private var selectedView: ViewType = .dashboard
     @State private var isTourPresented = false
+    @AppStorage(AdvancedFeature.fileTranscription.defaultsKey) private var fileTranscriptionEnabled = AdvancedFeature.defaultValue
 
     var body: some View {
         HStack(spacing: 0) {
@@ -38,6 +39,12 @@ struct ContentView: View {
                let viewType = ViewType.allCases.first(where: { $0.rawValue == destination }) {
                 logger.notice("navigateToDestination received: \(destination, privacy: .public)")
                 selectedView = viewType
+            }
+        }
+        .onChange(of: fileTranscriptionEnabled) { _, enabled in
+            // The sidebar item disappears with the switch; do not leave its screen open.
+            if !enabled && selectedView == .transcribeAudio {
+                selectedView = .dashboard
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: AppTour.showRequested)) { _ in

@@ -295,6 +295,8 @@ struct VoiceInkApp: App {
 
                             // Process any pending open-file request now that the main ContentView is ready.
                             if let pendingURL = appDelegate.pendingOpenFileURL {
+                                // Opening a file is an explicit request: bring the hidden screen back.
+                                AdvancedFeature.fileTranscription.setEnabled(true)
                                 NotificationCenter.default.post(name: .navigateToDestination, object: nil, userInfo: ["destination": "Transcribe Audio"])
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     NotificationCenter.default.post(name: .openFileForTranscription, object: nil, userInfo: ["url": pendingURL])
