@@ -262,4 +262,28 @@ struct AdvancedFeaturesTests {
             #expect(!AdvancedFeature.advancedOutputs.isEnabled(in: defaults))
         }
     }
+
+    @Test func anyModeUsesAIIsFalseWithoutModes() {
+        withDefaults { defaults in
+            #expect(!AdvancedFeatures.anyModeUsesAI(in: defaults))
+            store([], in: defaults)
+            #expect(!AdvancedFeatures.anyModeUsesAI(in: defaults))
+        }
+    }
+
+    @Test func anyModeUsesAIIsFalseWhenNoModeHasAI() {
+        withDefaults { defaults in
+            let copy = OutputProfile(name: "Copy", isAIEnhancementEnabled: false, outputMode: .copy)
+            store([cleanPaste(), copy], in: defaults)
+            #expect(!AdvancedFeatures.anyModeUsesAI(in: defaults))
+        }
+    }
+
+    @Test func anyModeUsesAIIsTrueWhenAModeHasAI() {
+        withDefaults { defaults in
+            let ai = OutputProfile(name: "AI", isAIEnhancementEnabled: true)
+            store([cleanPaste(), ai], in: defaults)
+            #expect(AdvancedFeatures.anyModeUsesAI(in: defaults))
+        }
+    }
 }

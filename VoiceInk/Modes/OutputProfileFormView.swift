@@ -21,6 +21,7 @@ struct OutputProfileFormView: View {
     @State private var isShowingIconPicker = false
     @State private var isShowingDeleteConfirmation = false
     @State private var isContextAwarenessExpanded = false
+    @State private var isAIEnhancementExpanded = false
     @State private var isAdvancedPasteExpanded = false
 
     private var warmupSnapshot: ModeFormWarmupSnapshot {
@@ -139,6 +140,9 @@ struct OutputProfileFormView: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onChange(of: draft.isAIEnhancementEnabled) { _, newValue in
+            applyAIEnhancementToggle(newValue)
+        }
         .confirmationDialog(
             "Delete Mode?",
             isPresented: $isShowingDeleteConfirmation,
@@ -156,28 +160,78 @@ struct OutputProfileFormView: View {
         .modeValidationAlert(errors: validationErrors, isPresented: $showValidationAlert)
     }
 
+    /// Folded while there is no connected provider and this mode does not use
+    /// AI. Derived from live state, so it opens by itself once a provider
+    /// shows up (the warmup snapshot loads asynchronously) or AI is switched on.
+    private var isAIEnhancementCollapsed: Bool {
+        aiProviderOptions.isEmpty && !draft.isAIEnhancementEnabled
+    }
+
+    @ViewBuilder
     private var aiEnhancementSection: some View {
-        Section("AI Enhancement") {
-            Toggle("AI Enhancement", isOn: $draft.isAIEnhancementEnabled)
-                .onChange(of: draft.isAIEnhancementEnabled) { _, newValue in
-                    if newValue {
-                        if configuredSelectedAIProvider == nil {
-                            draft.selectedAIProvider = aiProviderOptions.first?.rawValue
-                            draft.selectedAIModel = nil
-                        }
-                        if draft.selectedAIModel == nil,
-                           let provider = configuredSelectedAIProvider,
-                           provider != .localCLI {
-                            draft.selectedAIModel = warmupSnapshot.selectedModel(for: provider)
-                        }
-                        if draft.selectedPromptId == nil {
-                            draft.selectedPromptId = warmupSnapshot.firstPromptId
-                        }
-                        if configuredSelectedAIProvider == .ollama {
-                            aiService.refreshOllamaAvailabilityInBackground()
-                        }
-                    }
+        if isAIEnhancementCollapsed {
+            Section {
+                ExpandableSettingsRow(
+                    title: "AI Enhancement",
+                    isExpanded: $isAIEnhancementExpanded,
+                    isEnabled: nil,
+                    summary: "AI rewrites the transcript following a prompt: it fixes, translates or formats it. Needs a connected provider or a local model.",
+                    statusNote: "No providers connected"
+                ) {
+                    aiEnhancementContent
                 }
+
+                connectProviderButton
+            }
+        } else {
+            Section("AI Enhancement") {
+                aiEnhancementContent
+            }
+        }
+    }
+
+    /// Lives on the Form, not on the Toggle: the toggle moves between the folded
+    /// row and the open section when it flips, which would drop a modifier on it.
+    private func applyAIEnhancementToggle(_ isOn: Bool) {
+        guard isOn else { return }
+        if configuredSelectedAIProvider == nil {
+            draft.selectedAIProvider = aiProviderOptions.first?.rawValue
+            draft.selectedAIModel = nil
+        }
+        if draft.selectedAIModel == nil,
+           let provider = configuredSelectedAIProvider,
+           provider != .localCLI {
+            draft.selectedAIModel = warmupSnapshot.selectedModel(for: provider)
+        }
+        if draft.selectedPromptId == nil {
+            draft.selectedPromptId = warmupSnapshot.firstPromptId
+        }
+        if configuredSelectedAIProvider == .ollama {
+            aiService.refreshOllamaAvailabilityInBackground()
+        }
+    }
+
+    private var connectProviderButton: some View {
+        Button {
+            NotificationCenter.default.post(
+                name: .navigateToDestination,
+                object: nil,
+                userInfo: ["destination": ViewType.models.rawValue]
+            )
+        } label: {
+            HStack(spacing: 4) {
+                Text("Connect a provider in AI Models")
+                Image(systemName: "arrow.right")
+            }
+            .font(.system(size: 12, weight: .semibold))
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(AppTheme.Accent.text)
+    }
+
+    @ViewBuilder
+    private var aiEnhancementContent: some View {
+            Toggle("AI Enhancement", isOn: $draft.isAIEnhancementEnabled)
 
             let providerBinding = Binding<AIProvider>(
                 get: {
@@ -198,6 +252,7 @@ struct OutputProfileFormView: View {
                             .foregroundColor(.secondary)
                             .italic()
                     }
+                    connectProviderButton
                 } else {
                     Picker("AI Provider", selection: providerBinding) {
                         ForEach(providerOptions, id: \.self) { provider in
@@ -227,7 +282,6 @@ struct OutputProfileFormView: View {
                     contextAwarenessRow
                 }
             }
-        }
     }
 
     @ViewBuilder

@@ -1436,6 +1436,16 @@
         }
       }
     },
+    "AI rewrites the transcript following a prompt: it fixes, translates or formats it. Needs a connected provider or a local model.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI przepisuje transkrypcję według promptu: poprawia, tłumaczy lub formatuje tekst. Wymaga podłączonego dostawcy albo lokalnego modelu."
+          }
+        }
+      }
+    },
     "Append to existing file": {
       "localizations": {
         "pl": {
@@ -1630,6 +1640,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'ordre és buida."
+          }
+        }
+      }
+    },
+    "Connect a provider in AI Models": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podłącz dostawcę w Modelach AI"
           }
         }
       }

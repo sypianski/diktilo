@@ -106,6 +106,18 @@ enum AdvancedFeatures {
         return modes.contains { $0.outputMode == .customCommand || $0.outputMode == .saveTarget }
     }
 
+    /// True when at least one stored mode has AI enhancement switched on. Used to
+    /// keep the AI settings open for people who already rely on them. Reads the
+    /// JSON directly, like the detectors above.
+    static func anyModeUsesAI(in defaults: UserDefaults) -> Bool {
+        guard let data = defaults.data(forKey: OutputProfileManager.configKey)
+                ?? defaults.data(forKey: LegacyModeDataKey.configurations),
+              let modes = try? JSONDecoder().decode([OutputProfile].self, from: data) else {
+            return false
+        }
+        return modes.contains { $0.isAIEnhancementEnabled }
+    }
+
     /// One-shot: switches a feature on when a detector reports a non-default
     /// configuration. Never overwrites a value the user has set explicitly.
     static func runMigrationIfNeeded(

@@ -55,12 +55,24 @@ struct ModelFallbackChainSection: View {
         return sums.mapValues { $0.total / Double($0.count) }
     }
 
-    @State private var kind: Kind = .transcription
+    @State private var storedKind: Kind = .transcription
     @State private var transcriptionOrder: [String] = []
     @State private var enhancementLinks: [ModelFallbackChain.EnhancementLink] = []
     @State private var draggingID: String?
     @State private var isAddingModel = false
     @State private var searchText = ""
+
+    /// Text-improvement order is only worth showing once AI is in use: a provider
+    /// is connected or some mode has enhancement on. Hidden, the screen stays on
+    /// speech recognition (the stored choice is kept, not reset).
+    private var isAIInUse: Bool {
+        !aiService.connectedProviders.isEmpty || AdvancedFeatures.anyModeUsesAI(in: .standard)
+    }
+
+    private var kind: Kind {
+        get { isAIInUse ? storedKind : .transcription }
+        nonmutating set { storedKind = newValue }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -105,13 +117,15 @@ struct ModelFallbackChainSection: View {
 
             Spacer(minLength: 8)
 
-            Picker("Model Order", selection: $kind) {
-                Text("Speech recognition").tag(Kind.transcription)
-                Text("Text improvement").tag(Kind.enhancement)
+            if isAIInUse {
+                Picker("Model Order", selection: Binding(get: { kind }, set: { kind = $0 })) {
+                    Text("Speech recognition").tag(Kind.transcription)
+                    Text("Text improvement").tag(Kind.enhancement)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .fixedSize()
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
         }
     }
 
