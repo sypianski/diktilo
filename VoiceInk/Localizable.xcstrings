@@ -1404,6 +1404,16 @@
         }
       }
     },
+    "Active — details collapsed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywne — szczegóły zwinięte"
+          }
+        }
+      }
+    },
     "Add Save Target": {
       "localizations": {
         "pl": {
@@ -1928,6 +1938,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Carpeta"
+          }
+        }
+      }
+    },
+    "Disabled — settings are kept": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone — ustawienia zachowane"
           }
         }
       }
