@@ -42569,6 +42569,76 @@
           }
         }
       }
+    },
+    "Advanced input": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaawansowane wejście"
+          }
+        }
+      }
+    },
+    "Use several microphones in the order Diktilo should try them.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używaj kilku mikrofonów w kolejności, w jakiej Diktilo ma je wypróbowywać."
+          }
+        }
+      }
+    },
+    "Priority order is on": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kolejność priorytetów jest włączona"
+          }
+        }
+      }
+    },
+    "Sounds that play when recording starts and stops.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dźwięki odtwarzane na początku i na końcu nagrywania."
+          }
+        }
+      }
+    },
+    "Changed from the defaults": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmienione względem domyślnych"
+          }
+        }
+      }
+    },
+    "More Languages": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Więcej języków"
+          }
+        }
+      }
+    },
+    "Dictate in several languages and set which comes first.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dyktuj w kilku językach i ustaw, który jest pierwszy."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

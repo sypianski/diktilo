@@ -9,8 +9,15 @@ struct TranscriptionSection: View {
     @AppStorage(GlobalTranscriptionSettings.Keys.isRealtimeEnabled) private var isRealtimeEnabled = true
     @AppStorage(GlobalTranscriptionSettings.Keys.isTextFormattingEnabled) private var isTextFormattingEnabled = true
 
+    /// Owned by the Recording screen so its jump chip can unfold the row.
+    @Binding var isMoreLanguagesExpanded: Bool
+
     @State private var languages = DictationLanguages.codes
     @State private var isAddingLanguage = false
+
+    init(isMoreLanguagesExpanded: Binding<Bool>) {
+        _isMoreLanguagesExpanded = isMoreLanguagesExpanded
+    }
 
     private enum RealtimeLimit {
         case none
@@ -22,19 +29,43 @@ struct TranscriptionSection: View {
         Section {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Dictation Languages")
-                Text(languagesNote)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
+                if languages.count < 2 {
+                    Text(languagesNote)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
 
+                // The first language is always in view; with none chosen the
+                // add button is the way to pick it.
                 FlowLayout(spacing: 6) {
                     ForEach(Array(languages.enumerated()), id: \.element) { index, code in
                         languageChip(code, at: index)
                     }
 
-                    addLanguageChip
+                    if languages.isEmpty {
+                        addLanguageChip
+                    }
                 }
             }
             .id(RecordingAnchor.languages)
+
+            if !languages.isEmpty {
+                ExpandableSettingsRow(
+                    title: "More Languages",
+                    isExpanded: $isMoreLanguagesExpanded,
+                    isEnabled: nil,
+                    summary: "Dictate in several languages and set which comes first.",
+                    statusNote: nil
+                ) {
+                    if languages.count > 1 {
+                        Text(languagesNote)
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    addLanguageChip
+                }
+            }
 
             if let model = transcriptionModelManager.currentTranscriptionModel {
                 if model.provider == .nativeApple {

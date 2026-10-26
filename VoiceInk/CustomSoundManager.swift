@@ -157,9 +157,10 @@ class CustomSoundManager: ObservableObject {
         for type: SoundType,
         builtInSound: BuiltInSound,
         customFilename: String?,
-        legacySoundFeedbackEnabled: Bool?
+        legacySoundFeedbackEnabled: Bool?,
+        defaults: UserDefaults = .standard
     ) -> SoundSelection {
-        switch UserDefaults.standard.string(forKey: type.selectionKey) {
+        switch defaults.string(forKey: type.selectionKey) {
         case "none":
             return .none
         case "custom":
@@ -174,13 +175,36 @@ class CustomSoundManager: ObservableObject {
         }
     }
 
-    private static func savedBuiltInSound(for type: SoundType) -> BuiltInSound {
-        if let rawValue = UserDefaults.standard.string(forKey: type.builtInSoundKey),
+    private static func savedBuiltInSound(for type: SoundType, defaults: UserDefaults = .standard) -> BuiltInSound {
+        if let rawValue = defaults.string(forKey: type.builtInSoundKey),
            let sound = BuiltInSound(rawValue: rawValue) {
             return sound
         }
 
         return type.defaultBuiltInSound
+    }
+
+    /// True when the start or stop sound differs from the shipped default
+    /// (another sound, a custom file or none). Reads the persisted state only,
+    /// so a view can decide at creation whether to show the sounds unfolded.
+    static func hasNonDefaultSounds(in defaults: UserDefaults = .standard) -> Bool {
+        let legacy = defaults.object(forKey: "isSoundFeedbackEnabled")
+            .map { _ in defaults.bool(forKey: "isSoundFeedbackEnabled") }
+        return [SoundType.start, SoundType.stop].contains { type in
+            let selection = savedSoundSelection(
+                for: type,
+                builtInSound: savedBuiltInSound(for: type, defaults: defaults),
+                customFilename: defaults.string(forKey: type.filenameKey),
+                legacySoundFeedbackEnabled: legacy,
+                defaults: defaults
+            )
+            return selection != .builtIn(type.defaultBuiltInSound)
+        }
+    }
+
+    /// Live counterpart of `hasNonDefaultSounds(in:)` for observing views.
+    var usesNonDefaultSounds: Bool {
+        !isDefaultSelection(for: .start) || !isDefaultSelection(for: .stop)
     }
 
     private func customSoundsDirectory() -> URL? {

@@ -27,6 +27,7 @@ struct AudioSetupView: View {
     @ObservedObject private var audioDeviceManager = AudioDeviceManager.shared
     @ObservedObject private var mediaController = MediaController.shared
     @ObservedObject private var playbackController = PlaybackController.shared
+    @ObservedObject private var soundManager = CustomSoundManager.shared
     @EnvironmentObject private var recorderUIManager: RecorderUIManager
     @EnvironmentObject private var engine: VoiceInkEngine
     @StateObject private var levelMonitor = InputLevelMonitor()
@@ -36,6 +37,17 @@ struct AudioSetupView: View {
     @AppStorage("RecorderDestinationHUDEnabled") private var destinationHUDEnabled = true
     @State private var microphoneSourceBeforePriorityOrder: MicrophoneSourceSelection = .systemDefault
     @State private var refreshIconRotation = 0.0
+    // Folded details; each starts open when its setting is not the default
+    // (PC-005: folded settings stay in force, only the controls are hidden).
+    @State private var isAdvancedInputExpanded: Bool
+    @State private var isSoundsExpanded: Bool
+    @State private var isMoreLanguagesExpanded: Bool
+
+    init() {
+        _isAdvancedInputExpanded = State(initialValue: AudioDeviceManager.shared.inputMode == .prioritized)
+        _isSoundsExpanded = State(initialValue: CustomSoundManager.hasNonDefaultSounds())
+        _isMoreLanguagesExpanded = State(initialValue: DictationLanguages.codes.count > 1)
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -52,17 +64,9 @@ struct AudioSetupView: View {
                             .id(RecordingAnchor.microphone)
                     }
 
-                    if usesPriorityOrder {
-                        Section {
-                            priorityOrderRows
-                        } header: {
-                            Text("Priority Order")
-                        }
-                    }
-
                     // Right after the microphone: what you say and how it becomes text,
                     // before how the bar looks.
-                    TranscriptionSection()
+                    TranscriptionSection(isMoreLanguagesExpanded: $isMoreLanguagesExpanded)
 
                     Section {
                         panelStyleTiles
@@ -86,10 +90,16 @@ struct AudioSetupView: View {
                     }
 
                     Section {
-                        CustomSoundSettingsView()
-                    } header: {
-                        Text("Recording Sounds")
-                            .id(RecordingAnchor.sounds)
+                        ExpandableSettingsRow(
+                            title: "Recording Sounds",
+                            isExpanded: $isSoundsExpanded,
+                            isEnabled: nil,
+                            summary: "Sounds that play when recording starts and stops.",
+                            statusNote: soundManager.usesNonDefaultSounds ? "Changed from the defaults" : nil
+                        ) {
+                            CustomSoundSettingsView()
+                        }
+                        .id(RecordingAnchor.sounds)
                     }
 
                     Section {
@@ -135,8 +145,12 @@ struct AudioSetupView: View {
         HStack(spacing: 8) {
             ForEach(RecordingAnchor.allCases) { anchor in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        proxy.scrollTo(anchor, anchor: .top)
+                    // Unfold a folded section first, then scroll once it has its final height.
+                    expand(anchor)
+                    DispatchQueue.main.async {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            proxy.scrollTo(anchor, anchor: .top)
+                        }
                     }
                 } label: {
                     Text(anchor.title)
@@ -156,6 +170,20 @@ struct AudioSetupView: View {
         .padding(.bottom, 4)
     }
 
+    /// Chips of folded sections open them; the others only scroll.
+    private func expand(_ anchor: RecordingAnchor) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            switch anchor {
+            case .languages:
+                isMoreLanguagesExpanded = true
+            case .sounds:
+                isSoundsExpanded = true
+            case .microphone, .panel, .behavior:
+                break
+            }
+        }
+    }
+
     // MARK: - Panel tiles
 
     private var panelStyleTiles: some View {
@@ -173,12 +201,6 @@ struct AudioSetupView: View {
 
     @ViewBuilder
     private var inputSettingsRows: some View {
-        Picker("Microphone Mode", selection: inputRouteSelection) {
-            Text("Selected Microphone").tag(InputRoute.singleMicrophone)
-            Text("Priority Order").tag(InputRoute.priorityOrder)
-        }
-        .pickerStyle(.menu)
-
         if !usesPriorityOrder {
             Picker("Microphone", selection: microphoneSourceSelection) {
                 Text(systemDefaultSourceTitle).tag(MicrophoneSourceSelection.systemDefault)
@@ -219,6 +241,24 @@ struct AudioSetupView: View {
                 }
                 .controlSize(.small)
                 .disabled(engine.recordingState != .idle)
+            }
+        }
+
+        ExpandableSettingsRow(
+            title: "Advanced input",
+            isExpanded: $isAdvancedInputExpanded,
+            isEnabled: nil,
+            summary: "Use several microphones in the order Diktilo should try them.",
+            statusNote: usesPriorityOrder ? "Priority order is on" : nil
+        ) {
+            Picker("Microphone Mode", selection: inputRouteSelection) {
+                Text("Selected Microphone").tag(InputRoute.singleMicrophone)
+                Text("Priority Order").tag(InputRoute.priorityOrder)
+            }
+            .pickerStyle(.menu)
+
+            if usesPriorityOrder {
+                priorityOrderRows
             }
         }
     }
